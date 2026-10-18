@@ -287,8 +287,10 @@ uv run pytest tests/test_opencode_adapter.py -v
 
 OpenCode `1.19.0` (V1 `{ id, server }` plugin contract, supported since
 `1.18.29`) loads the project plugin from
-`.opencode/plugins/agent-casuality.ts`. Start the Agent-Casuality receiver in
-one terminal:
+`.opencode/plugins/agent-casuality.ts` — an installed copy of the canonical
+source at `packages/opencode-agent-casuality/src/index.ts` (git-ignored; the
+`scripts/check-opencode-plugin-compat.py` helper installs it automatically).
+Start the Agent-Casuality receiver in one terminal:
 
 ```powershell
 uv run casuality-opencode-ingest --db .casuality/opencode.db

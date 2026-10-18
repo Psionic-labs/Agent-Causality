@@ -76,7 +76,7 @@ fixture remains its own canonical ground truth at `fixture/fixture.json`.
 ### Real OpenCode coding-agent benchmark
 
 The `opencode` mode measures Agent-Casuality on live OpenCode executions
-through the validated `.opencode/plugins/agent-casuality.ts` integration. It
+through the validated `packages/opencode-agent-casuality/src/index.ts` integration. It
 scores capture completeness and diagnosis quality separately across five
 small tasks: `stale_research`, `conflicting_review`, `failed_test_retry`,
 `subagent_disagreement`, and `shared_state_contamination`. Task definitions

@@ -11,7 +11,7 @@ Capture a real coding-agent session live:
 real OpenCode execution → captured events → causal analysis → diagnosis
 ```
 
-Plugin: [`.opencode/plugins/agent-casuality.ts`](../.opencode/plugins/agent-casuality.ts)
+Plugin: [`packages/opencode-agent-casuality/src/index.ts`](../packages/opencode-agent-casuality/src/index.ts)
 (global `event` hook plus tool, permission, command, and chat hooks).
 Test: [`tests/test_opencode_adapter.py`](../tests/test_opencode_adapter.py).
 

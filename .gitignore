@@ -11,6 +11,10 @@ conversation-summary.md
 NEXT.md
 node_modules/
 test_pics/
+paper.tex
+
+# Installed OpenCode plugin (canonical source: packages/opencode-agent-casuality/src/index.ts)
+.opencode/
 
 # Distribution / packaging
 .Python

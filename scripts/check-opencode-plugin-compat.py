@@ -1,7 +1,8 @@
 """Verify the Agent-Casuality OpenCode plugin loads on real OpenCode binaries.
 
-Runs a trivial prompt under each given `opencode` binary with the repo's
-`.opencode/plugins/agent-casuality.ts` on the plugin path (cwd = repo root)
+Runs a trivial prompt under each given `opencode` binary with the canonical
+plugin (`packages/opencode-agent-casuality/src/index.ts`) installed into
+`<workdir>/.opencode/plugins/agent-casuality.ts` (cwd = workdir)
 and an ephemeral ingest receiver, then asserts:
 
   1. the receiver persisted at least one event (hooks actually fired), with
@@ -38,7 +39,7 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO_ROOT))
 
-from opencode_adapter.server import OpenCodeIngestServer  # noqa: E402
+from adapters.opencode.server import OpenCodeIngestServer  # noqa: E402
 from storage.sqlite import SQLiteEventStore  # noqa: E402
 
 DEFAULT_MODEL = "openrouter/deepseek/deepseek-v4-flash"
@@ -63,6 +64,18 @@ DOWNLOADED_1834_BIN = (
 DEFAULT_LOG = (
     Path.home() / ".local" / "share" / "opencode" / "log" / "opencode.log"
 )
+
+PLUGIN_SOURCE = REPO_ROOT / "packages" / "opencode-agent-casuality" / "src" / "index.ts"
+
+
+def ensure_plugin_installed(workdir: Path) -> None:
+    """Install the canonical plugin where OpenCode auto-loads it (like a user install)."""
+    dest = workdir / ".opencode" / "plugins" / "agent-casuality.ts"
+    if dest.exists():
+        return
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    dest.write_text(PLUGIN_SOURCE.read_text(encoding="utf-8"), encoding="utf-8")
+    print(f"installed plugin: {dest}")
 
 
 def resolve_key(workdir: Path) -> str:
@@ -216,6 +229,7 @@ def main() -> int:
             raise SystemExit(f"bad --bin spec (want LABEL:PATH): {spec!r}")
         targets.append((label, Path(path)))
     api_key = resolve_key(workdir)
+    ensure_plugin_installed(workdir)
     results = [
         check_binary(
             label,
