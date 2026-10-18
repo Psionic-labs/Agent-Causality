@@ -37,7 +37,7 @@ explains failures with grounded evidence instead of guesses.
 
 ## Demo video
 
-[![Agent-Casuality demo — watch on YouTube](https://img.youtube.com/vi/bogmzYe9Hzs/hqdefault.jpg)](https://www.youtube.com/watch?v=bogmzYe9Hzs)
+[![Agent-Casuality demo — watch on YouTube](https://img.youtube.com/vi/bogmzYe9Hzs/maxresdefault.jpg)](https://www.youtube.com/watch?v=bogmzYe9Hzs)
 
 *Full walkthrough, click the thumbnail to watch on YouTube.*
 
