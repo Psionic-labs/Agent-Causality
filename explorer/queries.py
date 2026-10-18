@@ -35,8 +35,15 @@ def _inner(event: Any) -> dict[str, Any]:
 
 
 def short_label(event: Any) -> str:
-    """One-line human label: event type plus the interesting OpenCode detail."""
-    kind = str(_common(event).get("opencode_kind", ""))
+    """One-line human label: event type plus the interesting runtime detail.
+
+    OpenCode events carry a ``tool``/``args`` payload; adapters like LangGraph
+    only expose the callback ``name`` (node or tool name). Falls back through
+    both so every runtime gets a meaningful label.
+    """
+    common = _common(event)
+    kind = str(common.get("opencode_kind", ""))
+    name = str(common.get("name") or "")
     inner = _inner(event)
     tool = str(inner.get("tool", ""))
     args = inner.get("args", {})
@@ -48,8 +55,11 @@ def short_label(event: Any) -> str:
     if tool:
         headline = tool + (f" {detail}" if detail else "")
     else:
-        headline = detail or kind or getattr(event, "event_type", "")
-    return f"{getattr(event, 'event_type', '')} · {headline}".strip(" ·")
+        headline = detail or name or kind or getattr(event, "event_type", "")
+    event_type = str(getattr(event, "event_type", ""))
+    if headline == event_type:
+        return event_type
+    return f"{event_type} · {headline}".strip(" ·")
 
 
 def _role_of(event_id: str, resolved: dict[str, list[str]]) -> str | None:
