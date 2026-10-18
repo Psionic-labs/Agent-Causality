@@ -14,14 +14,15 @@ Repository = "https://github.com/Psionic-labs/Agent-Casuality"
 [project.optional-dependencies]
 postgres = ["psycopg[binary]>=3.2.0"]
 explain = ["httpx>=0.27.0"]
-all = ["psycopg[binary]>=3.2.0", "httpx>=0.27.0"]
+langgraph = ["langchain-core>=0.3.0"]
+all = ["psycopg[binary]>=3.2.0", "httpx>=0.27.0", "langchain-core>=0.3.0"]
 
 [build-system]
 requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools.packages.find]
-include = ["benchmark*", "casuality*", "cli*", "core*", "explorer*", "sdk*", "storage*", "examples*", "opencode_adapter*"]
+include = ["adapters*", "benchmark*", "casuality*", "cli*", "core*", "explorer*", "sdk*", "storage*", "examples*"]
 
 [tool.setuptools.package-data]
 benchmark = ["ground_truth/*.json"]
@@ -32,12 +33,14 @@ explorer = ["demo/*.json", "static/*", "static/**/*"]
 casuality = "cli.main:main"
 agent-casuality = "cli.main:main"
 casuality-benchmark = "benchmark.runner:main"
-casuality-opencode-ingest = "opencode_adapter.server:main"
+casuality-opencode-ingest = "adapters.opencode.server:main"
 casuality-explorer = "explorer.server:main"
 
 [dependency-groups]
 dev = [
     "httpx>=0.27.0",
+    "langchain-core>=0.3.0",
+    "langgraph>=0.4.0",
     "psycopg[binary]>=3.2.0",
     "pytest>=8.0.0",
     "ruff>=0.9.0",

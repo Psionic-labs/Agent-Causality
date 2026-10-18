@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 from typing import Any
 
+from adapters.opencode.mapping import OpenCodeEventMapper
 from benchmark.opencode.runner import render_markdown
 from benchmark.opencode.scoring import (
     EVENT_CLASSES,
@@ -22,7 +23,6 @@ from benchmark.opencode.tasks import (
     resolve_opencode_binary,
     setup_workdir,
 )
-from opencode_adapter.mapping import OpenCodeEventMapper
 from sdk.events import InMemoryEventLog
 
 RECORDED = Path("benchmark/opencode/recorded")

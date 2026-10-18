@@ -18,7 +18,7 @@ from pathlib import Path
 from typing import Any
 from uuid import uuid4
 
-from opencode_adapter.server import OpenCodeIngestServer
+from adapters.opencode.server import OpenCodeIngestServer
 from storage.sqlite import SQLiteEventStore
 
 from .scoring import (

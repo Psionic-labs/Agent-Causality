@@ -6,7 +6,7 @@
 [![License: AGPL-3.0](https://img.shields.io/badge/license-AGPL--3.0-green)](https://github.com/Psionic-labs/Agent-Casuality/blob/main/LICENSE)
 [![OpenCode 1.19+](https://img.shields.io/badge/opencode-1.19%2B-purple)](https://opencode.ai)
 
-*Causal debugging for branching multi-agent systems — plus the OpenCode capture plugin.*
+*Causal debugging for branching multi-agent systems — plus capture adapters for OpenCode and LangGraph.*
 
 Agent-Casuality records what your agents did as a causal event graph, then
 explains failures with grounded evidence instead of guesses.
@@ -24,12 +24,24 @@ explains failures with grounded evidence instead of guesses.
 >
 > Source: <https://github.com/Psionic-labs/Agent-Casuality>
 
+[Demo video](#demo-video) ·
 [Install](#install--you-need-both-packages) ·
 [30-second demo](#try-it-in-30-seconds-no-server-key-or-network) ·
 [Single-run capture](#single-run-capture-ingest--opencode--explorer) ·
 [Explorer](#see-it-visual-dag-explorer) ·
 [OpenCode](#works-with-opencode) ·
+[LangGraph](#works-with-langgraph) ·
 [Docs](#documentation)
+
+---
+
+## Demo video
+
+[![Agent-Casuality demo — watch on YouTube](https://img.youtube.com/vi/bogmzYe9Hzs/hqdefault.jpg)](https://www.youtube.com/watch?v=bogmzYe9Hzs)
+
+*Full walkthrough, click the thumbnail to watch on YouTube.*
+
+*The Video follows the Single-run capture given below*
 
 ---
 
@@ -273,6 +285,34 @@ Explorer and CLI live in the PyPI distribution.
 
 ---
 
+## Works with LangGraph
+
+`CasualityCallbackHandler` is a LangChain callback handler: point your
+graph's `config` at it and every node, tool, and LLM run lands in the
+causal graph — fail-open, with `parent_run_id` containment converted into
+explicit causal edges (unknown parents are dropped, never invented).
+
+```python
+from adapters.langgraph import CasualityCallbackHandler
+from storage.sqlite import SQLiteEventStore
+
+store = SQLiteEventStore(".casuality/langgraph.db")
+handler = CasualityCallbackHandler(store)
+
+app.invoke(inputs, config=handler.config())
+```
+
+Worked example: a deterministic replay of the documented July 2025 Replit
+incident — freeze violated, production rows deleted, fabricated data
+written, false rollback claim — captured as 22 causally-validated events
+in
+[`examples/replit_incident.py`](https://github.com/Psionic-labs/Agent-Casuality/blob/main/examples/replit_incident.py)
+(write-up:
+[docs/case-study-replit.md](https://github.com/Psionic-labs/Agent-Casuality/blob/main/docs/case-study-replit.md)).
+[Adapter guide →](https://github.com/Psionic-labs/Agent-Casuality/blob/main/docs/langgraph.md)
+
+---
+
 ## Benchmarks
 
 Offline, provider-neutral suite (`uv run casuality-benchmark ...`) plus a
@@ -303,6 +343,8 @@ and `benchmark/results/`.
 | --- | --- |
 | Getting started | [GETTING_STARTED.md](https://github.com/Psionic-labs/Agent-Casuality/blob/main/GETTING_STARTED.md) |
 | OpenCode integration | [docs/opencode.md](https://github.com/Psionic-labs/Agent-Casuality/blob/main/docs/opencode.md) |
+| LangGraph integration | [docs/langgraph.md](https://github.com/Psionic-labs/Agent-Casuality/blob/main/docs/langgraph.md) |
+| Replit incident case study | [docs/case-study-replit.md](https://github.com/Psionic-labs/Agent-Casuality/blob/main/docs/case-study-replit.md) |
 | CLI and Python reference | [docs/reference.md](https://github.com/Psionic-labs/Agent-Casuality/blob/main/docs/reference.md) |
 | Benchmarks and results | [docs/benchmarks.md](https://github.com/Psionic-labs/Agent-Casuality/blob/main/docs/benchmarks.md) |
 | Scope and limits | [docs/reference.md](https://github.com/Psionic-labs/Agent-Casuality/blob/main/docs/reference.md) |

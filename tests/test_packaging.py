@@ -109,7 +109,7 @@ def test_pyproject_declares_static_and_entry_points() -> None:
     )
     scripts = data["project"]["scripts"]
     assert scripts.get("casuality-explorer") == "explorer.server:main"
-    assert scripts.get("casuality-opencode-ingest") == "opencode_adapter.server:main"
+    assert scripts.get("casuality-opencode-ingest") == "adapters.opencode.server:main"
     assert (ROOT / "MANIFEST.in").is_file()
     manifest = (ROOT / "MANIFEST.in").read_text(encoding="utf-8")
     assert "explorer/static" in manifest

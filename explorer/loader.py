@@ -13,8 +13,8 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
+from adapters.opencode.mapping import OpenCodeEventMapper
 from benchmark.opencode.scoring import resolve_failure, resolve_roles
-from opencode_adapter.mapping import OpenCodeEventMapper
 from sdk.events import InMemoryEventLog
 
 DEMO_DIR = Path(__file__).resolve().parent / "demo"

@@ -5,36 +5,15 @@ from __future__ import annotations
 import copy
 import hashlib
 import json
-import re
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from typing import Any
 from uuid import NAMESPACE_URL, uuid5
 
+from adapters.redaction import redact_value
 from sdk.events import AgentClock, Event, record_event
 from sdk.memory import ResourceRegistry
 from sdk.privacy import PayloadRedactor, make_fail_open_append
-
-# Regex patterns detecting sensitive keys and secret values
-_SECRET_KEY_RE = re.compile(r"(?:api[_-]?key|authorization|bearer|token|secret|password)", re.I)
-_SECRET_VALUE_RE = re.compile(r"(?:bearer\s+|sk[-_]|api[_-]?key\s*[=:])", re.I)
-
-
-# Recursively sanitize nested dictionaries and lists before persistence
-def _redact(value: Any, redactor: PayloadRedactor) -> Any:
-    if isinstance(value, dict):
-        safe: dict[str, Any] = {}
-        for key, nested in value.items():
-            if _SECRET_KEY_RE.search(str(key)):
-                safe[key] = "[REDACTED]"
-            else:
-                safe[key] = _redact(nested, redactor)
-        return redactor.redact(safe)
-    if isinstance(value, list):
-        return [_redact(item, redactor) for item in value]
-    if isinstance(value, str) and _SECRET_VALUE_RE.search(value):
-        return "[REDACTED]"
-    return value
 
 
 # Deterministic UUID5 generator based on session, kind, and source event ID
@@ -183,7 +162,7 @@ class OpenCodeEventMapper:
         # tool callID linkage, or resource read-after-write). Arrival order is
         # preserved by logical_seq/wall_time, never inferred as causality.
         parent_ids = list(parents or [])
-        safe_payload = _redact(copy.deepcopy(payload), self.redactor)
+        safe_payload = redact_value(copy.deepcopy(payload), self.redactor)
         event, stored = record_event(
             agent_id=f"opencode:{session_id}",
             clock=state.clock,

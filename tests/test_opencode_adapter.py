@@ -7,8 +7,8 @@ from datetime import UTC, datetime
 from pathlib import Path
 from urllib.request import Request, urlopen
 
-from opencode_adapter.mapping import OpenCodeEventMapper
-from opencode_adapter.server import OpenCodeIngestServer
+from adapters.opencode.mapping import OpenCodeEventMapper
+from adapters.opencode.server import OpenCodeIngestServer
 from sdk.events import AgentClock, InMemoryEventLog, record_event
 from storage.sqlite import SQLiteEventStore
 
