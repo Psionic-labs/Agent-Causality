@@ -2,6 +2,46 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.0] - 2026-10-18
+
+### Capture adapters package + LangGraph integration
+
+- **Breaking (pre-1.0):** direct imports of `opencode_adapter` must move to
+  `adapters.opencode`; the `casuality-opencode-ingest` entry point is
+  unchanged.
+- New `adapters/` package: the OpenCode runtime capture moved from
+  `opencode_adapter/` to `adapters/opencode/` (history preserved; the
+  `casuality-opencode-ingest` entry point now targets
+  `adapters.opencode.server:main`).
+- New LangGraph adapter: `CasualityCallbackHandler`
+  (`adapters/langgraph/mapping.py`) records every chain/tool/LLM/retriever
+  callback as causal events — one root run becomes one agent, unknown
+  parents are dropped, frontier chaining orders siblings, resource
+  read-after-write edges link file readers to last writers, event IDs are
+  deterministic and idempotent, payloads are deeply redacted and coerced
+  JSON-safe, and capture is fail-open (`handler.errors`, never raises into
+  the agent). `langchain-core` stays optional; extras:
+  `agent-casuality[langgraph]`.
+- Shared deep-redaction helper (`adapters/redaction.py`); the sensitive-key
+  regex was tightened so keys like `token_usage` are no longer redacted
+  while `access_token`-style keys still are.
+- Deterministic case study: `examples/replit_incident.py` replays the
+  documented July 2025 Replit incident as a captured causal graph
+  (write-up: `docs/case-study-replit.md`). Runs start from a fresh database
+  by default (`--append` keeps prior captures) and print the exact
+  `casuality-explorer` command for the result.
+- Visual DAG Explorer: node labels now fall back to the generic callback
+  `name` field, so LangGraph runs render meaningful labels
+  (`tool_call · write_sql`) instead of repeating the event type; the DAG,
+  failure, diagnosis, and evidence endpoints all work on LangGraph captures.
+- Docs: new `docs/langgraph.md`; README gains a LangGraph section and
+  documentation-table rows (PyPI and npm copies re-synced byte-identical,
+  also picking up the previously missing demo-video section).
+- The root `.opencode/` directory (an installed copy of the canonical
+  plugin at `packages/opencode-agent-casuality/src/index.ts`) is now
+  git-ignored and no longer tracked; the plugin-compat script installs the
+  canonical source into `<workdir>/.opencode/plugins/` before running.
+
 ## [0.1.4] - 2026-10-14
 
 ### Unified README for both registries (docs only)
