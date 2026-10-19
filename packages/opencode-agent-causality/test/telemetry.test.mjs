@@ -1,7 +1,7 @@
 import { test } from "node:test"
 import assert from "node:assert/strict"
 import path from "node:path"
-import { readFileSync } from "node:fs"
+import { existsSync, readFileSync } from "node:fs"
 import { fileURLToPath } from "node:url"
 
 const here = path.dirname(fileURLToPath(import.meta.url))
@@ -68,16 +68,21 @@ async function settle(timeoutMs = 15000) {
 }
 
 test("local and published plugin sources stay in sync with observable telemetry", () => {
-  const local = readFileSync(
-    path.resolve(root, "..", "..", ".opencode", "plugins", "agent-causality.ts"),
-    "utf8",
-  )
+  const needles = ["telemetryStats", "droppedQueueOverflow", "rejectedByReceiver", "persisted"]
   const published = readFileSync(path.resolve(root, "src", "index.ts"), "utf8")
+  for (const needle of needles) {
+    assert.match(published, new RegExp(needle), `published source missing ${needle}`)
+  }
+  // The installed copy lives in the gitignored `.opencode/` (installed by
+  // scripts/check-opencode-plugin-compat.py), so a fresh checkout has nothing
+  // to compare against; the sync invariant only applies where it exists.
+  const localPath = path.resolve(root, "..", "..", ".opencode", "plugins", "agent-causality.ts")
+  if (!existsSync(localPath)) return
+  const local = readFileSync(localPath, "utf8")
   const norm = (s) => s.replace(/\r\n/g, "\n").trimEnd()
   assert.equal(norm(local), norm(published), "plugin sources diverged")
-  for (const needle of ["telemetryStats", "droppedQueueOverflow", "rejectedByReceiver", "persisted"]) {
+  for (const needle of needles) {
     assert.match(local, new RegExp(needle), `local source missing ${needle}`)
-    assert.match(published, new RegExp(needle), `published source missing ${needle}`)
   }
 })
 
