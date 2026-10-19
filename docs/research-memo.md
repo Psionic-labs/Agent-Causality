@@ -9,7 +9,7 @@
 
 ## System Model
 
-Agent-Casuality is designed as a causal debugging and observability substrate for concurrent, branching, and merging multi-agent LLM systems. Tracing the architecture from execution capture through storage, graph representation, state reconstruction, and decision attribution reveals the following end-to-end model:
+Agent-Causality is designed as a causal debugging and observability substrate for concurrent, branching, and merging multi-agent LLM systems. Tracing the architecture from execution capture through storage, graph representation, state reconstruction, and decision attribution reveals the following end-to-end model:
 
 ```
 [Agent Execution Layer]
@@ -317,7 +317,7 @@ In the Customer Approval scenario (`fixture/fixture.json`), mask $B_3$'s search 
 
 ### Defense of the Core Direction: The Phase 2.5 Semantic Decision SCM with Resource-Version Invariant
 
-The single strongest direction that transforms Agent-Casuality from an ad-hoc tracing script into an academically defensible, breakthrough causal debugging system is:
+The single strongest direction that transforms Agent-Causality from an ad-hoc tracing script into an academically defensible, breakthrough causal debugging system is:
 
 > **The Formulation of Multi-Agent Decision Points as Structural Causal Models (SCMs) over Semantic Ports, coupled with Resource-Versioned State Invariants.**
 

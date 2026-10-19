@@ -427,10 +427,10 @@ Purpose: exercises the real CLI end to end using `fixture.json` as the event
 store. These are the same assertions layer 4 of the script makes.
 
 ```powershell
-uv run casuality --fixture fixture/fixture.json agents
-uv run casuality --fixture fixture/fixture.json slice A4
-uv run casuality --fixture fixture/fixture.json why A3
-uv run casuality --fixture fixture/fixture.json reconstruct B 4
+uv run causality --fixture fixture/fixture.json agents
+uv run causality --fixture fixture/fixture.json slice A4
+uv run causality --fixture fixture/fixture.json why A3
+uv run causality --fixture fixture/fixture.json reconstruct B 4
 ```
 
 Expected results:
@@ -451,7 +451,7 @@ Expected results:
 Against a live run, swap the backend for PostgreSQL:
 
 ```powershell
-uv run casuality slice <event-uuid>
+uv run causality slice <event-uuid>
 ```
 
 ## 16. Confirm the Phase 3 integration test wrote valid snapshots
@@ -585,10 +585,10 @@ Purpose: exercises the `provenance` subcommand end to end against the bundled
 
 ```powershell
 # Trace an exact multi-hop chain
-uv run casuality --fixture fixture/fixture.json provenance A3.output.approve
+uv run causality --fixture fixture/fixture.json provenance A3.output.approve
 
 # Trace an LLM-boundary coarse link
-uv run casuality --fixture fixture/fixture.json provenance B2.args.query
+uv run causality --fixture fixture/fixture.json provenance B2.args.query
 ```
 
 Expected results:
@@ -638,7 +638,7 @@ rows with `field_path = "agent.decision.output"` and
 
 ```powershell
 # Trace the chain rooted at agent.decision.output (uses DATABASE_URL automatically)
-uv run casuality provenance agent.decision.output
+uv run causality provenance agent.decision.output
 ```
 
 Expected result: a chain of the form:
@@ -654,7 +654,7 @@ and `source_path` pointing back to the tool result field.
 **Step 3 — confirm traversal stays in one run:**
 
 ```powershell
-uv run casuality provenance agent.decision.output
+uv run causality provenance agent.decision.output
 ```
 
 If the integration test has been run multiple times, each run's edges share
@@ -665,7 +665,7 @@ to events inside the same run in the database.
 > [!NOTE]
 > The database backend resolves `DATABASE_URL` from the environment. If you
 > have not set it, the CLI defaults to a local SQLite database at
-> `.casuality/events.db` instead of failing.
+> `.causality/events.db` instead of failing.
 
 
 

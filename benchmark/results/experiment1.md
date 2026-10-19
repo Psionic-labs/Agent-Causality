@@ -1,14 +1,14 @@
 # Benchmark result: experiment1
 
 ## Methodology
-Experiment 1 evaluates the same four counterfactual B/C cells with Agent-Casuality Shapley interaction and a direct 2x2 contrast. Offline mode uses the deterministic scenario evaluators. The current Fastino catalog exposes no structured-output capability, and GLiNER-2.5-Decide returns a single intent classification rather than good/bad branch decisions; therefore the external Experiment 1 path remains blocked until a compatible model/API mode exists.
+Experiment 1 evaluates the same four counterfactual B/C cells with Agent-Causality Shapley interaction and a direct 2x2 contrast. Offline mode uses the deterministic scenario evaluators. The current Fastino catalog exposes no structured-output capability, and GLiNER-2.5-Decide returns a single intent classification rather than good/bad branch decisions; therefore the external Experiment 1 path remains blocked until a compatible model/API mode exists.
 
 ## Machine-readable result
 
 ```json
 {
   "aggregate": {
-    "agent_casuality": {
+    "agent_causality": {
       "false_negative": 0,
       "false_positive": 0,
       "false_positive_rate": 0.0,
@@ -39,7 +39,7 @@ Experiment 1 evaluates the same four counterfactual B/C cells with Agent-Casuali
   "repetitions": 3,
   "rows": [
     {
-      "agent_casuality": {
+      "agent_causality": {
         "false_negative": 0,
         "false_positive": 0,
         "score_distribution": [
@@ -102,7 +102,7 @@ Experiment 1 evaluates the same four counterfactual B/C cells with Agent-Casuali
       "temperature": 0.0
     },
     {
-      "agent_casuality": {
+      "agent_causality": {
         "false_negative": 0,
         "false_positive": 0,
         "score_distribution": [
@@ -165,7 +165,7 @@ Experiment 1 evaluates the same four counterfactual B/C cells with Agent-Casuali
       "temperature": 0.0
     },
     {
-      "agent_casuality": {
+      "agent_causality": {
         "false_negative": 0,
         "false_positive": 0,
         "score_distribution": [
@@ -228,7 +228,7 @@ Experiment 1 evaluates the same four counterfactual B/C cells with Agent-Casuali
       "temperature": 0.3
     },
     {
-      "agent_casuality": {
+      "agent_causality": {
         "false_negative": 0,
         "false_positive": 0,
         "score_distribution": [
@@ -291,7 +291,7 @@ Experiment 1 evaluates the same four counterfactual B/C cells with Agent-Casuali
       "temperature": 0.3
     },
     {
-      "agent_casuality": {
+      "agent_causality": {
         "false_negative": 0,
         "false_positive": 0,
         "score_distribution": [
@@ -354,7 +354,7 @@ Experiment 1 evaluates the same four counterfactual B/C cells with Agent-Casuali
       "temperature": 0.7
     },
     {
-      "agent_casuality": {
+      "agent_causality": {
         "false_negative": 0,
         "false_positive": 0,
         "score_distribution": [
@@ -417,7 +417,7 @@ Experiment 1 evaluates the same four counterfactual B/C cells with Agent-Casuali
       "temperature": 0.7
     },
     {
-      "agent_casuality": {
+      "agent_causality": {
         "false_negative": 0,
         "false_positive": 0,
         "score_distribution": [
@@ -480,7 +480,7 @@ Experiment 1 evaluates the same four counterfactual B/C cells with Agent-Casuali
       "temperature": 1.0
     },
     {
-      "agent_casuality": {
+      "agent_causality": {
         "false_negative": 0,
         "false_positive": 0,
         "score_distribution": [
@@ -544,7 +544,7 @@ Experiment 1 evaluates the same four counterfactual B/C cells with Agent-Casuali
     }
   ],
   "targets": {
-    "agent_casuality_false_positive_under_1_percent": {
+    "agent_causality_false_positive_under_1_percent": {
       "measured": 0.0,
       "status": "TARGET MET",
       "threshold": 0.01

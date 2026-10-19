@@ -2,7 +2,7 @@
 
 Backends:
     --fixture PATH   run against a fixture.json file (no database needed)
-    --db PATH        use a local SQLite database (default: .casuality/events.db)
+    --db PATH        use a local SQLite database (default: .causality/events.db)
     (default)        use SQLite, or PostgreSQL when DATABASE_URL is set
 
 Examples:
@@ -86,10 +86,10 @@ def load_postgres_backend() -> Any:
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="Agent-Casuality causal debugger")
+    parser = argparse.ArgumentParser(description="Agent-Causality causal debugger")
     parser.add_argument("--fixture", type=Path, default=None, help="path to fixture.json")
     parser.add_argument(
-        "--db", type=Path, default=None, help="local SQLite path (default: .casuality/events.db)"
+        "--db", type=Path, default=None, help="local SQLite path (default: .causality/events.db)"
     )
     parser.add_argument(
         "--load-module",
@@ -278,9 +278,9 @@ def cmd_explain(
     try:
         text = explain(pkg, api_key=api_key, model=model)
     except (RuntimeError, ValueError) as exc:
-        print(f"[casuality] LLM explanation unavailable: {exc}")
+        print(f"[causality] LLM explanation unavailable: {exc}")
         print(
-            "[casuality] Showing the offline evidence summary instead. "
+            "[causality] Showing the offline evidence summary instead. "
             "Try --no-llm for this mode."
         )
         print(render_evidence_summary(pkg))
@@ -288,7 +288,7 @@ def cmd_explain(
     if explanation_matches_format(text, pkg):
         print(text)
     else:
-        print("[casuality] LLM returned an unusable explanation; showing the evidence summary.")
+        print("[causality] LLM returned an unusable explanation; showing the evidence summary.")
         print(render_evidence_summary(pkg))
 
 

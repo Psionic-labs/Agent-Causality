@@ -21,7 +21,7 @@ from langchain_core.runnables import RunnableConfig
 from langchain_core.tools import tool
 from langgraph.graph import END, START, StateGraph
 
-from adapters.langgraph import CasualityCallbackHandler
+from adapters.langgraph import CausalityCallbackHandler
 from core.slicing import structural_slice
 from core.validator import GraphValidator
 from storage.sqlite import SQLiteEventStore
@@ -165,8 +165,8 @@ def main() -> None:
     parser.add_argument(
         "--db",
         type=Path,
-        default=Path(".casuality/replit-incident.db"),
-        help="SQLite database path (default: .casuality/replit-incident.db)",
+        default=Path(".causality/replit-incident.db"),
+        help="SQLite database path (default: .causality/replit-incident.db)",
     )
     parser.add_argument(
         "--append",
@@ -183,7 +183,7 @@ def main() -> None:
                 sidecar.unlink()
 
     store = SQLiteEventStore(args.db)
-    handler = CasualityCallbackHandler(store)
+    handler = CausalityCallbackHandler(store)
     app = build_graph()
     result = app.invoke(
         {
@@ -250,7 +250,7 @@ def main() -> None:
           f"recorded {false_claim.logical_seq - verification.logical_seq} "
           "events after the verification read.")
 
-    print(f"\nVisual DAG: uv run casuality-explorer --db {args.db}")
+    print(f"\nVisual DAG: uv run causality-explorer --db {args.db}")
 
     store.close()
 

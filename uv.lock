@@ -7,7 +7,7 @@ resolution-markers = [
 ]
 
 [[package]]
-name = "agent-casuality"
+name = "agent-causality"
 version = "0.2.0"
 source = { editable = "." }
 

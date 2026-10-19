@@ -435,8 +435,8 @@ def explain(
     headers = {
         "Authorization": f"Bearer {resolved_api_key}",
         "Content-Type": "application/json",
-        "HTTP-Referer": "https://github.com/Psionic-labs/Agent-Casuality",
-        "X-Title": "Agent-Casuality Causal Debugger",
+        "HTTP-Referer": "https://github.com/Psionic-labs/Agent-Causality",
+        "X-Title": "Agent-Causality Causal Debugger",
     }
 
     payload = {

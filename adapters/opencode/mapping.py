@@ -1,4 +1,4 @@
-"""Map current OpenCode V1 plugin payloads into Agent-Casuality events."""
+"""Map current OpenCode V1 plugin payloads into Agent-Causality events."""
 
 from __future__ import annotations
 

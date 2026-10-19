@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-import casuality
+import causality
 from core.decision import DecisionContract
 from core.slicing import structural_slice
 from core.validator import GraphValidator
@@ -13,8 +13,8 @@ from storage.sqlite import SQLiteEventStore
 def test_sqlite_store_reopens_events(tmp_path: Path) -> None:
     path = tmp_path / "events.db"
     first = SQLiteEventStore(path)
-    casuality.init(path)
-    runtime = casuality._runtime
+    causality.init(path)
+    runtime = causality._runtime
     assert runtime is not None
     event, _ = record_event(
         agent_id="agent",
@@ -32,18 +32,18 @@ def test_sqlite_store_reopens_events(tmp_path: Path) -> None:
 
 
 def test_public_decorators_capture_a_causal_decision(tmp_path: Path) -> None:
-    casuality.init(tmp_path / "events.db")
+    causality.init(tmp_path / "events.db")
 
-    @casuality.agent(role="researcher")
+    @causality.agent(role="researcher")
     def research(query: str) -> dict[str, str]:
         return {"answer": query}
 
-    @casuality.merge_decision(ports=["research_summary"])
+    @causality.merge_decision(ports=["research_summary"])
     def approve(research_summary: dict[str, str]) -> str:
         return "ok" if research_summary["answer"] == "yes" else "no"
 
     assert approve(research("yes")) == "ok"
-    runtime = casuality._runtime
+    runtime = causality._runtime
     assert runtime is not None
     decision = runtime.log.events()[-1]
     assert len(structural_slice(decision.id, runtime.log)) == 4
@@ -53,13 +53,13 @@ def test_public_decorators_capture_a_causal_decision(tmp_path: Path) -> None:
 
 def test_public_decision_sources_are_isolated_to_current_run(tmp_path: Path) -> None:
     path = tmp_path / "events.db"
-    first_runtime = casuality.init(path)
+    first_runtime = causality.init(path)
 
-    @casuality.agent(role="researcher")
+    @causality.agent(role="researcher")
     def first_research(_: str) -> str:
         return "eligible"
 
-    @casuality.merge_decision(ports=["status"], decision_type="tests.first_run")
+    @causality.merge_decision(ports=["status"], decision_type="tests.first_run")
     def first_decision(status: str) -> str:
         return status
 
@@ -70,13 +70,13 @@ def test_public_decision_sources_are_isolated_to_current_run(tmp_path: Path) -> 
     first_source_id = first_contract.ports[0].source_event_id
     first_runtime.log.close()
 
-    second_runtime = casuality.init(path)
+    second_runtime = causality.init(path)
 
-    @casuality.agent(role="researcher")
+    @causality.agent(role="researcher")
     def second_research(_: str) -> str:
         return "eligible"
 
-    @casuality.merge_decision(ports=["status"], decision_type="tests.second_run")
+    @causality.merge_decision(ports=["status"], decision_type="tests.second_run")
     def second_decision(status: str) -> str:
         return status
 
@@ -102,9 +102,9 @@ def test_public_decision_sources_are_isolated_to_current_run(tmp_path: Path) -> 
 
 
 def test_merge_decision_persists_baselines(tmp_path: Path) -> None:
-    casuality.init(tmp_path / "events.db")
+    causality.init(tmp_path / "events.db")
 
-    @casuality.merge_decision(
+    @causality.merge_decision(
         ports=["status"],
         baselines={"status": "ineligible"},
         decision_type="tests.approval",
@@ -113,7 +113,7 @@ def test_merge_decision_persists_baselines(tmp_path: Path) -> None:
         return status
 
     assert approve("eligible") == "eligible"
-    runtime = casuality._runtime
+    runtime = causality._runtime
     assert runtime is not None
     contract = runtime.log.events()[-1].payload["decision_contract"]
     assert contract["decision_type"] == "tests.approval"

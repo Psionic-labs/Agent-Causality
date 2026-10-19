@@ -1,11 +1,11 @@
 {
-  "name": "@psionic-labs/opencode-agent-casuality",
+  "name": "@psionic-labs/opencode-agent-causality",
   "version": "0.1.4",
-  "description": "OpenCode plugin that streams Agent-Casuality telemetry events to the ingest endpoint",
+  "description": "OpenCode plugin that streams Agent-Causality telemetry events to the ingest endpoint",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Psionic-labs/Agent-Casuality.git",
-    "directory": "packages/opencode-agent-casuality"
+    "url": "git+https://github.com/Psionic-labs/Agent-Causality.git",
+    "directory": "packages/opencode-agent-causality"
   },
   "type": "module",
   "license": "AGPL-3.0-only",

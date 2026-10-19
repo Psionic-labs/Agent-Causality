@@ -68,7 +68,7 @@ await new Promise((r) => setTimeout(r, 1500))
 console.log("driver-done")
 `
 
-const driverPath = path.join(os.tmpdir(), `casuality-plugin-driver-${process.pid}.mjs`)
+const driverPath = path.join(os.tmpdir(), `causality-plugin-driver-${process.pid}.mjs`)
 writeFileSync(driverPath, driver)
 
 const child = spawn(
@@ -78,8 +78,8 @@ const child = spawn(
     cwd: root,
     env: {
       ...process.env,
-      CASUALITY_OPENCODE_INGEST_URL: ingestUrl,
-      CASUALITY_OPENCODE_INGEST_TOKEN: "test-token-123",
+      CAUSALITY_OPENCODE_INGEST_URL: ingestUrl,
+      CAUSALITY_OPENCODE_INGEST_TOKEN: "test-token-123",
     },
     stdio: ["ignore", "pipe", "pipe"],
   },

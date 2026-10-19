@@ -66,7 +66,7 @@ should also run the local end-to-end example:
 
 ```powershell
 uv run python examples/customer_approval.py
-uv run casuality --fixture fixture/fixture.json explain A4 --no-llm
+uv run causality --fixture fixture/fixture.json explain A4 --no-llm
 ```
 
 The first command uses SQLite and does not require a database server or model

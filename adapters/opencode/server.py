@@ -17,7 +17,7 @@ from .mapping import OpenCodeEventMapper
 
 # HTTP Request Handler: receives telemetry envelopes posted by the OpenCode plugin
 class _Handler(BaseHTTPRequestHandler):
-    server_version = "AgentCasualityOpenCode/1"
+    server_version = "AgentCausalityOpenCode/1"
 
     def do_POST(self) -> None:  # noqa: N802 - BaseHTTPRequestHandler API
         # Only accept telemetry at the dedicated ingest path
@@ -163,14 +163,14 @@ class OpenCodeIngestServer:
 
 
 def main() -> None:
-    # CLI entrypoint for `casuality-opencode-ingest` command
-    parser = argparse.ArgumentParser(description="Local OpenCode Agent-Casuality ingest receiver")
-    parser.add_argument("--db", type=Path, default=Path(".casuality/opencode.db"))
+    # CLI entrypoint for `causality-opencode-ingest` command
+    parser = argparse.ArgumentParser(description="Local OpenCode Agent-Causality ingest receiver")
+    parser.add_argument("--db", type=Path, default=Path(".causality/opencode.db"))
     parser.add_argument("--host", default="127.0.0.1")
     parser.add_argument("--port", type=int, default=8765)
     args = parser.parse_args()
     server = OpenCodeIngestServer(args.db, host=args.host, port=args.port)
-    print(f"Agent-Casuality OpenCode ingest listening on http://{args.host}:{args.port}/v1/opencode/events")
+    print(f"Agent-Causality OpenCode ingest listening on http://{args.host}:{args.port}/v1/opencode/events")
     try:
         server.serve_forever()
     except KeyboardInterrupt:

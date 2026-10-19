@@ -167,7 +167,7 @@ def test_opencode_fail_open_does_not_raise() -> None:
 
 
 def test_opencode_event_type_mappings() -> None:
-    """Verify all OpenCode event kinds translate to canonical Agent-Casuality event types."""
+    """Verify all OpenCode event kinds translate to canonical Agent-Causality event types."""
     log = InMemoryEventLog()
     mapper = OpenCodeEventMapper(log)
 

@@ -35,7 +35,7 @@ globalThis.fetch = async (_url, opts) => {
 }
 
 const pluginModule = await import("../dist/index.js")
-const { telemetryStats, __casualityTestReset, __casualityTestQueueLength } = pluginModule
+const { telemetryStats, __causalityTestReset, __causalityTestQueueLength } = pluginModule
 const plugin = pluginModule.default.server
 
 function resetHarness() {
@@ -44,7 +44,7 @@ function resetHarness() {
   bodies = []
   gateOpen = false
   gatePending = []
-  __casualityTestReset()
+  __causalityTestReset()
 }
 
 async function settle(timeoutMs = 15000) {
@@ -56,10 +56,10 @@ async function settle(timeoutMs = 15000) {
     const done =
       telemetryStats.delivered + telemetryStats.droppedDeliveryFailed ===
       telemetryStats.enqueued - telemetryStats.droppedQueueOverflow
-    if (__casualityTestQueueLength() === 0 && done) break
+    if (__causalityTestQueueLength() === 0 && done) break
     await new Promise((r) => setTimeout(r, 25))
   }
-  assert.equal(__casualityTestQueueLength(), 0, "queue did not drain in time")
+  assert.equal(__causalityTestQueueLength(), 0, "queue did not drain in time")
   assert.equal(
     telemetryStats.delivered + telemetryStats.droppedDeliveryFailed,
     telemetryStats.enqueued - telemetryStats.droppedQueueOverflow,
@@ -69,7 +69,7 @@ async function settle(timeoutMs = 15000) {
 
 test("local and published plugin sources stay in sync with observable telemetry", () => {
   const local = readFileSync(
-    path.resolve(root, "..", "..", ".opencode", "plugins", "agent-casuality.ts"),
+    path.resolve(root, "..", "..", ".opencode", "plugins", "agent-causality.ts"),
     "utf8",
   )
   const published = readFileSync(path.resolve(root, "src", "index.ts"), "utf8")
@@ -98,12 +98,12 @@ test("queue overflow is counted and observable (fail-open)", async () => {
     telemetryStats.droppedQueueOverflow > 0,
     `expected overflow drops, got ${telemetryStats.droppedQueueOverflow}`,
   )
-  assert.ok(__casualityTestQueueLength() <= 256, "queue exceeded its bound")
+  assert.ok(__causalityTestQueueLength() <= 256, "queue exceeded its bound")
   gateOpen = true
   for (const resolve of gatePending) resolve()
   gatePending = []
   await settle()
-  assert.equal(__casualityTestQueueLength(), 0)
+  assert.equal(__causalityTestQueueLength(), 0)
   assert.equal(
     telemetryStats.delivered,
     telemetryStats.enqueued - telemetryStats.droppedQueueOverflow,
@@ -164,5 +164,5 @@ test("fail-open: unreachable receiver never rejects the hook", async () => {
   await settle()
   assert.equal(telemetryStats.delivered, 0)
   assert.equal(telemetryStats.droppedDeliveryFailed, 2)
-  assert.equal(__casualityTestQueueLength(), 0)
+  assert.equal(__causalityTestQueueLength(), 0)
 })

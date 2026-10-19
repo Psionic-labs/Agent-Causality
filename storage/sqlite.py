@@ -1,4 +1,4 @@
-"""Zero-configuration SQLite event store for local Agent-Casuality runs."""
+"""Zero-configuration SQLite event store for local Agent-Causality runs."""
 
 from __future__ import annotations
 
@@ -21,7 +21,7 @@ class SQLiteEventStore(InMemoryEventLog):
     PostgreSQL adapters, while a new CLI process can reopen the same file.
     """
 
-    def __init__(self, path: str | Path = ".casuality/events.db") -> None:
+    def __init__(self, path: str | Path = ".causality/events.db") -> None:
         super().__init__()
         self.path = Path(path).expanduser()
         self.path.parent.mkdir(parents=True, exist_ok=True)

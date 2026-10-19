@@ -1,4 +1,4 @@
-"""Pytest configuration and shared fixtures for Agent-Casuality tests.
+"""Pytest configuration and shared fixtures for Agent-Causality tests.
 
 Global autouse fixture:
     reset_default_registry - clears sdk.memory.default_resource_registry before

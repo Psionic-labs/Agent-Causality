@@ -1,1 +1,1 @@
-"""Provider-neutral, deterministic benchmarks for Agent-Casuality."""
+"""Provider-neutral, deterministic benchmarks for Agent-Causality."""

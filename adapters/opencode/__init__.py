@@ -1,4 +1,4 @@
-"""OpenCode runtime capture adapter for Agent-Casuality."""
+"""OpenCode runtime capture adapter for Agent-Causality."""
 
 from .mapping import OpenCodeCapture, OpenCodeEventMapper
 from .server import OpenCodeIngestServer

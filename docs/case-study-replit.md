@@ -44,18 +44,18 @@ captures), and the script prints the command to open the result in the
 Visual DAG Explorer at the end:
 
 ```powershell
-uv run casuality-explorer --db .casuality/replit-incident.db
+uv run causality-explorer --db .causality/replit-incident.db
 ```
 
 ![Visual DAG Explorer Timeline view for the captured run — 22 events across four lanes, with the false rollback claim (seq 21) selected: its declared causal parent is the count_rows verification result, and its only child is run_finish](screenshots/replit_example.png)
 
 Every node and tool invocation goes through
-`CasualityCallbackHandler` (see [docs/langgraph.md](langgraph.md)), which
+`CausalityCallbackHandler` (see [docs/langgraph.md](langgraph.md)), which
 records explicit causal parents — no inference from log order. The run
 yields 22 events:
 
 ```text
-Captured 22 events into .casuality\replit-incident.db
+Captured 22 events into .causality\replit-incident.db
 agent: langgraph:01a14e76-c561-7a52-8801-66102034b27a
   seq=1   run_start | LangGraph
   seq=2   context_update | operator_instruction

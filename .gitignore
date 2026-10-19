@@ -13,7 +13,7 @@ node_modules/
 test_pics/
 paper.tex
 
-# Installed OpenCode plugin (canonical source: packages/opencode-agent-casuality/src/index.ts)
+# Installed OpenCode plugin (canonical source: packages/opencode-agent-causality/src/index.ts)
 .opencode/
 
 # Distribution / packaging
@@ -36,7 +36,7 @@ share/python-wheels/
 *.egg
 MANIFEST
 *.uv-cache
-.casuality
+.causality
 HANDOFF.md
 
 # PyInstaller
@@ -254,7 +254,7 @@ frontend/next-env.d.ts
 npm-debug.log*
 .DS_Store
 
-# Casuality explorer bundle: frontend/out/ above is a local-only build artifact,
+# Causality explorer bundle: frontend/out/ above is a local-only build artifact,
 # but its synced copy under explorer/static/ (via scripts/sync-explorer-static.py)
 # IS the distributable asset and must stay committed — never ignore it.
 !explorer/static/

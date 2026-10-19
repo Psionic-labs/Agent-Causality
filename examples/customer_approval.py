@@ -8,7 +8,7 @@ import sys
 from pathlib import Path
 from typing import cast
 
-import casuality
+import causality
 from core.decision import register_decision_evaluator
 from sdk.events import record_event
 
@@ -31,8 +31,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--db",
         type=Path,
-        default=Path(".casuality/example.db"),
-        help="SQLite database path (default: .casuality/example.db)",
+        default=Path(".causality/example.db"),
+        help="SQLite database path (default: .causality/example.db)",
     )
     parser.add_argument(
         "--model",
@@ -44,20 +44,20 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> None:
     args = parse_args()
-    runtime = casuality.init(args.db)
+    runtime = causality.init(args.db)
     failure_event_id = ""
     outcome = ""
 
     try:
-        @casuality.agent(role="researcher")
+        @causality.agent(role="researcher")
         def research(_: str) -> str:
             return "eligible"
 
-        @casuality.agent(role="risk-evaluator")
+        @causality.agent(role="risk-evaluator")
         def assess_risk(_: str) -> float:
             return 0.2
 
-        captured_approval = casuality.merge_decision(
+        captured_approval = causality.merge_decision(
             ports=["customer_status", "risk_score"],
             baselines={"customer_status": "ineligible", "risk_score": 0.8},
             decision_type=DECISION_TYPE,
@@ -112,12 +112,12 @@ def main() -> None:
     print("\nExplore further")
     print("Raw evidence:")
     print(
-        f"uv run casuality --load-module {module_name} --db \"{args.db}\" "
+        f"uv run causality --load-module {module_name} --db \"{args.db}\" "
         f"explain {failure_event_id} --raw-evidence --no-llm"
     )
     print("Optional LLM explanation:")
     print(
-        f"uv run casuality --load-module {module_name} --db \"{args.db}\" "
+        f"uv run causality --load-module {module_name} --db \"{args.db}\" "
         f"explain {failure_event_id} --model \"{args.model}\""
     )
 

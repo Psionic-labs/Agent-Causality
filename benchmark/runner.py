@@ -473,7 +473,7 @@ def run_experiment1(
                     },
                     "input": prompt,
                     "number_of_runs": repetitions,
-                    "agent_casuality": {
+                    "agent_causality": {
                         "true_positive": agent_detected if expected_interaction else 0,
                         "false_negative": (
                             repetitions - agent_detected if expected_interaction else 0
@@ -503,8 +503,8 @@ def run_experiment1(
     independent_rows = [row for row in rows if not row["expected_interaction"]]
     interaction_runs = sum(row["number_of_runs"] for row in interaction_rows)
     independent = sum(row["number_of_runs"] for row in rows if not row["expected_interaction"])
-    agent_false_positive = sum(row["agent_casuality"]["false_positive"] for row in independent_rows)
-    agent_true_positive = sum(row["agent_casuality"]["true_positive"] for row in interaction_rows)
+    agent_false_positive = sum(row["agent_causality"]["false_positive"] for row in independent_rows)
+    agent_true_positive = sum(row["agent_causality"]["true_positive"] for row in interaction_rows)
     naive_false_positive = sum(row["naive_2x2"]["false_positive"] for row in independent_rows)
     naive_true_positive = sum(row["naive_2x2"]["true_positive"] for row in interaction_rows)
     return {
@@ -521,7 +521,7 @@ def run_experiment1(
         },
         "rows": rows,
         "aggregate": {
-            "agent_casuality": {
+            "agent_causality": {
                 "true_positive": agent_true_positive,
                 "false_negative": interaction_runs - agent_true_positive,
                 "true_negative": independent - agent_false_positive,
@@ -541,7 +541,7 @@ def run_experiment1(
             "cache_hits": cache_hits,
         },
         "targets": {
-            "agent_casuality_false_positive_under_1_percent": {
+            "agent_causality_false_positive_under_1_percent": {
                 "threshold": 0.01,
                 "measured": agent_false_positive / max(1, independent),
                 "status": "TARGET MET"
@@ -968,7 +968,7 @@ def run_baseline(adapter: BaselineAdapter | None = None) -> dict[str, Any]:
             "commit_or_build": None,
             "input": "the five deterministic benchmark scenarios",
             "methodology": (
-                "Each existing Agent-Casuality scenario is serialized into a recorded trace "
+                "Each existing Agent-Causality scenario is serialized into a recorded trace "
                 "and a paired counterfactual trace with only the scenario's known target event "
                 "values changed. agent-replay diff compares those two traces. Its output is "
                 "scored only as divergence localization; causal capabilities remain unsupported."
@@ -1004,7 +1004,7 @@ def run_baseline(adapter: BaselineAdapter | None = None) -> dict[str, Any]:
             ],
         },
         "reproducibility": {
-            "command": "uv run casuality-benchmark baseline",
+            "command": "uv run causality-benchmark baseline",
             "required_input": "the five benchmark scenarios under benchmark/ground_truth/",
             "configuration": {"adapter": selected.name},
             "exit_code": next(
@@ -1025,7 +1025,7 @@ def run_baseline(adapter: BaselineAdapter | None = None) -> dict[str, Any]:
                 "scenario": row["scenario"],
                 "capability": capability,
                 "baseline": row["capabilities"][capability]["status"],
-                "agent_casuality": "measured by deterministic benchmark",
+                "agent_causality": "measured by deterministic benchmark",
                 "comparable": row["capabilities"][capability]["status"] == "supported",
                 "scope": row["capabilities"][capability].get("scope"),
             }
@@ -1041,7 +1041,7 @@ def run_baseline(adapter: BaselineAdapter | None = None) -> dict[str, Any]:
             "Unsupported capabilities have no precision, recall, or failure score.",
             "The paired counterfactual traces are adapter inputs derived from existing event "
             "records; "
-            "agent-replay does not execute Agent-Casuality scenarios itself.",
+            "agent-replay does not execute Agent-Causality scenarios itself.",
             *execution_errors,
         ],
     }
@@ -1052,7 +1052,7 @@ def _markdown(result: dict[str, Any]) -> str:
     methodology = {
         "experiment1": (
             "Experiment 1 evaluates the same four counterfactual B/C cells with "
-            "Agent-Casuality Shapley interaction and a direct 2x2 contrast. "
+            "Agent-Causality Shapley interaction and a direct 2x2 contrast. "
             "Offline mode uses the deterministic scenario evaluators. The current Fastino "
             "catalog exposes no structured-output capability, and GLiNER-2.5-Decide returns "
             "a single intent classification rather than good/bad branch decisions; therefore "
@@ -1080,7 +1080,7 @@ def _markdown(result: dict[str, Any]) -> str:
         environment = result.get("environment", {})
         table = [
             "\n## Capability Comparison\n",
-            "| Scenario | Capability | Baseline | Agent-Casuality | Comparable |",
+            "| Scenario | Capability | Baseline | Agent-Causality | Comparable |",
             "| --- | --- | --- | --- | --- |",
         ]
         table.extend(
@@ -1088,7 +1088,7 @@ def _markdown(result: dict[str, Any]) -> str:
                 scenario=row["scenario"],
                 capability=row["capability"],
                 baseline=row["baseline"],
-                agent=row["agent_casuality"],
+                agent=row["agent_causality"],
                 comparable="yes" if row["comparable"] else "no",
             )
             for row in result.get("comparison", [])
@@ -1107,7 +1107,7 @@ def _markdown(result: dict[str, Any]) -> str:
             + "\n".join(f"- {item}" for item in result.get("limitations", []))
             + "\n"
             "\n## Reproduction\n\n"
-            "```powershell\nuv run casuality-benchmark baseline\n```\n\n"
+            "```powershell\nuv run causality-benchmark baseline\n```\n\n"
             "The available Git executable was audited but rejected as a baseline because "
             "it does not consume these execution artifacts or produce causal analysis.\n"
         )

@@ -89,7 +89,7 @@ def _trace_document(
                 },
                 "output": payload,
                 "metadata": {
-                    "agent_casuality_event_id": event.id,
+                    "agent_causality_event_id": event.id,
                     "agent_id": event.agent_id,
                     "causal_parent_ids": parents,
                     "run_id": event.run_id,
@@ -99,7 +99,7 @@ def _trace_document(
             }
         )
     return {
-        "agent_name": f"agent-casuality-{scenario.name}",
+        "agent_name": f"agent-causality-{scenario.name}",
         "agent_version": "benchmark",
         "trigger": "event",
         "status": "failed",
@@ -108,11 +108,11 @@ def _trace_document(
         "started_at": "2026-01-01T00:00:00.000Z",
         "ended_at": "2026-01-01T00:00:01.000Z",
         "total_duration_ms": 1000,
-        "tags": ["agent-casuality", "baseline", scenario.name, variant],
+        "tags": ["agent-causality", "baseline", scenario.name, variant],
         "metadata": {
             "benchmark_scenario": scenario.name,
             "variant": variant,
-            "source": "Agent-Casuality scenario event records",
+            "source": "Agent-Causality scenario event records",
         },
         "steps": steps,
     }

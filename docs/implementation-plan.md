@@ -512,7 +512,7 @@ distribution and dogfooding track, not a prerequisite for proving the
 core debugger or for starting Phase 4 or Phase 5. It may run in parallel
 with those phases once Phase 3 is complete.
 
-**Goal.** Use Agent-Casuality inside real coding agents without coupling
+**Goal.** Use Agent-Causality inside real coding agents without coupling
 the core engine to one vendor's event format.
 
 ```mermaid
@@ -521,18 +521,18 @@ flowchart LR
     C[Claude Code] --> A
     X[Codex] --> A
     A --> S[Common event contract]
-    S --> P[Agent-Casuality core]
+    S --> P[Agent-Causality core]
     P --> G[PostgreSQL graph]
 ```
 
 **Principle.** Build an adapter first and package it as a plugin second.
 The adapter translates a host agent's native lifecycle into the common
-Agent-Casuality event contract. The plugin is the installable configuration
+Agent-Causality event contract. The plugin is the installable configuration
 and packaging layer for that adapter.
 
 ```text
 OpenCode events       ┐
-Claude Code hooks     ├──> runtime adapter ──> Agent-Casuality events
+Claude Code hooks     ├──> runtime adapter ──> Agent-Causality events
 Codex events/API      ┘                              |
                                              PostgreSQL graph
 ```

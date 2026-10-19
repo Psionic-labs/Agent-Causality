@@ -1,7 +1,7 @@
 # Benchmark suite
 
-`python -m benchmark.runner` (or `casuality-benchmark` after `uv sync`) runs
-the benchmark without coupling Agent-Casuality to any coding-agent vendor.
+`python -m benchmark.runner` (or `causality-benchmark` after `uv sync`) runs
+the benchmark without coupling Agent-Causality to any coding-agent vendor.
 
 Modes are `offline`, `failure-injection`, `scenarios`, `experiment1`,
 `experiment2`, `experiment3`, `baseline`, `opencode`, and `all`. `all` stays
@@ -15,29 +15,29 @@ Run these commands from the repository root after `uv sync`:
 
 ```powershell
 # Five deterministic causal scenarios
-uv run casuality-benchmark scenarios
+uv run causality-benchmark scenarios
 
 # Failure-injection checks
-uv run casuality-benchmark failure-injection
+uv run causality-benchmark failure-injection
 
 # Shared-state dependency recovery
-uv run casuality-benchmark experiment2 --dependencies 100
+uv run causality-benchmark experiment2 --dependencies 100
 
 # Experiment 1, offline and deterministic
-uv run casuality-benchmark experiment1 --repetitions 3 --max-requests 24
+uv run causality-benchmark experiment1 --repetitions 3 --max-requests 24
 
 # Experiment 3, offline parser/schema/decision execution
-uv run casuality-benchmark experiment3
+uv run causality-benchmark experiment3
 
 # Baseline status and reproducibility metadata
-uv run casuality-benchmark baseline
+uv run causality-benchmark baseline
 
 # Run the complete offline suite
-uv run casuality-benchmark all
+uv run causality-benchmark all
 ```
 
 The commands write JSON and Markdown artifacts to `benchmark/results/`.
-`experiment1` records both the Agent-Casuality Shapley interaction and the
+`experiment1` records both the Agent-Causality Shapley interaction and the
 direct 2x2 comparison over the same `00`, `01`, `10`, and `11` replay cells.
 `experiment3` records the original input, both interventions, parser result,
 schema result, decision result, and failure classification for all 20 cases.
@@ -55,7 +55,7 @@ $stamp = Get-Date -Format 'yyyyMMdd-HHmmss'
 $output = "benchmark/results/fastino-validation-$stamp"
 New-Item -ItemType Directory -Path $output | Out-Null
 
-uv run casuality-benchmark experiment1 `
+uv run causality-benchmark experiment1 `
 	--provider fastino `
 	--model "fastino/GLiNER-2.5-Decide" `
 	--repetitions 1 `
@@ -75,8 +75,8 @@ fixture remains its own canonical ground truth at `fixture/fixture.json`.
 
 ### Real OpenCode coding-agent benchmark
 
-The `opencode` mode measures Agent-Casuality on live OpenCode executions
-through the validated `packages/opencode-agent-casuality/src/index.ts` integration. It
+The `opencode` mode measures Agent-Causality on live OpenCode executions
+through the validated `packages/opencode-agent-causality/src/index.ts` integration. It
 scores capture completeness and diagnosis quality separately across five
 small tasks: `stale_research`, `conflicting_review`, `failed_test_retry`,
 `subagent_disagreement`, and `shared_state_contamination`. Task definitions
@@ -90,15 +90,15 @@ are stored in the artifacts.
 
 ```powershell
 # Full suite: 5 tasks x 1 run (takes ~15-30 minutes, requires OpenCode + a model)
-uv run casuality-benchmark opencode --timeout 420
+uv run causality-benchmark opencode --timeout 420
 
 # Single task, e.g. for a quick smoke of the harness
-uv run casuality-benchmark opencode --task failed_test_retry --timeout 300
+uv run causality-benchmark opencode --task failed_test_retry --timeout 300
 
 # Repeat runs, custom binary / output / receiver / model / timeout
 # (pass an available model — the 2026-10-11 committed rerun used
 # openrouter/deepseek/deepseek-v4-flash, since retired from OpenRouter's free tier)
-uv run casuality-benchmark opencode `
+uv run causality-benchmark opencode `
   --task stale_research --task failed_test_retry `
   --runs 2 --timeout 300 `
   --opencode-bin "C:/path/to/opencode.exe" `

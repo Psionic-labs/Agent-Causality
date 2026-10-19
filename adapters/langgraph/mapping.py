@@ -1,4 +1,4 @@
-"""Map LangGraph execution callbacks into Agent-Casuality causal events.
+"""Map LangGraph execution callbacks into Agent-Causality causal events.
 
 LangGraph (through the LangChain runnable protocol) reports every node, tool,
 LLM, and retriever invocation through callback handlers carrying a ``run_id``
@@ -221,7 +221,7 @@ class _RunState:
     frontier_id: str | None = None
 
 
-class CasualityCallbackHandler(_BaseCallbackHandler):  # ty: ignore[unsupported-base]
+class CausalityCallbackHandler(_BaseCallbackHandler):  # ty: ignore[unsupported-base]
     """Record LangGraph/LangChain executions as causal events.
 
     Attach with ``config={"callbacks": [handler]}`` or ``handler.config()``.

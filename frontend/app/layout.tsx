@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Agent-Casuality DAG Explorer",
+  title: "Agent-Causality DAG Explorer",
   description: "Read-only visual explorer for agent causal traces: failure diagnosis, causal DAG, timeline, and evidence.",
 };
 

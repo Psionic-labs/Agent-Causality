@@ -4,7 +4,7 @@ import json
 from typing import Any, TypedDict, cast
 from uuid import uuid4
 
-from adapters.langgraph.mapping import CasualityCallbackHandler
+from adapters.langgraph.mapping import CausalityCallbackHandler
 from core.reducer import AgentState, reduce
 from core.validator import GraphValidator
 from sdk.events import InMemoryEventLog
@@ -24,7 +24,7 @@ def _reduce_all(log: InMemoryEventLog) -> AgentState:
 
 def test_root_chain_start_and_end_chain_together() -> None:
     log = InMemoryEventLog()
-    handler = CasualityCallbackHandler(log)
+    handler = CausalityCallbackHandler(log)
     root = uuid4()
 
     handler.on_chain_start({"name": "graph"}, {"x": 1}, run_id=root)
@@ -47,7 +47,7 @@ def test_root_chain_start_and_end_chain_together() -> None:
 
 def test_node_and_tool_events_form_valid_chain() -> None:
     log = InMemoryEventLog()
-    handler = CasualityCallbackHandler(log)
+    handler = CausalityCallbackHandler(log)
     root, node, tool = uuid4(), uuid4(), uuid4()
 
     handler.on_chain_start({"name": "graph"}, {}, run_id=root)
@@ -85,7 +85,7 @@ def test_node_and_tool_events_form_valid_chain() -> None:
 
 def test_unknown_parent_events_are_dropped() -> None:
     log = InMemoryEventLog()
-    handler = CasualityCallbackHandler(log)
+    handler = CausalityCallbackHandler(log)
 
     handler.on_chain_start({"name": "node"}, {}, run_id=uuid4(), parent_run_id=uuid4())
     handler.on_tool_end("x", run_id=uuid4())
@@ -97,7 +97,7 @@ def test_unknown_parent_events_are_dropped() -> None:
 
 def test_duplicate_start_is_idempotent() -> None:
     log = InMemoryEventLog()
-    handler = CasualityCallbackHandler(log)
+    handler = CausalityCallbackHandler(log)
     root = uuid4()
 
     handler.on_chain_start({"name": "graph"}, {}, run_id=root)
@@ -108,7 +108,7 @@ def test_duplicate_start_is_idempotent() -> None:
 
 def test_multiple_invocations_get_isolated_agents() -> None:
     log = InMemoryEventLog()
-    handler = CasualityCallbackHandler(log)
+    handler = CausalityCallbackHandler(log)
     first, second = uuid4(), uuid4()
 
     handler.on_chain_start({"name": "first"}, {}, run_id=first)
@@ -127,7 +127,7 @@ def test_multiple_invocations_get_isolated_agents() -> None:
 
 def test_tool_failure_closes_open_invocation() -> None:
     log = InMemoryEventLog()
-    handler = CasualityCallbackHandler(log)
+    handler = CausalityCallbackHandler(log)
     root, tool = uuid4(), uuid4()
 
     handler.on_chain_start({"name": "graph"}, {}, run_id=root)
@@ -146,7 +146,7 @@ def test_tool_failure_closes_open_invocation() -> None:
 
 def test_llm_error_marks_agent_error() -> None:
     log = InMemoryEventLog()
-    handler = CasualityCallbackHandler(log)
+    handler = CausalityCallbackHandler(log)
     root, llm = uuid4(), uuid4()
 
     handler.on_chain_start({"name": "graph"}, {}, run_id=root)
@@ -165,7 +165,7 @@ def test_llm_start_and_end_record_model_calls() -> None:
     from langchain_core.outputs import ChatGeneration, LLMResult
 
     log = InMemoryEventLog()
-    handler = CasualityCallbackHandler(log)
+    handler = CausalityCallbackHandler(log)
     root, llm = uuid4(), uuid4()
 
     handler.on_chain_start({"name": "graph"}, {}, run_id=root)
@@ -194,7 +194,7 @@ def test_llm_start_and_end_record_model_calls() -> None:
 
 def test_write_then_read_tool_links_writer_as_parent() -> None:
     log = InMemoryEventLog()
-    handler = CasualityCallbackHandler(log)
+    handler = CausalityCallbackHandler(log)
     root, write, read = uuid4(), uuid4(), uuid4()
 
     handler.on_chain_start({"name": "graph"}, {}, run_id=root)
@@ -232,7 +232,7 @@ def test_write_then_read_tool_links_writer_as_parent() -> None:
 
 def test_payloads_are_redacted_and_json_safe(tmp_path) -> None:
     log = SQLiteEventStore(tmp_path / "events.db")
-    handler = CasualityCallbackHandler(log)
+    handler = CausalityCallbackHandler(log)
 
     class Opaque:
         def __repr__(self) -> str:
@@ -263,7 +263,7 @@ def test_payloads_are_redacted_and_json_safe(tmp_path) -> None:
 
 def test_long_values_are_truncated() -> None:
     log = InMemoryEventLog()
-    handler = CasualityCallbackHandler(log)
+    handler = CausalityCallbackHandler(log)
     root = uuid4()
 
     handler.on_chain_start({"name": "graph"}, {"text": "x" * 10_000}, run_id=root)
@@ -274,7 +274,7 @@ def test_long_values_are_truncated() -> None:
 
 
 def test_config_returns_callback_config() -> None:
-    handler = CasualityCallbackHandler(InMemoryEventLog())
+    handler = CausalityCallbackHandler(InMemoryEventLog())
 
     config = handler.config()
     assert config["callbacks"] == [handler]
@@ -289,7 +289,7 @@ def test_capture_survives_store_failure() -> None:
         def get_by_idempotency_key(self, agent_id: str, key: str) -> None:
             return None
 
-    handler = CasualityCallbackHandler(ExplodingLog())
+    handler = CausalityCallbackHandler(ExplodingLog())
     root = uuid4()
 
     handler.on_chain_start({"name": "graph"}, {}, run_id=root)
@@ -300,7 +300,7 @@ def test_capture_survives_store_failure() -> None:
 
 def test_reset_drops_run_state() -> None:
     log = InMemoryEventLog()
-    handler = CasualityCallbackHandler(log)
+    handler = CausalityCallbackHandler(log)
     root = uuid4()
 
     handler.on_chain_start({"name": "graph"}, {}, run_id=root)
@@ -332,7 +332,7 @@ def test_real_langgraph_execution_is_captured(tmp_path) -> None:
     app = builder.compile()
 
     log = SQLiteEventStore(tmp_path / "langgraph.db")
-    handler = CasualityCallbackHandler(log)
+    handler = CausalityCallbackHandler(log)
     config = cast(RunnableConfig, handler.config())
     result = app.invoke({"value": 1}, config=config)
 

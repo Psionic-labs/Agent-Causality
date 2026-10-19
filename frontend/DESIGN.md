@@ -1,6 +1,6 @@
 # Visual DAG Explorer — Design Document
 
-A record of every significant design decision behind the Agent-Casuality
+A record of every significant design decision behind the Agent-Causality
 Visual DAG Explorer: **what** was built and **why**, plus ideas deliberately
 left out that a future redesign could pick up. Intended audience: anyone
 (Claude included) asked to produce new designs for this UI.
@@ -225,7 +225,7 @@ to the benchmark's recorded trace.
 package has **no field-level provenance grades**, and its `tool_result`
 payloads carry **no exit codes** (status shows `—`). The UI states these
 instead of hiding them. Real branching exists only in the live
-`.casuality/opencode.db` (viewable via `--db`).
+`.causality/opencode.db` (viewable via `--db`).
 
 ## 12. Validation contract
 

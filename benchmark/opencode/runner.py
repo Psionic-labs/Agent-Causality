@@ -104,7 +104,7 @@ def run_task(
     spec = load_spec(task)
     run_id = f"{task}-{uuid4().hex[:8]}"
     root = repo_root or Path.cwd()
-    work_base = root / ".casuality" / "opencode-bench"
+    work_base = root / ".causality" / "opencode-bench"
     workdir = work_base / run_id
     run_dir = output_dir / "runs" / run_id
     run_dir.mkdir(parents=True, exist_ok=True)
@@ -130,7 +130,7 @@ def run_task(
         command += ["-m", model]
     env = dict(__import__("os").environ)
     if ingest_url:
-        env["CASUALITY_OPENCODE_INGEST_URL"] = ingest_url
+        env["CAUSALITY_OPENCODE_INGEST_URL"] = ingest_url
 
     started = _timestamp()
     try:
@@ -439,7 +439,7 @@ def write_artifacts(
         "kind": "opencode",
         "methodology": (
             "Each task runs a real OpenCode coding-agent session with the "
-            "Agent-Casuality plugin enabled. The trace is captured through "
+            "Agent-Causality plugin enabled. The trace is captured through "
             "the validated /v1/opencode/events receiver into SQLite, then "
             "scored for minimum expected event-class coverage (captured / "
             "expected minimum per class; NOT general precision/recall) and "
@@ -646,7 +646,7 @@ def render_markdown(result: dict[str, Any]) -> str:
         "## Reproduction",
         "",
         "```powershell",
-        "uv run casuality-benchmark opencode",
+        "uv run causality-benchmark opencode",
         "```",
         "",
         "Real OpenCode execution is not part of normal CI (`uv run pytest -q`).",

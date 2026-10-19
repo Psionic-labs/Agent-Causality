@@ -19,12 +19,12 @@ real SQLite capture/reopen regression, not a fixture graph self-comparison:
 
 ```powershell
 uv run pytest tests/integration/test_customer_approval.py -q
-uv run casuality-benchmark failure-injection
-uv run casuality-benchmark scenarios
-uv run casuality-benchmark experiment1 --repetitions 3
-uv run casuality-benchmark experiment2 --dependencies 100
-uv run casuality-benchmark experiment3
-uv run casuality-benchmark baseline
+uv run causality-benchmark failure-injection
+uv run causality-benchmark scenarios
+uv run causality-benchmark experiment1 --repetitions 3
+uv run causality-benchmark experiment2 --dependencies 100
+uv run causality-benchmark experiment3
+uv run causality-benchmark baseline
 ```
 
 `baseline` invokes `clay-good/agent-replay` at the pinned commit
@@ -60,15 +60,15 @@ archive only for deep PostgreSQL inspection.
 ## Fixture CLI smoke (no database)
 
 ```powershell
-uv run casuality --fixture fixture/fixture.json agents
-uv run casuality --fixture fixture/fixture.json slice A4
-uv run casuality --fixture fixture/fixture.json why A3
-uv run casuality --fixture fixture/fixture.json reconstruct B 4
-uv run casuality --fixture fixture/fixture.json provenance A3.output.approve
-uv run casuality --fixture fixture/fixture.json replay dec_customer_approval_A3 customer_status=ineligible
-uv run casuality --fixture fixture/fixture.json interaction dec_customer_approval_A3
-uv run casuality --fixture fixture/fixture.json minimize A4
-uv run casuality --fixture fixture/fixture.json explain A4 --no-llm
+uv run causality --fixture fixture/fixture.json agents
+uv run causality --fixture fixture/fixture.json slice A4
+uv run causality --fixture fixture/fixture.json why A3
+uv run causality --fixture fixture/fixture.json reconstruct B 4
+uv run causality --fixture fixture/fixture.json provenance A3.output.approve
+uv run causality --fixture fixture/fixture.json replay dec_customer_approval_A3 customer_status=ineligible
+uv run causality --fixture fixture/fixture.json interaction dec_customer_approval_A3
+uv run causality --fixture fixture/fixture.json minimize A4
+uv run causality --fixture fixture/fixture.json explain A4 --no-llm
 ```
 
 Expected: `slice A4` lists 9 events (no `D*`); `provenance
@@ -124,15 +124,15 @@ verifying:
 ### CLI Verification Against Fixture
 ```powershell
 # 1. Evaluate single counterfactual intervention
-uv run casuality --fixture fixture/fixture.json replay dec_customer_approval_A3 customer_status=ineligible
+uv run causality --fixture fixture/fixture.json replay dec_customer_approval_A3 customer_status=ineligible
 # Expected: Original outcome: failure, Counterfactual outcome: success
 
 # 2. Compute Shapley interaction index
-uv run casuality --fixture fixture/fixture.json interaction dec_customer_approval_A3
+uv run causality --fixture fixture/fixture.json interaction dec_customer_approval_A3
 # Expected: B3_x_C3 interaction value = 1.0, std_err = 0.0
 
 # 3. Minimize structural slice via ddmin
-uv run casuality --fixture fixture/fixture.json minimize A4
+uv run causality --fixture fixture/fixture.json minimize A4
 # Expected: Minimal slice of A4: 4 events (ddmin) -> B3, C3, A3, A4
 ```
 
@@ -157,7 +157,7 @@ Expected result: the focused suite verifies:
 
 ### CLI Verification (Offline & Zero-Token)
 ```powershell
-uv run casuality --fixture fixture/fixture.json explain A4 --no-llm --raw-evidence
+uv run causality --fixture fixture/fixture.json explain A4 --no-llm --raw-evidence
 ```
 
 Expected result:
@@ -167,7 +167,7 @@ Expected result:
 ### Live Explanation with OpenRouter
 ```powershell
 # Using the default model (nvidia/nemotron-3-ultra-550b-a55b:free, or override via --model / OPENROUTER_MODEL)
-uv run casuality --fixture fixture/fixture.json explain A4
+uv run causality --fixture fixture/fixture.json explain A4
 ```
 
 Expected result:
@@ -210,19 +210,19 @@ Query the real PostgreSQL run using the CLI:
 
 ```powershell
 # 1. Structural slice isolates the causal cone from hundreds of irrelevant events:
-uv run casuality slice <failure-event-uuid>
+uv run causality slice <failure-event-uuid>
 
 # 2. Audit field-level origins through tools:
-uv run casuality provenance <decision-event-uuid>.output.approve
+uv run causality provenance <decision-event-uuid>.output.approve
 
 # 3. Minimize down to the minimal failure-inducing subset:
-uv run casuality minimize <failure-event-uuid>
+uv run causality minimize <failure-event-uuid>
 
 # 4. Measure whether failure was Branch 1, Branch 2, or Joint:
-uv run casuality interaction <decision-contract-uuid>
+uv run causality interaction <decision-contract-uuid>
 
 # 5. Synthesize grounded explanation:
-uv run casuality explain <failure-event-uuid>
+uv run causality explain <failure-event-uuid>
 ```
 
 ### Step 5: Verification Checklist for Real Systems
@@ -256,12 +256,12 @@ Expected result: all 17 adapter tests pass, verifying:
 
 1. Launch receiver daemon in one terminal:
 ```powershell
-uv run casuality-opencode-ingest --db .casuality/opencode.db
+uv run causality-opencode-ingest --db .causality/opencode.db
 ```
 
 2. Run real OpenCode session in a second terminal:
 ```powershell
-$env:CASUALITY_OPENCODE_INGEST_URL = "http://127.0.0.1:8765/v1/opencode/events"
+$env:CAUSALITY_OPENCODE_INGEST_URL = "http://127.0.0.1:8765/v1/opencode/events"
 opencode run "Inspect the repository, make a small testable change, and run pytest"
 ```
 
@@ -269,7 +269,7 @@ opencode run "Inspect the repository, make a small testable change, and run pyte
 ```powershell
 uv run python -c "
 from storage.sqlite import SQLiteEventStore
-store = SQLiteEventStore('.casuality/opencode.db')
+store = SQLiteEventStore('.causality/opencode.db')
 events = store.events()
 print(f'Total captured events: {len(events)}')
 tools = [e for e in events if e.event_type in ('tool_call', 'tool_result')]
@@ -315,7 +315,7 @@ Expected result: ruff and ty clean; full suite green (198 passed, 7 skipped — 
 
 1. Start the explorer (default serves the bundled 10-envelope demo trace; `--db` points at a live capture):
 ```powershell
-uv run python -m explorer.server --db .casuality/opencode.db --port 8797
+uv run python -m explorer.server --db .causality/opencode.db --port 8797
 ```
 
 2. Verify the evidence endpoints (replace `$port` if different):

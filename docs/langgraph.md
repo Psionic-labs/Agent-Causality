@@ -1,6 +1,6 @@
 # LangGraph integration
 
-> Live capture needs **both** libraries: `agent-casuality` (PyPI — SDK,
+> Live capture needs **both** libraries: `agent-causality` (PyPI — SDK,
 > storage, validation, explorer, CLI) **and** the LangGraph stack
 > (`langgraph` + `langchain-core`) that you are already running. The
 > adapter is a LangChain callback handler, so it observes whatever the
@@ -13,7 +13,7 @@ LangGraph run → callbacks → causal events → slices → grounded diagnosis
 ```
 
 Adapter: [`adapters/langgraph/mapping.py`](../adapters/langgraph/mapping.py)
-(`CasualityCallbackHandler`).
+(`CausalityCallbackHandler`).
 Test: [`tests/test_langgraph_adapter.py`](../tests/test_langgraph_adapter.py).
 Worked example of a real failure:
 [`docs/case-study-replit.md`](case-study-replit.md) /
@@ -27,16 +27,16 @@ uv sync
 uv run python examples/replit_incident.py
 
 # Consumer flow
-pip install agent-casuality
+pip install agent-causality
 pip install langgraph langchain-core
 ```
 
 ```python
-from adapters.langgraph import CasualityCallbackHandler
+from adapters.langgraph import CausalityCallbackHandler
 from storage.sqlite import SQLiteEventStore
 
-store = SQLiteEventStore(".casuality/langgraph.db")
-handler = CasualityCallbackHandler(store)
+store = SQLiteEventStore(".causality/langgraph.db")
+handler = CausalityCallbackHandler(store)
 
 result = app.invoke({"value": 1}, config=handler.config())
 # equivalently: app.invoke(inputs, config={"callbacks": [handler]})
@@ -52,8 +52,8 @@ assert report.is_valid
 Then inspect the run in the explorer:
 
 ```powershell
-uv run python -m explorer.server --db .casuality/langgraph.db
-# (installed equivalent: casuality-explorer --db .casuality/langgraph.db)
+uv run python -m explorer.server --db .causality/langgraph.db
+# (installed equivalent: causality-explorer --db .causality/langgraph.db)
 ```
 
 ## What gets recorded
@@ -125,8 +125,8 @@ Redaction is opt-in and best-effort.
 
 - `langchain-core` is optional: without it the handler still imports (a
   stand-in base class is used), so the package never hard-depends on the
-  LangChain stack. Install with `pip install agent-casuality` plus
-  `langchain-core` (extras: `agent-casuality[langgraph]`).
+  LangChain stack. Install with `pip install agent-causality` plus
+  `langchain-core` (extras: `agent-causality[langgraph]`).
 - Tested against `langchain-core` 1.6 and `langgraph` 1.2; the
   integration test (`test_real_langgraph_execution_is_captured`) runs a
   real StateGraph and asserts a clean validator report.

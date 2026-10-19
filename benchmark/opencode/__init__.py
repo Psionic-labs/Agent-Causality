@@ -1,7 +1,7 @@
-"""Real OpenCode coding-agent benchmark for Agent-Casuality.
+"""Real OpenCode coding-agent benchmark for Agent-Causality.
 
 Measures capture completeness and diagnosis quality on live OpenCode
-executions through the validated `.opencode/plugins/agent-casuality.ts`
+executions through the validated `.opencode/plugins/agent-causality.ts`
 integration. Ground truth lives in `ground_truth/*.json` (single source
 of truth); this package only loads and executes it.
 """

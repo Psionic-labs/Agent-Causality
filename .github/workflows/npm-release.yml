@@ -31,7 +31,7 @@ jobs:
           ref: ${{ inputs.tag || github.ref }}
       - id: v
         run: |
-          VERSION="$(node -p "require('./packages/opencode-agent-casuality/package.json').version")"
+          VERSION="$(node -p "require('./packages/opencode-agent-causality/package.json').version")"
           TAG="${{ inputs.tag || github.ref_name }}"
           test "plugin-v$VERSION" = "$TAG" || { echo "tag $TAG != plugin-v$VERSION from package.json"; exit 1; }
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
@@ -44,7 +44,7 @@ jobs:
       id-token: write # npm OIDC trusted publishing
     defaults:
       run:
-        working-directory: packages/opencode-agent-casuality
+        working-directory: packages/opencode-agent-causality
     steps:
       - uses: actions/checkout@v7
         with:

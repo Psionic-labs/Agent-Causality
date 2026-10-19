@@ -4,7 +4,7 @@ declare const process: {
   env: Record<string, string | undefined>
 }
 
-// Telemetry envelope shipped to Agent-Casuality ingest endpoint
+// Telemetry envelope shipped to Agent-Causality ingest endpoint
 type Envelope = {
   kind: string
   timestamp: number
@@ -15,21 +15,21 @@ type Envelope = {
 // Configurable endpoint (defaults to local receiver on port 8765).
 // Resolved per request so env changes apply without reloading the plugin.
 function ingestUrl(): string {
-  return process.env.CASUALITY_OPENCODE_INGEST_URL ?? "http://127.0.0.1:8765/v1/opencode/events"
+  return process.env.CAUSALITY_OPENCODE_INGEST_URL ?? "http://127.0.0.1:8765/v1/opencode/events"
 }
 
 function ingestTimeoutMs(): number {
-  const parsed = Number(process.env.CASUALITY_OPENCODE_INGEST_TIMEOUT_MS ?? 5000)
+  const parsed = Number(process.env.CAUSALITY_OPENCODE_INGEST_TIMEOUT_MS ?? 5000)
   return Number.isFinite(parsed) && parsed > 0 ? parsed : 5000
 }
 
 function batchMax(): number {
-  const parsed = Number(process.env.CASUALITY_OPENCODE_BATCH_MAX ?? 25)
+  const parsed = Number(process.env.CAUSALITY_OPENCODE_BATCH_MAX ?? 25)
   return Number.isFinite(parsed) && parsed >= 1 ? Math.floor(parsed) : 25
 }
 
 function authHeaders(): Record<string, string> {
-  const token = process.env.CASUALITY_OPENCODE_INGEST_TOKEN
+  const token = process.env.CAUSALITY_OPENCODE_INGEST_TOKEN
   return token ? { authorization: `Bearer ${token}` } : {}
 }
 
@@ -51,7 +51,7 @@ export const telemetryStats = {
 // receiver must not obscure OpenCode's UI. Set this to "1" or "true" when
 // diagnosing capture issues.
 function telemetryWarningsEnabled(): boolean {
-  const value = process.env.CASUALITY_OPENCODE_LOG_TELEMETRY_FAILURES?.toLowerCase()
+  const value = process.env.CAUSALITY_OPENCODE_LOG_TELEMETRY_FAILURES?.toLowerCase()
   return value === "1" || value === "true"
 }
 
@@ -63,7 +63,7 @@ let lastWarnedDrops = 0
 function warn(message: string): void {
   if (!telemetryWarningsEnabled()) return
   try {
-    console.warn(`[agent-casuality] ${message}`)
+    console.warn(`[agent-causality] ${message}`)
   } catch {
     // Logging must never interrupt OpenCode (fail-open)
   }
@@ -80,7 +80,7 @@ function warnDeliveryExhausted(result: PostResult, batch: Envelope[]): void {
   const kinds = [...new Set(batch.map((item) => item.kind))].slice(0, 3).join(", ")
   const hint = warnedEndpointHint
     ? ""
-    : ` is the receiver running? start it with \`uv run casuality-opencode-ingest --db .casuality/opencode.db\` (endpoint ${ingestUrl()}).`
+    : ` is the receiver running? start it with \`uv run causality-opencode-ingest --db .causality/opencode.db\` (endpoint ${ingestUrl()}).`
   warnedEndpointHint = true
   warn(
     `telemetry delivery failed after 3 attempts (${result}): dropped ${batch.length} event(s) [${kinds}] ` +
@@ -218,7 +218,7 @@ async function drain(): Promise<void> {
 }
 
 // Introspection hooks for tests and operators (read-only except reset).
-export function __casualityTestReset(): void {
+export function __causalityTestReset(): void {
   queue.length = 0
   telemetryStats.enqueued = 0
   telemetryStats.delivered = 0
@@ -230,12 +230,12 @@ export function __casualityTestReset(): void {
   lastWarnedDrops = 0
 }
 
-export function __casualityTestQueueLength(): number {
+export function __causalityTestQueueLength(): number {
   return queue.length
 }
 
 // OpenCode V1 Plugin implementation registering event and lifecycle hooks
-export const AgentCasualityPlugin: Plugin = async () => ({
+export const AgentCausalityPlugin: Plugin = async () => ({
   // Global OpenCode event stream (session lifecycle, file edits, git/file watcher, errors)
   event: async ({ event }) => {
     enqueue(`event:${event.type}`, event.properties)
@@ -299,6 +299,6 @@ export const AgentCasualityPlugin: Plugin = async () => ({
 // as telemetryStats no longer break loading with
 // "Plugin export is not a function" (OpenCode >= 1.19).
 export default {
-  id: "agent-casuality",
-  server: AgentCasualityPlugin,
+  id: "agent-causality",
+  server: AgentCausalityPlugin,
 }

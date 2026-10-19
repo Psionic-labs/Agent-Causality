@@ -1,4 +1,4 @@
-"""Read-only visual DAG explorer for Agent-Casuality traces.
+"""Read-only visual DAG explorer for Agent-Causality traces.
 
 The explorer never mutates the causal engine, the benchmark, the OpenCode
 adapter, or any event store. It loads events (a bundled demo trace or a

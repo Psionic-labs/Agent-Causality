@@ -1,4 +1,4 @@
-"""Three-line local capture API for Agent-Casuality."""
+"""Three-line local capture API for Agent-Causality."""
 
 from __future__ import annotations
 
@@ -161,9 +161,9 @@ _runtime: Runtime | None = None
 
 
 def init(path: str | Path | None = None) -> Runtime:
-    """Start local capture using SQLite, creating ``.casuality/events.db``."""
+    """Start local capture using SQLite, creating ``.causality/events.db``."""
     global _runtime
-    database_path = path or os.environ.get("CASUALITY_DB_PATH", ".casuality/events.db")
+    database_path = path or os.environ.get("CAUSALITY_DB_PATH", ".causality/events.db")
     log = SQLiteEventStore(database_path)
     runtime = Runtime(log=log, run_id=str(uuid4()), agent_id=str(uuid4()), clock=AgentClock())
     log.agents[runtime.agent_id] = AgentRecord(
@@ -175,7 +175,7 @@ def init(path: str | Path | None = None) -> Runtime:
 
 def _require_runtime() -> Runtime:
     if _runtime is None:
-        raise RuntimeError("Call casuality.init() before using capture decorators")
+        raise RuntimeError("Call causality.init() before using capture decorators")
     return _runtime
 
 

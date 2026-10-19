@@ -1,5 +1,5 @@
-"""LangGraph adapter: record graph executions as Agent-Casuality causal events."""
+"""LangGraph adapter: record graph executions as Agent-Causality causal events."""
 
-from adapters.langgraph.mapping import CasualityCallbackHandler
+from adapters.langgraph.mapping import CausalityCallbackHandler
 
-__all__ = ["CasualityCallbackHandler"]
+__all__ = ["CausalityCallbackHandler"]

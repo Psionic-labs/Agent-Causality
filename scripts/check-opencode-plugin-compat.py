@@ -1,14 +1,14 @@
-"""Verify the Agent-Casuality OpenCode plugin loads on real OpenCode binaries.
+"""Verify the Agent-Causality OpenCode plugin loads on real OpenCode binaries.
 
 Runs a trivial prompt under each given `opencode` binary with the canonical
-plugin (`packages/opencode-agent-casuality/src/index.ts`) installed into
-`<workdir>/.opencode/plugins/agent-casuality.ts` (cwd = workdir)
+plugin (`packages/opencode-agent-causality/src/index.ts`) installed into
+`<workdir>/.opencode/plugins/agent-causality.ts` (cwd = workdir)
 and an ephemeral ingest receiver, then asserts:
 
   1. the receiver persisted at least one event (hooks actually fired), with
      zero receiver errors;
   2. the OpenCode server log shows no `failed to load plugin` line for the
-     agent-casuality plugin (loader regressions are otherwise silent).
+     agent-causality plugin (loader regressions are otherwise silent).
 
 The agent's own exit code is informational only: a model failure still
 proves the plugin loaded as long as session/tool events were ingested.
@@ -65,12 +65,12 @@ DEFAULT_LOG = (
     Path.home() / ".local" / "share" / "opencode" / "log" / "opencode.log"
 )
 
-PLUGIN_SOURCE = REPO_ROOT / "packages" / "opencode-agent-casuality" / "src" / "index.ts"
+PLUGIN_SOURCE = REPO_ROOT / "packages" / "opencode-agent-causality" / "src" / "index.ts"
 
 
 def ensure_plugin_installed(workdir: Path) -> None:
     """Install the canonical plugin where OpenCode auto-loads it (like a user install)."""
-    dest = workdir / ".opencode" / "plugins" / "agent-casuality.ts"
+    dest = workdir / ".opencode" / "plugins" / "agent-causality.ts"
     if dest.exists():
         return
     dest.parent.mkdir(parents=True, exist_ok=True)
@@ -131,7 +131,7 @@ def check_binary(
 
     env = dict(os.environ)
     env["OPENROUTER_API_KEY"] = api_key
-    env["CASUALITY_OPENCODE_INGEST_URL"] = (
+    env["CAUSALITY_OPENCODE_INGEST_URL"] = (
         f"http://{host}:{port}/v1/opencode/events"
     )
     log_offset = log_path.stat().st_size if log_path.exists() else 0
@@ -164,12 +164,12 @@ def check_binary(
     load_failures = [
         line
         for line in fresh_log.splitlines()
-        if "failed to load plugin" in line and "agent-casuality" in line
+        if "failed to load plugin" in line and "agent-causality" in line
     ]
     other_failures = [
         line
         for line in fresh_log.splitlines()
-        if "failed to load plugin" in line and "agent-casuality" not in line
+        if "failed to load plugin" in line and "agent-causality" not in line
     ]
 
     print(f"exit code: {proc.returncode} (informational)")

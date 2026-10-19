@@ -1,7 +1,7 @@
 # OpenCode integration
 
-> Live capture needs **both** packages: `agent-casuality` (PyPI — receiver,
-> explorer, CLI) **and** `@psionic-labs/opencode-agent-casuality` (npm —
+> Live capture needs **both** packages: `agent-causality` (PyPI — receiver,
+> explorer, CLI) **and** `@psionic-labs/opencode-agent-causality` (npm —
 > plugin, telemetry only). The npm plugin alone has nowhere to persist
 > traces; the PyPI package alone cannot observe an OpenCode session.
 
@@ -11,15 +11,15 @@ Capture a real coding-agent session live:
 real OpenCode execution → captured events → causal analysis → diagnosis
 ```
 
-Plugin: [`packages/opencode-agent-casuality/src/index.ts`](../packages/opencode-agent-casuality/src/index.ts)
+Plugin: [`packages/opencode-agent-causality/src/index.ts`](../packages/opencode-agent-causality/src/index.ts)
 (global `event` hook plus tool, permission, command, and chat hooks).
 Test: [`tests/test_opencode_adapter.py`](../tests/test_opencode_adapter.py).
 
 ## Run it
 
 ```powershell
-# Terminal 1: receiver (PyPI: casuality-opencode-ingest ...; source: uv run casuality-opencode-ingest ...)
-casuality-opencode-ingest --db .casuality/opencode.db
+# Terminal 1: receiver (PyPI: causality-opencode-ingest ...; source: uv run causality-opencode-ingest ...)
+causality-opencode-ingest --db .causality/opencode.db
 # Terminal 2: agent (plugin posts automatically)
 opencode run "Read RESEARCH.md, implement sort_items in task.py as recommended, run the test script."
 ```
@@ -27,24 +27,24 @@ opencode run "Read RESEARCH.md, implement sort_items in task.py as recommended, 
 ## Single-run capture (example db file, port `8797`)
 
 Isolated one-task loop — same commands as the unified README. One SQLite
-file per task (`.casuality/single-run.db` is just an example — any path
+file per task (`.causality/single-run.db` is just an example — any path
 works), alternate explorer port so it never clashes with `:8766`:
 
 ```powershell
 # Terminal 1: receiver
-uv run casuality-opencode-ingest --db .casuality/single-run.db
-# (PyPI install: casuality-opencode-ingest --db .casuality/single-run.db)
+uv run causality-opencode-ingest --db .causality/single-run.db
+# (PyPI install: causality-opencode-ingest --db .causality/single-run.db)
 
 # Terminal 2: instrumented fix task (plugin posts automatically)
 opencode run "Run the existing tests before editing. Diagnose and fix the bug in discount.py so both tests pass. Do not modify the tests. Rerun the tests and summarize the change."
 
 # Optional: AI explanations for this project
-uv add "agent-casuality[explain]"
-# (pip equivalent: pip install "agent-casuality[explain]")
+uv add "agent-causality[explain]"
+# (pip equivalent: pip install "agent-causality[explain]")
 
 # Terminal 3: explorer on the same file
-uv run python -m explorer.server --db .casuality/single-run.db --port 8797
-# (PyPI install: casuality-explorer --db .casuality/single-run.db --port 8797)
+uv run python -m explorer.server --db .causality/single-run.db --port 8797
+# (PyPI install: causality-explorer --db .causality/single-run.db --port 8797)
 ```
 
 Then open <http://127.0.0.1:8797>. Use a fresh `--db` path per task for
@@ -71,18 +71,18 @@ interpretation uses one). No repository clone is needed for the PyPI path.
 
 ```powershell
 # PyPI consumer flow
-pip install agent-casuality
-casuality-opencode-ingest --db .casuality/opencode.db
+pip install agent-causality
+causality-opencode-ingest --db .causality/opencode.db
 # ... run an OpenCode session (plugin posts automatically) ...
-casuality-explorer --db .casuality/opencode.db
+causality-explorer --db .causality/opencode.db
 
 # Source checkout flow
 # 1. Capture a fresh trace (one benchmark task is enough)
-uv run casuality-benchmark opencode --task shared_state_contamination --timeout 300
+uv run causality-benchmark opencode --task shared_state_contamination --timeout 300
 
 # 2. Serve the resulting trace in the explorer
 uv run python -m explorer.server --db benchmark/results/opencode/runs/<run-id>/trace.db
-# (installed equivalent: casuality-explorer --db <path>)
+# (installed equivalent: causality-explorer --db <path>)
 
 # 3. Open http://127.0.0.1:8766 — graph, timeline, event inspector, and
 #    analysis tabs load from the trace's recorded causal edges.
@@ -109,7 +109,7 @@ Three claims are kept strictly separate:
 ## Loader compatibility
 
 The plugin default-exports the V1 server-plugin module
-`{ id: "agent-casuality", server: AgentCasualityPlugin }`, supported since
+`{ id: "agent-causality", server: AgentCausalityPlugin }`, supported since
 OpenCode `1.18.29`. A bare-function default export falls through to the
 legacy loader, where any non-function named export (e.g. `telemetryStats`)
 silently disables the whole plugin on OpenCode `>= 1.19`
@@ -133,16 +133,16 @@ reloading the plugin):
 
 | Environment variable | Default | Description |
 | --- | --- | --- |
-| `CASUALITY_OPENCODE_INGEST_URL` | `http://127.0.0.1:8765/v1/opencode/events` | Ingest endpoint |
-| `CASUALITY_OPENCODE_INGEST_TOKEN` | _(unset)_ | Sent as `Authorization: Bearer <token>` |
-| `CASUALITY_OPENCODE_INGEST_TIMEOUT_MS` | `5000` | Per-request timeout in ms |
-| `CASUALITY_OPENCODE_BATCH_MAX` | `25` | Max envelopes per POST (singletons stay single objects) |
-| `CASUALITY_OPENCODE_LOG_TELEMETRY_FAILURES` | _(unset)_ | Set to `1`/`true` to enable delivery warnings |
+| `CAUSALITY_OPENCODE_INGEST_URL` | `http://127.0.0.1:8765/v1/opencode/events` | Ingest endpoint |
+| `CAUSALITY_OPENCODE_INGEST_TOKEN` | _(unset)_ | Sent as `Authorization: Bearer <token>` |
+| `CAUSALITY_OPENCODE_INGEST_TIMEOUT_MS` | `5000` | Per-request timeout in ms |
+| `CAUSALITY_OPENCODE_BATCH_MAX` | `25` | Max envelopes per POST (singletons stay single objects) |
+| `CAUSALITY_OPENCODE_LOG_TELEMETRY_FAILURES` | _(unset)_ | Set to `1`/`true` to enable delivery warnings |
 
 ```powershell
-$env:CASUALITY_OPENCODE_INGEST_URL = "http://127.0.0.1:8765/v1/opencode/events"
-$env:CASUALITY_OPENCODE_INGEST_TOKEN = "your-token"
-uv run casuality-opencode-ingest --db .casuality/opencode.db
+$env:CAUSALITY_OPENCODE_INGEST_URL = "http://127.0.0.1:8765/v1/opencode/events"
+$env:CAUSALITY_OPENCODE_INGEST_TOKEN = "your-token"
+uv run causality-opencode-ingest --db .causality/opencode.db
 ```
 
 ## Privacy
@@ -153,14 +153,14 @@ opt-in and best-effort.
 ## Fail-open behavior
 
 - The plugin buffers at most 256 envelopes (oldest dropped on overflow),
-  sends them in batches (up to `CASUALITY_OPENCODE_BATCH_MAX`, default 25
+  sends them in batches (up to `CAUSALITY_OPENCODE_BATCH_MAX`, default 25
   per POST; singletons stay single objects for backward compatibility),
   retries each batch 3 times with 200ms/400ms backoff, and drops telemetry
   rather than interrupting OpenCode. Queue overflows and exhausted retries
   are counted in `telemetryStats` (`droppedQueueOverflow`,
   `droppedDeliveryFailed`, `rejectedByReceiver`). Telemetry is quiet by
   default: delivery warnings are emitted only when
-  `CASUALITY_OPENCODE_LOG_TELEMETRY_FAILURES=1`/`true`, rate-limited, with
+  `CAUSALITY_OPENCODE_LOG_TELEMETRY_FAILURES=1`/`true`, rate-limited, with
   the first one naming the endpoint plus the receiver start command. An
   HTTP 2xx with an explicit short `persisted`/`accepted` count (fewer than
   the batch size) is retried, not treated as delivered; bodies without

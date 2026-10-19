@@ -2,7 +2,7 @@
 
 ## Methodology
 
-Each task runs a real OpenCode coding-agent session with the Agent-Casuality plugin enabled. The trace is captured through the validated /v1/opencode/events receiver into SQLite, then scored for minimum expected event-class coverage (captured / expected minimum per class; NOT general precision/recall) and diagnosis quality (cause, structural slice, required-cause preservation proxy, provenance, joint-branch ancestry, distractors, summary-citation grounding). Minimal-slice results are a required-cause preservation proxy and are NOT causal minimality (not measurable: no DecisionContract or observable failure predicate on live traces). Interaction results are joint-branch ancestry detection and are NOT causal interaction (unsupported: no counterfactual intervention). Capture failures, diagnosis failures, and agent deviations are reported separately; capture shows micro- and macro-averages across task types.
+Each task runs a real OpenCode coding-agent session with the Agent-Causality plugin enabled. The trace is captured through the validated /v1/opencode/events receiver into SQLite, then scored for minimum expected event-class coverage (captured / expected minimum per class; NOT general precision/recall) and diagnosis quality (cause, structural slice, required-cause preservation proxy, provenance, joint-branch ancestry, distractors, summary-citation grounding). Minimal-slice results are a required-cause preservation proxy and are NOT causal minimality (not measurable: no DecisionContract or observable failure predicate on live traces). Interaction results are joint-branch ancestry detection and are NOT causal interaction (unsupported: no counterfactual intervention). Capture failures, diagnosis failures, and agent deviations are reported separately; capture shows micro- and macro-averages across task types.
 
 OpenCode version: `1.19.0`
 
@@ -155,7 +155,7 @@ Runs where the intended causal structure did not materialize (agent deviation, n
 ## Reproduction
 
 ```powershell
-uv run casuality-benchmark opencode
+uv run causality-benchmark opencode
 ```
 
 Real OpenCode execution is not part of normal CI (`uv run pytest -q`).

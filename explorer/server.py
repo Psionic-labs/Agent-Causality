@@ -71,7 +71,7 @@ class _ExplorerServer(ThreadingHTTPServer):
 
 
 class _Handler(BaseHTTPRequestHandler):
-    server_version = "AgentCasualityExplorer/1"
+    server_version = "AgentCausalityExplorer/1"
 
     def log_message(self, format: str, *args: Any) -> None:
         return

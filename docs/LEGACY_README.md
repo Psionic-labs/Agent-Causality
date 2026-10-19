@@ -1,4 +1,4 @@
-# Agent-Casuality
+# Agent-Causality
 
 > **Document status:** Archived snapshot, kept for provenance. Not referenced
 > by the current docs. Use [README.md](../README.md) and
@@ -13,7 +13,7 @@ multi-agent LLM systems. It records agent activity as a causal event graph
 and explains failures with grounded evidence instead of guesses.
 
 **Why not ordinary observability?** Logs and traces show what happened.
-Agent-Casuality records explicit causal parents, decision contracts with
+Agent-Causality records explicit causal parents, decision contracts with
 baselines, and resource versions — then *tests* which inputs actually flip
 the outcome via merge-local counterfactual replay.
 
@@ -27,7 +27,7 @@ Agent execution
 → grounded diagnosis
 ```
 
-**Install?** `uv add agent-casuality` ([details](#installation)).
+**Install?** `uv add agent-causality` ([details](#installation)).
 
 **Demo?** [Quick start](#quick-start) (30 seconds, offline) or the
 [real OpenCode demo](#real-opencode-demo) below.
@@ -37,7 +37,7 @@ fail-open ([details](#opencode-integration)).
 
 ## Installation
 
-Requires Python 3.11+ and `uv`. Published on PyPI as `agent-casuality`
+Requires Python 3.11+ and `uv`. Published on PyPI as `agent-causality`
 (v0.1.0):
 
 ```powershell
@@ -45,12 +45,12 @@ uv init
 ```
 
 ```powershell
-uv add agent-casuality
+uv add agent-causality
 ```
 OR 
 
 ```powershell
-uv pip install agent-casuality
+uv pip install agent-causality
 ```
 
 From a repository checkout (development):
@@ -68,7 +68,7 @@ uv run python examples/customer_approval.py
 ```
 
 It captures two agent results plus a wrong approval, persists the run to
-`.casuality/example.db`, reopens it in a fresh CLI process, and prints a
+`.causality/example.db`, reopens it in a fresh CLI process, and prints a
 grounded offline explanation:
 
 ```text
@@ -88,7 +88,7 @@ Limitations: the evidence does not establish why the upstream tools produced the
 Inspect the same failure directly:
 
 ```powershell
-uv run casuality --load-module examples.customer_approval --db .casuality/example.db explain <failure-event-id> --no-llm
+uv run causality --load-module examples.customer_approval --db .causality/example.db explain <failure-event-id> --no-llm
 ```
 
 ## Real OpenCode demo
@@ -108,7 +108,7 @@ OpenCode `1.18.34`).
 
 ```powershell
 # Terminal 1: receiver
-uv run casuality-opencode-ingest --db .casuality/opencode.db
+uv run causality-opencode-ingest --db .causality/opencode.db
 # Terminal 2: agent (plugin posts automatically)
 opencode run "Read RESEARCH.md, implement sort_items in task.py as recommended, run the test script."
 ```
@@ -131,14 +131,14 @@ Full methodology lives in the artifacts and `docs/`; headlines:
 
 | Suite | Command | Result |
 | --- | --- | --- |
-| Five deterministic scenarios | `uv run casuality-benchmark scenarios` | 5/5 pass; exact-match `1.0` on slice, provenance, interaction |
-| Experiment 2 (shared-state recovery) | `uv run casuality-benchmark experiment2 --dependencies 100` | 100/100 recovered |
-| Experiment 3 (semantic-port vs raw deletion) | `uv run casuality-benchmark experiment3` | 20/20 semantic-port successes; raw-deletion failure rate 70% (target > 35% met) |
-| Failure injection | `uv run casuality-benchmark failure-injection` | 3/3 pass |
-| Experiment 1 (offline) | `uv run casuality-benchmark experiment1 --repetitions 3` | Passes (12 true positives / 12 true negatives) |
-| Experiment 1 (external Fastino) | `uv run casuality-benchmark experiment1 --provider fastino` | Provider-blocked / deferred — catalog has no structured-output capability, so no external run was completed |
-| `agent-replay 0.2.0` baseline | `uv run casuality-benchmark baseline` | Divergence localization only; multi-parent causality, interactions, shared-state causality, distractor reasoning, and minimal reduction unsupported |
-| OpenCode coding-agent benchmark | `uv run casuality-benchmark opencode` | See [demo](#real-opencode-demo) above |
+| Five deterministic scenarios | `uv run causality-benchmark scenarios` | 5/5 pass; exact-match `1.0` on slice, provenance, interaction |
+| Experiment 2 (shared-state recovery) | `uv run causality-benchmark experiment2 --dependencies 100` | 100/100 recovered |
+| Experiment 3 (semantic-port vs raw deletion) | `uv run causality-benchmark experiment3` | 20/20 semantic-port successes; raw-deletion failure rate 70% (target > 35% met) |
+| Failure injection | `uv run causality-benchmark failure-injection` | 3/3 pass |
+| Experiment 1 (offline) | `uv run causality-benchmark experiment1 --repetitions 3` | Passes (12 true positives / 12 true negatives) |
+| Experiment 1 (external Fastino) | `uv run causality-benchmark experiment1 --provider fastino` | Provider-blocked / deferred — catalog has no structured-output capability, so no external run was completed |
+| `agent-replay 0.2.0` baseline | `uv run causality-benchmark baseline` | Divergence localization only; multi-parent causality, interactions, shared-state causality, distractor reasoning, and minimal reduction unsupported |
+| OpenCode coding-agent benchmark | `uv run causality-benchmark opencode` | See [demo](#real-opencode-demo) above |
 
 Terminology (proxies are never presented as stronger claims):
 
@@ -152,7 +152,7 @@ Terminology (proxies are never presented as stronger claims):
 
 ## OpenCode integration
 
-Plugin: [.opencode/plugins/agent-casuality.ts](.opencode/plugins/agent-casuality.ts)
+Plugin: [.opencode/plugins/agent-causality.ts](.opencode/plugins/agent-causality.ts)
 (global `event` hook plus tool, permission, command, and chat hooks).
 Test: [tests/test_opencode_adapter.py](tests/test_opencode_adapter.py).
 
@@ -165,9 +165,9 @@ POST http://127.0.0.1:8765/v1/opencode/events
 Optional token (sent as a bearer header):
 
 ```powershell
-$env:CASUALITY_OPENCODE_INGEST_URL = "http://127.0.0.1:8765/v1/opencode/events"
-$env:CASUALITY_OPENCODE_INGEST_TOKEN = "your-token"
-uv run casuality-opencode-ingest --db .casuality/opencode.db
+$env:CAUSALITY_OPENCODE_INGEST_URL = "http://127.0.0.1:8765/v1/opencode/events"
+$env:CAUSALITY_OPENCODE_INGEST_TOKEN = "your-token"
+uv run causality-opencode-ingest --db .causality/opencode.db
 ```
 
 Privacy: secret keys/values are redacted to `[REDACTED]` before storage.
@@ -183,23 +183,23 @@ to `unknown`.
 
 `examples/customer_approval.py` is the complete runnable API example:
 
-- `casuality.init(path)` — SQLite-backed runtime;
-- `@casuality.agent(role=...)` — captured tool-like agents;
-- `@casuality.merge_decision(...)` — decision ports, baselines, evaluators.
+- `causality.init(path)` — SQLite-backed runtime;
+- `@causality.agent(role=...)` — captured tool-like agents;
+- `@causality.merge_decision(...)` — decision ports, baselines, evaluators.
 
 Use the low-level SDK for explicit clocks, causal parents, field
 provenance, or non-local storage (see [GETTING_STARTED.md](GETTING_STARTED.md)).
 
 ```powershell
-uv run casuality --fixture fixture/fixture.json slice A4
-uv run casuality --fixture fixture/fixture.json minimize A4
-uv run casuality --fixture fixture/fixture.json interaction dec_customer_approval_A3
-uv run casuality --fixture fixture/fixture.json explain A4 --no-llm
+uv run causality --fixture fixture/fixture.json slice A4
+uv run causality --fixture fixture/fixture.json minimize A4
+uv run causality --fixture fixture/fixture.json interaction dec_customer_approval_A3
+uv run causality --fixture fixture/fixture.json explain A4 --no-llm
 ```
 
 Commands: `agents`, `slice`, `why`, `reconstruct`, `provenance`, `replay`,
 `interaction`, `minimize`, `explain`. Pick a backend with `--fixture PATH`,
-`--db PATH`, or `DATABASE_URL` (defaults to `.casuality/events.db`,
+`--db PATH`, or `DATABASE_URL` (defaults to `.causality/events.db`,
 which only Python capture code creates).
 
 ## Scope and limits
@@ -219,7 +219,7 @@ which only Python capture code creates).
 ```powershell
 uv sync --extra explain
 $env:OPENROUTER_API_KEY = "your-key"
-uv run casuality --fixture fixture/fixture.json explain A4 --model "your/model"
+uv run causality --fixture fixture/fixture.json explain A4 --model "your/model"
 ```
 
 ```powershell

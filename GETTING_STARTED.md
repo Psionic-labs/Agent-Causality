@@ -1,6 +1,6 @@
 # Getting Started
 
-Agent-Casuality captures branching agent runs, persists their causal event
+Agent-Causality captures branching agent runs, persists their causal event
 graphs, and explains failures from local SQLite. PostgreSQL, external model
 providers, and API keys are optional.
 
@@ -14,24 +14,24 @@ providers, and API keys are optional.
 You need **both** packages for live OpenCode capture — either one alone
 is not enough:
 
-- `agent-casuality` (PyPI): SDK, CLI, `casuality-opencode-ingest` receiver,
-  and `casuality-explorer`. Without it there is nowhere to persist or view
+- `agent-causality` (PyPI): SDK, CLI, `causality-opencode-ingest` receiver,
+  and `causality-explorer`. Without it there is nowhere to persist or view
   traces.
-- `@psionic-labs/opencode-agent-casuality` (npm): OpenCode plugin,
+- `@psionic-labs/opencode-agent-causality` (npm): OpenCode plugin,
   telemetry capture only. Without it nothing observes the session.
 
 ```powershell
-pip install agent-casuality
-# or: uv add agent-casuality
-opencode plugin add @psionic-labs/opencode-agent-casuality
+pip install agent-causality
+# or: uv add agent-causality
+opencode plugin add @psionic-labs/opencode-agent-causality
 ```
 
 Consumer flow: start the receiver → run OpenCode → launch the Visual DAG:
 
 ```powershell
-casuality-opencode-ingest --db .casuality/opencode.db
+causality-opencode-ingest --db .causality/opencode.db
 opencode run "Inspect the repository, make a small testable change, and run pytest"
-casuality-explorer --db .casuality/opencode.db
+causality-explorer --db .causality/opencode.db
 ```
 
 Then open <http://127.0.0.1:8766>. See [docs/opencode.md](docs/opencode.md)
@@ -40,13 +40,13 @@ the explorer API.
 
 ## Single-run capture (isolated db file, port `8797`)
 
-One SQLite file per task keeps traces separate (`.casuality/single-run.db`
+One SQLite file per task keeps traces separate (`.causality/single-run.db`
 below is just an example — any path works). This is the minimal
 reproducible loop (same commands as the unified README):
 
 ```powershell
-# Terminal 1: receiver (PyPI install; source checkout: uv run casuality-opencode-ingest ...)
-casuality-opencode-ingest --db .casuality/single-run.db
+# Terminal 1: receiver (PyPI install; source checkout: uv run causality-opencode-ingest ...)
+causality-opencode-ingest --db .causality/single-run.db
 
 # Terminal 2: one instrumented agent task (plugin posts automatically)
 opencode run "Run the existing tests before editing. Diagnose and fix the bug in discount.py so both tests pass. Do not modify the tests. Rerun the tests and summarize the change."
@@ -55,15 +55,15 @@ opencode run "Run the existing tests before editing. Diagnose and fix the bug in
 Optional AI explanations for the project (needs `httpx` + `OPENROUTER_API_KEY`):
 
 ```powershell
-uv add "agent-casuality[explain]"
-# pip equivalent: pip install "agent-casuality[explain]"
+uv add "agent-causality[explain]"
+# pip equivalent: pip install "agent-causality[explain]"
 ```
 
 ```powershell
 # Terminal 3: explorer on the same file, alternate port to avoid clashing with :8766
-casuality-explorer --db .casuality/single-run.db --port 8797
+causality-explorer --db .causality/single-run.db --port 8797
 # Source checkout equivalent:
-uv run python -m explorer.server --db .casuality/single-run.db --port 8797
+uv run python -m explorer.server --db .causality/single-run.db --port 8797
 ```
 
 Then open <http://127.0.0.1:8797>. Use a fresh `--db` path per task for
@@ -77,8 +77,8 @@ From the repository root:
 uv sync
 ```
 
-This installs the project in editable mode and provides the `casuality` and
-`agent-casuality` commands.
+This installs the project in editable mode and provides the `causality` and
+`agent-causality` commands.
 
 ## Run the end-to-end demo
 
@@ -89,12 +89,12 @@ uv run python examples/customer_approval.py
 The command is self-contained and does not require PostgreSQL, an API key, or
 network access. It performs a complete local flow:
 
-1. `casuality.init()` creates `.casuality/example.db`.
+1. `causality.init()` creates `.causality/example.db`.
 2. Two decorated agents return eligibility and risk values.
 3. A merge decision records semantic ports and canonical baselines.
 4. A terminal `agent_finish` event marks the incorrect approval as a failure.
 5. SQLite is closed.
-6. A fresh `casuality` CLI process reloads the evaluator module, reopens the
+6. A fresh `causality` CLI process reloads the evaluator module, reopens the
    database, and renders the offline evidence package.
 
 The key result is:
@@ -118,11 +118,11 @@ database without linking events across `run_id` values.
 Use the failure event ID printed by the demo:
 
 ```powershell
-uv run casuality --load-module examples.customer_approval `
-    --db .casuality/example.db slice <failure-event-id>
+uv run causality --load-module examples.customer_approval `
+    --db .causality/example.db slice <failure-event-id>
 
-uv run casuality --load-module examples.customer_approval `
-    --db .casuality/example.db explain <failure-event-id> --no-llm
+uv run causality --load-module examples.customer_approval `
+    --db .causality/example.db explain <failure-event-id> --no-llm
 ```
 
 `--load-module` is required for persisted custom decisions because the decision
@@ -131,8 +131,8 @@ evaluator is application code and is not serialized into the event payload.
 Use `--raw-evidence` when the complete JSON package is needed:
 
 ```powershell
-uv run casuality --load-module examples.customer_approval `
-    --db .casuality/example.db explain <failure-event-id> `
+uv run causality --load-module examples.customer_approval `
+    --db .causality/example.db explain <failure-event-id> `
     --raw-evidence --no-llm
 ```
 
@@ -141,20 +141,20 @@ uv run casuality --load-module examples.customer_approval `
 The fixture is a separate, readable control case:
 
 ```powershell
-uv run casuality --fixture fixture/fixture.json explain A4 --no-llm
+uv run causality --fixture fixture/fixture.json explain A4 --no-llm
 ```
 
 Useful fixture commands include:
 
 ```powershell
-uv run casuality --fixture fixture/fixture.json agents
-uv run casuality --fixture fixture/fixture.json slice A4
-uv run casuality --fixture fixture/fixture.json why A4
-uv run casuality --fixture fixture/fixture.json reconstruct B 4
-uv run casuality --fixture fixture/fixture.json provenance A3.output.approve
-uv run casuality --fixture fixture/fixture.json replay dec_customer_approval_A3 customer_status=ineligible
-uv run casuality --fixture fixture/fixture.json interaction dec_customer_approval_A3
-uv run casuality --fixture fixture/fixture.json minimize A4
+uv run causality --fixture fixture/fixture.json agents
+uv run causality --fixture fixture/fixture.json slice A4
+uv run causality --fixture fixture/fixture.json why A4
+uv run causality --fixture fixture/fixture.json reconstruct B 4
+uv run causality --fixture fixture/fixture.json provenance A3.output.approve
+uv run causality --fixture fixture/fixture.json replay dec_customer_approval_A3 customer_status=ineligible
+uv run causality --fixture fixture/fixture.json interaction dec_customer_approval_A3
+uv run causality --fixture fixture/fixture.json minimize A4
 ```
 
 The fixture's ground-truth annotations make it useful for tests and
@@ -165,9 +165,9 @@ cross-process persistence.
 
 The complete example is `examples/customer_approval.py`. Its local flow uses:
 
-- `casuality.init(path)` to create a SQLite runtime;
-- `@casuality.agent(role=...)` to capture agent function calls and results; and
-- `@casuality.merge_decision(...)` to create decision ports, baselines, a
+- `causality.init(path)` to create a SQLite runtime;
+- `@causality.agent(role=...)` to capture agent function calls and results; and
+- `@causality.merge_decision(...)` to create decision ports, baselines, a
   decision contract, and an evaluator registration.
 
 For merge inputs, the convenience API looks for the most recent matching
@@ -185,7 +185,7 @@ The CLI supports these backend selectors:
 - no selector with `DATABASE_URL` set: read PostgreSQL.
 
 Without an explicit selector or `DATABASE_URL`, the CLI reads
-`.casuality/events.db`. It does not create application events; Python capture
+`.causality/events.db`. It does not create application events; Python capture
 code writes the database.
 
 The `agents` command currently supports only the fixture backend because SQLite
@@ -200,10 +200,10 @@ model-generated explanation (default model
 ```powershell
 uv sync --extra explain
 # PyPI / uv consumers instead:
-# pip install "agent-casuality[explain]"
-# uv add "agent-casuality[explain]"
+# pip install "agent-causality[explain]"
+# uv add "agent-causality[explain]"
 $env:OPENROUTER_API_KEY = "your-key"
-uv run casuality --fixture fixture/fixture.json explain A4 `
+uv run causality --fixture fixture/fixture.json explain A4 `
     --model "your/model"
 ```
 
@@ -287,36 +287,36 @@ uv run pytest tests/test_opencode_adapter.py -v
 
 OpenCode `1.19.0` (V1 `{ id, server }` plugin contract, supported since
 `1.18.29`) loads the project plugin from
-`.opencode/plugins/agent-casuality.ts` — an installed copy of the canonical
-source at `packages/opencode-agent-casuality/src/index.ts` (git-ignored; the
+`.opencode/plugins/agent-causality.ts` — an installed copy of the canonical
+source at `packages/opencode-agent-causality/src/index.ts` (git-ignored; the
 `scripts/check-opencode-plugin-compat.py` helper installs it automatically).
-Start the Agent-Casuality receiver in one terminal:
+Start the Agent-Causality receiver in one terminal:
 
 ```powershell
-uv run casuality-opencode-ingest --db .casuality/opencode.db
+uv run causality-opencode-ingest --db .causality/opencode.db
 ```
 
 In a second terminal, from this repository, run a real OpenCode session:
 
 ```powershell
-$env:CASUALITY_OPENCODE_INGEST_URL = "http://127.0.0.1:8765/v1/opencode/events"
+$env:CAUSALITY_OPENCODE_INGEST_URL = "http://127.0.0.1:8765/v1/opencode/events"
 opencode run "Inspect the repository, make a small testable change, and run pytest"
 ```
 
 The plugin uses OpenCode's V1 `event` hook and tool/permission/message hooks;
 it does not scrape terminal output. Verify captured events and causal DAG in
-`.casuality/opencode.db`:
+`.causality/opencode.db`:
 
 ```powershell
 # Inspect captured events, kinds, and resource URIs
-uv run python -c "from storage.sqlite import SQLiteEventStore; store = SQLiteEventStore('.casuality/opencode.db'); print([(e.event_type, e.payload.get('opencode_kind'), e.payload.get('resource_uri')) for e in store.events()])"
+uv run python -c "from storage.sqlite import SQLiteEventStore; store = SQLiteEventStore('.causality/opencode.db'); print([(e.event_type, e.payload.get('opencode_kind'), e.payload.get('resource_uri')) for e in store.events()])"
 
 # Verify causal graph ancestor traversal
-uv run python -c "from storage.sqlite import SQLiteEventStore; store = SQLiteEventStore('.casuality/opencode.db'); latest = store.events()[-1]; print('Causal ancestors count:', len(store.ancestors(latest.id)))"
+uv run python -c "from storage.sqlite import SQLiteEventStore; store = SQLiteEventStore('.causality/opencode.db'); latest = store.events()[-1]; print('Causal ancestors count:', len(store.ancestors(latest.id)))"
 ```
 
 Telemetry delivery is fail-open and quiet by default (no console warnings
-unless `CASUALITY_OPENCODE_LOG_TELEMETRY_FAILURES=1`); envelopes are sent in
+unless `CAUSALITY_OPENCODE_LOG_TELEMETRY_FAILURES=1`); envelopes are sent in
 batches of up to 25. See [docs/opencode.md](docs/opencode.md) for the full
 plugin options. The smoke test is not part of CI.
 
@@ -333,7 +333,7 @@ plugin options. The smoke test is not part of CI.
   discover arbitrary database or filesystem reads automatically.
 - The high-level local API does not yet record the fixture's exact field-level
   provenance chain.
-- The Visual DAG Explorer (`casuality-explorer`, default
+- The Visual DAG Explorer (`causality-explorer`, default
   <http://127.0.0.1:8766>; source checkout: `uv run python -m explorer.server`) is read-only over recorded causal edges; its
   optional *Generate AI analysis* calls OpenRouter only on click (default
   model `nvidia/nemotron-3-ultra-550b-a55b:free`, override with

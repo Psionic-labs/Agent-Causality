@@ -4,9 +4,9 @@
 
 `examples/customer_approval.py` is the complete runnable example:
 
-- `casuality.init(path)` — SQLite-backed runtime
-- `@casuality.agent(role=...)` — captured tool-like agents
-- `@casuality.merge_decision(...)` — decision ports, baselines, evaluators
+- `causality.init(path)` — SQLite-backed runtime
+- `@causality.agent(role=...)` — captured tool-like agents
+- `@causality.merge_decision(...)` — decision ports, baselines, evaluators
 
 Use the low-level SDK for explicit clocks, causal parents, field provenance,
 or non-local storage (see [GETTING_STARTED.md](../GETTING_STARTED.md)).
@@ -14,18 +14,18 @@ or non-local storage (see [GETTING_STARTED.md](../GETTING_STARTED.md)).
 ## CLI
 
 ```powershell
-uv run casuality --load-module examples.customer_approval --db .casuality/example.db explain <failure-event-id> --no-llm
-uv run casuality --fixture fixture/fixture.json slice A4
-uv run casuality --fixture fixture/fixture.json minimize A4
-uv run casuality --fixture fixture/fixture.json interaction dec_customer_approval_A3
-uv run casuality --fixture fixture/fixture.json explain A4 --no-llm
+uv run causality --load-module examples.customer_approval --db .causality/example.db explain <failure-event-id> --no-llm
+uv run causality --fixture fixture/fixture.json slice A4
+uv run causality --fixture fixture/fixture.json minimize A4
+uv run causality --fixture fixture/fixture.json interaction dec_customer_approval_A3
+uv run causality --fixture fixture/fixture.json explain A4 --no-llm
 ```
 
 Commands: `agents`, `slice`, `why`, `reconstruct`, `provenance`, `replay`,
 `interaction`, `minimize`, `explain`.
 
 Pick a backend with `--fixture PATH`, `--db PATH`, or `DATABASE_URL`. The
-default is `.casuality/events.db`, which only Python capture code creates.
+default is `.causality/events.db`, which only Python capture code creates.
 
 ## Scope and limits
 
@@ -39,19 +39,19 @@ default is `.casuality/events.db`, which only Python capture code creates.
 ## Visual DAG Explorer
 
 Read-only viewer over recorded causal edges (never inferred).
-Ships inside the `agent-casuality` wheel as vendored static assets
+Ships inside the `agent-causality` wheel as vendored static assets
 (`explorer/static/`, synced from `frontend/out/`); no clone needed:
 
 ```powershell
 # PyPI install
-casuality-explorer
-casuality-explorer --db .casuality/opencode.db --port 8766
+causality-explorer
+causality-explorer --db .causality/opencode.db --port 8766
 # Isolated single-run file (any path works — name is just an example)
-casuality-explorer --db .casuality/single-run.db --port 8797
+causality-explorer --db .causality/single-run.db --port 8797
 # Source checkout
 uv run python -m explorer.server
-uv run python -m explorer.server --db .casuality/opencode.db --port 8766
-uv run python -m explorer.server --db .casuality/single-run.db --port 8797
+uv run python -m explorer.server --db .causality/opencode.db --port 8766
+uv run python -m explorer.server --db .causality/single-run.db --port 8797
 ```
 
 Open <http://127.0.0.1:8766>. Default serves the bundled demo trace; `--db`
@@ -78,16 +78,16 @@ model text is always labeled interpretation, never mixed with evidence.
 POST http://127.0.0.1:8765/v1/opencode/events
 ```
 
-Receiver: `uv run casuality-opencode-ingest --db .casuality/opencode.db`.
+Receiver: `uv run causality-opencode-ingest --db .causality/opencode.db`.
 Answers `400` on malformed input, `202` with `received`/`normalized`/
 `persisted` counts otherwise.
 
 ```powershell
 # Default shared capture
-casuality-opencode-ingest --db .casuality/opencode.db
+causality-opencode-ingest --db .causality/opencode.db
 # Isolated single-run capture (pairs with the discount.py opencode task;
-# `.casuality/single-run.db` is just an example — any path works)
-casuality-opencode-ingest --db .casuality/single-run.db
+# `.causality/single-run.db` is just an example — any path works)
+causality-opencode-ingest --db .causality/single-run.db
 # Source checkout: prefix either with `uv run `
 ```
 
@@ -102,11 +102,11 @@ Plugin environment (see [docs/opencode.md](opencode.md)):
 
 | Variable | Default | Description |
 | --- | --- | --- |
-| `CASUALITY_OPENCODE_INGEST_URL` | `http://127.0.0.1:8765/v1/opencode/events` | Ingest endpoint |
-| `CASUALITY_OPENCODE_INGEST_TOKEN` | _(unset)_ | Sent as `Authorization: Bearer <token>` |
-| `CASUALITY_OPENCODE_INGEST_TIMEOUT_MS` | `5000` | Per-request timeout in ms |
-| `CASUALITY_OPENCODE_BATCH_MAX` | `25` | Max envelopes per POST (singletons stay single objects) |
-| `CASUALITY_OPENCODE_LOG_TELEMETRY_FAILURES` | _(unset)_ | Set to `1`/`true` to enable delivery warnings |
+| `CAUSALITY_OPENCODE_INGEST_URL` | `http://127.0.0.1:8765/v1/opencode/events` | Ingest endpoint |
+| `CAUSALITY_OPENCODE_INGEST_TOKEN` | _(unset)_ | Sent as `Authorization: Bearer <token>` |
+| `CAUSALITY_OPENCODE_INGEST_TIMEOUT_MS` | `5000` | Per-request timeout in ms |
+| `CAUSALITY_OPENCODE_BATCH_MAX` | `25` | Max envelopes per POST (singletons stay single objects) |
+| `CAUSALITY_OPENCODE_LOG_TELEMETRY_FAILURES` | _(unset)_ | Set to `1`/`true` to enable delivery warnings |
 
 Telemetry is fail-open and quiet by default: bounded 256-envelope buffer,
 batched POSTs with 3 attempts per batch, drops counted in `telemetryStats`
@@ -115,10 +115,10 @@ rather than interrupting OpenCode.
 ## Benchmarks
 
 ```powershell
-uv run casuality-benchmark scenarios
-uv run casuality-benchmark experiment2 --dependencies 100
-uv run casuality-benchmark experiment3
-uv run casuality-benchmark opencode --timeout 420
+uv run causality-benchmark scenarios
+uv run causality-benchmark experiment2 --dependencies 100
+uv run causality-benchmark experiment3
+uv run causality-benchmark opencode --timeout 420
 ```
 
 Full results in [benchmarks.md](benchmarks.md) and `benchmark/results/`.
@@ -128,10 +128,10 @@ Full results in [benchmarks.md](benchmarks.md) and `benchmark/results/`.
 ```powershell
 uv sync --extra explain
 # PyPI / uv consumers instead:
-# pip install "agent-casuality[explain]"
-# uv add "agent-casuality[explain]"
+# pip install "agent-causality[explain]"
+# uv add "agent-causality[explain]"
 $env:OPENROUTER_API_KEY = "your-key"
-uv run casuality --fixture fixture/fixture.json explain A4 --model "your/model"
+uv run causality --fixture fixture/fixture.json explain A4 --model "your/model"
 ```
 
 ```powershell

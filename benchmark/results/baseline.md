@@ -11,7 +11,7 @@ The named historical Phase 2 memory baseline was passed through its adapter for 
     "command": "agent-replay ingest/list/diff",
     "commit_or_build": null,
     "input": "the five deterministic benchmark scenarios",
-    "methodology": "Each existing Agent-Casuality scenario is serialized into a recorded trace and a paired counterfactual trace with only the scenario's known target event values changed. agent-replay diff compares those two traces. Its output is scored only as divergence localization; causal capabilities remain unsupported.",
+    "methodology": "Each existing Agent-Causality scenario is serialized into a recorded trace and a paired counterfactual trace with only the scenario's known target event values changed. agent-replay diff compares those two traces. Its output is scored only as divergence localization; causal capabilities remain unsupported.",
     "procedure": "agent-replay ingest, list, and diff invoked once per scenario",
     "status": "completed",
     "tool": "clay-good/agent-replay",
@@ -19,7 +19,7 @@ The named historical Phase 2 memory baseline was passed through its adapter for 
   },
   "comparison": [
     {
-      "agent_casuality": "measured by deterministic benchmark",
+      "agent_causality": "measured by deterministic benchmark",
       "baseline": "supported",
       "capability": "cause_identification",
       "comparable": true,
@@ -27,7 +27,7 @@ The named historical Phase 2 memory baseline was passed through its adapter for 
       "scope": "divergence localization, not causal attribution"
     },
     {
-      "agent_casuality": "measured by deterministic benchmark",
+      "agent_causality": "measured by deterministic benchmark",
       "baseline": "unsupported",
       "capability": "multiple_parents",
       "comparable": false,
@@ -35,7 +35,7 @@ The named historical Phase 2 memory baseline was passed through its adapter for 
       "scope": null
     },
     {
-      "agent_casuality": "measured by deterministic benchmark",
+      "agent_causality": "measured by deterministic benchmark",
       "baseline": "unsupported",
       "capability": "distractor_handling",
       "comparable": false,
@@ -43,7 +43,7 @@ The named historical Phase 2 memory baseline was passed through its adapter for 
       "scope": null
     },
     {
-      "agent_casuality": "measured by deterministic benchmark",
+      "agent_causality": "measured by deterministic benchmark",
       "baseline": "unsupported",
       "capability": "interaction",
       "comparable": false,
@@ -51,7 +51,7 @@ The named historical Phase 2 memory baseline was passed through its adapter for 
       "scope": null
     },
     {
-      "agent_casuality": "measured by deterministic benchmark",
+      "agent_causality": "measured by deterministic benchmark",
       "baseline": "unsupported",
       "capability": "shared_state_causality",
       "comparable": false,
@@ -59,7 +59,7 @@ The named historical Phase 2 memory baseline was passed through its adapter for 
       "scope": null
     },
     {
-      "agent_casuality": "measured by deterministic benchmark",
+      "agent_causality": "measured by deterministic benchmark",
       "baseline": "unsupported",
       "capability": "minimal_causal_reduction",
       "comparable": false,
@@ -67,7 +67,7 @@ The named historical Phase 2 memory baseline was passed through its adapter for 
       "scope": null
     },
     {
-      "agent_casuality": "measured by deterministic benchmark",
+      "agent_causality": "measured by deterministic benchmark",
       "baseline": "supported",
       "capability": "cause_identification",
       "comparable": true,
@@ -75,7 +75,7 @@ The named historical Phase 2 memory baseline was passed through its adapter for 
       "scope": "divergence localization, not causal attribution"
     },
     {
-      "agent_casuality": "measured by deterministic benchmark",
+      "agent_causality": "measured by deterministic benchmark",
       "baseline": "unsupported",
       "capability": "multiple_parents",
       "comparable": false,
@@ -83,7 +83,7 @@ The named historical Phase 2 memory baseline was passed through its adapter for 
       "scope": null
     },
     {
-      "agent_casuality": "measured by deterministic benchmark",
+      "agent_causality": "measured by deterministic benchmark",
       "baseline": "unsupported",
       "capability": "distractor_handling",
       "comparable": false,
@@ -91,7 +91,7 @@ The named historical Phase 2 memory baseline was passed through its adapter for 
       "scope": null
     },
     {
-      "agent_casuality": "measured by deterministic benchmark",
+      "agent_causality": "measured by deterministic benchmark",
       "baseline": "unsupported",
       "capability": "interaction",
       "comparable": false,
@@ -99,7 +99,7 @@ The named historical Phase 2 memory baseline was passed through its adapter for 
       "scope": null
     },
     {
-      "agent_casuality": "measured by deterministic benchmark",
+      "agent_causality": "measured by deterministic benchmark",
       "baseline": "unsupported",
       "capability": "shared_state_causality",
       "comparable": false,
@@ -107,7 +107,7 @@ The named historical Phase 2 memory baseline was passed through its adapter for 
       "scope": null
     },
     {
-      "agent_casuality": "measured by deterministic benchmark",
+      "agent_causality": "measured by deterministic benchmark",
       "baseline": "unsupported",
       "capability": "minimal_causal_reduction",
       "comparable": false,
@@ -115,7 +115,7 @@ The named historical Phase 2 memory baseline was passed through its adapter for 
       "scope": null
     },
     {
-      "agent_casuality": "measured by deterministic benchmark",
+      "agent_causality": "measured by deterministic benchmark",
       "baseline": "supported",
       "capability": "cause_identification",
       "comparable": true,
@@ -123,7 +123,7 @@ The named historical Phase 2 memory baseline was passed through its adapter for 
       "scope": "divergence localization, not causal attribution"
     },
     {
-      "agent_casuality": "measured by deterministic benchmark",
+      "agent_causality": "measured by deterministic benchmark",
       "baseline": "unsupported",
       "capability": "multiple_parents",
       "comparable": false,
@@ -131,7 +131,7 @@ The named historical Phase 2 memory baseline was passed through its adapter for 
       "scope": null
     },
     {
-      "agent_casuality": "measured by deterministic benchmark",
+      "agent_causality": "measured by deterministic benchmark",
       "baseline": "unsupported",
       "capability": "distractor_handling",
       "comparable": false,
@@ -139,7 +139,7 @@ The named historical Phase 2 memory baseline was passed through its adapter for 
       "scope": null
     },
     {
-      "agent_casuality": "measured by deterministic benchmark",
+      "agent_causality": "measured by deterministic benchmark",
       "baseline": "unsupported",
       "capability": "interaction",
       "comparable": false,
@@ -147,7 +147,7 @@ The named historical Phase 2 memory baseline was passed through its adapter for 
       "scope": null
     },
     {
-      "agent_casuality": "measured by deterministic benchmark",
+      "agent_causality": "measured by deterministic benchmark",
       "baseline": "unsupported",
       "capability": "shared_state_causality",
       "comparable": false,
@@ -155,7 +155,7 @@ The named historical Phase 2 memory baseline was passed through its adapter for 
       "scope": null
     },
     {
-      "agent_casuality": "measured by deterministic benchmark",
+      "agent_causality": "measured by deterministic benchmark",
       "baseline": "unsupported",
       "capability": "minimal_causal_reduction",
       "comparable": false,
@@ -163,7 +163,7 @@ The named historical Phase 2 memory baseline was passed through its adapter for 
       "scope": null
     },
     {
-      "agent_casuality": "measured by deterministic benchmark",
+      "agent_causality": "measured by deterministic benchmark",
       "baseline": "supported",
       "capability": "cause_identification",
       "comparable": true,
@@ -171,7 +171,7 @@ The named historical Phase 2 memory baseline was passed through its adapter for 
       "scope": "divergence localization, not causal attribution"
     },
     {
-      "agent_casuality": "measured by deterministic benchmark",
+      "agent_causality": "measured by deterministic benchmark",
       "baseline": "unsupported",
       "capability": "multiple_parents",
       "comparable": false,
@@ -179,7 +179,7 @@ The named historical Phase 2 memory baseline was passed through its adapter for 
       "scope": null
     },
     {
-      "agent_casuality": "measured by deterministic benchmark",
+      "agent_causality": "measured by deterministic benchmark",
       "baseline": "unsupported",
       "capability": "distractor_handling",
       "comparable": false,
@@ -187,7 +187,7 @@ The named historical Phase 2 memory baseline was passed through its adapter for 
       "scope": null
     },
     {
-      "agent_casuality": "measured by deterministic benchmark",
+      "agent_causality": "measured by deterministic benchmark",
       "baseline": "unsupported",
       "capability": "interaction",
       "comparable": false,
@@ -195,7 +195,7 @@ The named historical Phase 2 memory baseline was passed through its adapter for 
       "scope": null
     },
     {
-      "agent_casuality": "measured by deterministic benchmark",
+      "agent_causality": "measured by deterministic benchmark",
       "baseline": "unsupported",
       "capability": "shared_state_causality",
       "comparable": false,
@@ -203,7 +203,7 @@ The named historical Phase 2 memory baseline was passed through its adapter for 
       "scope": null
     },
     {
-      "agent_casuality": "measured by deterministic benchmark",
+      "agent_causality": "measured by deterministic benchmark",
       "baseline": "unsupported",
       "capability": "minimal_causal_reduction",
       "comparable": false,
@@ -211,7 +211,7 @@ The named historical Phase 2 memory baseline was passed through its adapter for 
       "scope": null
     },
     {
-      "agent_casuality": "measured by deterministic benchmark",
+      "agent_causality": "measured by deterministic benchmark",
       "baseline": "supported",
       "capability": "cause_identification",
       "comparable": true,
@@ -219,7 +219,7 @@ The named historical Phase 2 memory baseline was passed through its adapter for 
       "scope": "divergence localization, not causal attribution"
     },
     {
-      "agent_casuality": "measured by deterministic benchmark",
+      "agent_causality": "measured by deterministic benchmark",
       "baseline": "unsupported",
       "capability": "multiple_parents",
       "comparable": false,
@@ -227,7 +227,7 @@ The named historical Phase 2 memory baseline was passed through its adapter for 
       "scope": null
     },
     {
-      "agent_casuality": "measured by deterministic benchmark",
+      "agent_causality": "measured by deterministic benchmark",
       "baseline": "unsupported",
       "capability": "distractor_handling",
       "comparable": false,
@@ -235,7 +235,7 @@ The named historical Phase 2 memory baseline was passed through its adapter for 
       "scope": null
     },
     {
-      "agent_casuality": "measured by deterministic benchmark",
+      "agent_causality": "measured by deterministic benchmark",
       "baseline": "unsupported",
       "capability": "interaction",
       "comparable": false,
@@ -243,7 +243,7 @@ The named historical Phase 2 memory baseline was passed through its adapter for 
       "scope": null
     },
     {
-      "agent_casuality": "measured by deterministic benchmark",
+      "agent_causality": "measured by deterministic benchmark",
       "baseline": "unsupported",
       "capability": "shared_state_causality",
       "comparable": false,
@@ -251,7 +251,7 @@ The named historical Phase 2 memory baseline was passed through its adapter for 
       "scope": null
     },
     {
-      "agent_casuality": "measured by deterministic benchmark",
+      "agent_causality": "measured by deterministic benchmark",
       "baseline": "unsupported",
       "capability": "minimal_causal_reduction",
       "comparable": false,
@@ -293,10 +293,10 @@ The named historical Phase 2 memory baseline was passed through its adapter for 
     "OpenCode 1.18.32 was installed but explicitly excluded by the task.",
     "The current ResourceRegistry and causal engine are not substituted for the baseline.",
     "Unsupported capabilities have no precision, recall, or failure score.",
-    "The paired counterfactual traces are adapter inputs derived from existing event records; agent-replay does not execute Agent-Casuality scenarios itself."
+    "The paired counterfactual traces are adapter inputs derived from existing event records; agent-replay does not execute Agent-Causality scenarios itself."
   ],
   "reproducibility": {
-    "command": "uv run casuality-benchmark baseline",
+    "command": "uv run causality-benchmark baseline",
     "configuration": {
       "adapter": "clay-good/agent-replay"
     },
@@ -345,7 +345,7 @@ The named historical Phase 2 memory baseline was passed through its adapter for 
       },
       "execution": {
         "commands": [
-          "C:\\Users\\Nyx\\AppData\\Roaming\\npm\\agent-replay.cmd ingest D:\\Coding\\Agent-Casuality\\benchmark\\results\\baseline-inputs\\single_cause.json --dir C:\\Users\\Nyx\\AppData\\Local\\Temp\\agent-replay-single_cause-fvf3l1dw\\store",
+          "C:\\Users\\Nyx\\AppData\\Roaming\\npm\\agent-replay.cmd ingest D:\\Coding\\Agent-Causality\\benchmark\\results\\baseline-inputs\\single_cause.json --dir C:\\Users\\Nyx\\AppData\\Local\\Temp\\agent-replay-single_cause-fvf3l1dw\\store",
           "C:\\Users\\Nyx\\AppData\\Roaming\\npm\\agent-replay.cmd list --json --dir C:\\Users\\Nyx\\AppData\\Local\\Temp\\agent-replay-single_cause-fvf3l1dw\\store",
           "C:\\Users\\Nyx\\AppData\\Roaming\\npm\\agent-replay.cmd diff --json trc_Cg4vOZQaG1-L trc_X08LFprgt_KF --dir C:\\Users\\Nyx\\AppData\\Local\\Temp\\agent-replay-single_cause-fvf3l1dw\\store"
         ],
@@ -374,7 +374,7 @@ The named historical Phase 2 memory baseline was passed through its adapter for 
         "stderr": "",
         "stdout": "{\n  \"left_trace_id\": \"trc_Cg4vOZQaG1-L\",\n  \"right_trace_id\": \"trc_X08LFprgt_KF\",\n  \"divergence_step\": 1,\n  \"left_step_count\": 4,\n  \"right_step_count\": 4,\n  \"diffs\": [\n    {\n      \"step_number\": 1,\n      \"field\": \"output\",\n      \"left_value\": {\n        \"output\": \"bad\"\n      },\n      \"right_value\": {\n        \"output\": \"good\"\n      }\n    }\n  ],\n  \"compared_fields\": null\n}\n"
       },
-      "input_artifact": "D:\\Coding\\Agent-Casuality\\benchmark\\results\\baseline-inputs\\single_cause.json",
+      "input_artifact": "D:\\Coding\\Agent-Causality\\benchmark\\results\\baseline-inputs\\single_cause.json",
       "normalized_metrics": {
         "cause_identification": {
           "exact_match": true,
@@ -433,7 +433,7 @@ The named historical Phase 2 memory baseline was passed through its adapter for 
       },
       "execution": {
         "commands": [
-          "C:\\Users\\Nyx\\AppData\\Roaming\\npm\\agent-replay.cmd ingest D:\\Coding\\Agent-Casuality\\benchmark\\results\\baseline-inputs\\multiple_parents.json --dir C:\\Users\\Nyx\\AppData\\Local\\Temp\\agent-replay-multiple_parents-uzsxzq5e\\store",
+          "C:\\Users\\Nyx\\AppData\\Roaming\\npm\\agent-replay.cmd ingest D:\\Coding\\Agent-Causality\\benchmark\\results\\baseline-inputs\\multiple_parents.json --dir C:\\Users\\Nyx\\AppData\\Local\\Temp\\agent-replay-multiple_parents-uzsxzq5e\\store",
           "C:\\Users\\Nyx\\AppData\\Roaming\\npm\\agent-replay.cmd list --json --dir C:\\Users\\Nyx\\AppData\\Local\\Temp\\agent-replay-multiple_parents-uzsxzq5e\\store",
           "C:\\Users\\Nyx\\AppData\\Roaming\\npm\\agent-replay.cmd diff --json trc_uKWQj2r0T43H trc_zczmi_sleptT --dir C:\\Users\\Nyx\\AppData\\Local\\Temp\\agent-replay-multiple_parents-uzsxzq5e\\store"
         ],
@@ -472,7 +472,7 @@ The named historical Phase 2 memory baseline was passed through its adapter for 
         "stderr": "",
         "stdout": "{\n  \"left_trace_id\": \"trc_uKWQj2r0T43H\",\n  \"right_trace_id\": \"trc_zczmi_sleptT\",\n  \"divergence_step\": 1,\n  \"left_step_count\": 4,\n  \"right_step_count\": 4,\n  \"diffs\": [\n    {\n      \"step_number\": 1,\n      \"field\": \"output\",\n      \"left_value\": {\n        \"output\": \"bad\"\n      },\n      \"right_value\": {\n        \"output\": \"good\"\n      }\n    },\n    {\n      \"step_number\": 2,\n      \"field\": \"output\",\n      \"left_value\": {\n        \"output\": \"bad\"\n      },\n      \"right_value\": {\n        \"output\": \"good\"\n      }\n    }\n  ],\n  \"compared_fields\": null\n}\n"
       },
-      "input_artifact": "D:\\Coding\\Agent-Casuality\\benchmark\\results\\baseline-inputs\\multiple_parents.json",
+      "input_artifact": "D:\\Coding\\Agent-Causality\\benchmark\\results\\baseline-inputs\\multiple_parents.json",
       "normalized_metrics": {
         "cause_identification": {
           "exact_match": true,
@@ -533,7 +533,7 @@ The named historical Phase 2 memory baseline was passed through its adapter for 
       },
       "execution": {
         "commands": [
-          "C:\\Users\\Nyx\\AppData\\Roaming\\npm\\agent-replay.cmd ingest D:\\Coding\\Agent-Casuality\\benchmark\\results\\baseline-inputs\\interaction.json --dir C:\\Users\\Nyx\\AppData\\Local\\Temp\\agent-replay-interaction-dsx9r596\\store",
+          "C:\\Users\\Nyx\\AppData\\Roaming\\npm\\agent-replay.cmd ingest D:\\Coding\\Agent-Causality\\benchmark\\results\\baseline-inputs\\interaction.json --dir C:\\Users\\Nyx\\AppData\\Local\\Temp\\agent-replay-interaction-dsx9r596\\store",
           "C:\\Users\\Nyx\\AppData\\Roaming\\npm\\agent-replay.cmd list --json --dir C:\\Users\\Nyx\\AppData\\Local\\Temp\\agent-replay-interaction-dsx9r596\\store",
           "C:\\Users\\Nyx\\AppData\\Roaming\\npm\\agent-replay.cmd diff --json trc_bDIblwlb_bng trc_3a5vGcWUoK0Q --dir C:\\Users\\Nyx\\AppData\\Local\\Temp\\agent-replay-interaction-dsx9r596\\store"
         ],
@@ -572,7 +572,7 @@ The named historical Phase 2 memory baseline was passed through its adapter for 
         "stderr": "",
         "stdout": "{\n  \"left_trace_id\": \"trc_bDIblwlb_bng\",\n  \"right_trace_id\": \"trc_3a5vGcWUoK0Q\",\n  \"divergence_step\": 1,\n  \"left_step_count\": 4,\n  \"right_step_count\": 4,\n  \"diffs\": [\n    {\n      \"step_number\": 1,\n      \"field\": \"output\",\n      \"left_value\": {\n        \"output\": \"bad\"\n      },\n      \"right_value\": {\n        \"output\": \"good\"\n      }\n    },\n    {\n      \"step_number\": 2,\n      \"field\": \"output\",\n      \"left_value\": {\n        \"output\": \"bad\"\n      },\n      \"right_value\": {\n        \"output\": \"good\"\n      }\n    }\n  ],\n  \"compared_fields\": null\n}\n"
       },
-      "input_artifact": "D:\\Coding\\Agent-Casuality\\benchmark\\results\\baseline-inputs\\interaction.json",
+      "input_artifact": "D:\\Coding\\Agent-Causality\\benchmark\\results\\baseline-inputs\\interaction.json",
       "normalized_metrics": {
         "cause_identification": {
           "exact_match": true,
@@ -631,7 +631,7 @@ The named historical Phase 2 memory baseline was passed through its adapter for 
       },
       "execution": {
         "commands": [
-          "C:\\Users\\Nyx\\AppData\\Roaming\\npm\\agent-replay.cmd ingest D:\\Coding\\Agent-Casuality\\benchmark\\results\\baseline-inputs\\distractor.json --dir C:\\Users\\Nyx\\AppData\\Local\\Temp\\agent-replay-distractor-2mxid47k\\store",
+          "C:\\Users\\Nyx\\AppData\\Roaming\\npm\\agent-replay.cmd ingest D:\\Coding\\Agent-Causality\\benchmark\\results\\baseline-inputs\\distractor.json --dir C:\\Users\\Nyx\\AppData\\Local\\Temp\\agent-replay-distractor-2mxid47k\\store",
           "C:\\Users\\Nyx\\AppData\\Roaming\\npm\\agent-replay.cmd list --json --dir C:\\Users\\Nyx\\AppData\\Local\\Temp\\agent-replay-distractor-2mxid47k\\store",
           "C:\\Users\\Nyx\\AppData\\Roaming\\npm\\agent-replay.cmd diff --json trc_HVlm4BsyCICs trc_ykurlmAJljUY --dir C:\\Users\\Nyx\\AppData\\Local\\Temp\\agent-replay-distractor-2mxid47k\\store"
         ],
@@ -660,7 +660,7 @@ The named historical Phase 2 memory baseline was passed through its adapter for 
         "stderr": "",
         "stdout": "{\n  \"left_trace_id\": \"trc_HVlm4BsyCICs\",\n  \"right_trace_id\": \"trc_ykurlmAJljUY\",\n  \"divergence_step\": 1,\n  \"left_step_count\": 4,\n  \"right_step_count\": 4,\n  \"diffs\": [\n    {\n      \"step_number\": 1,\n      \"field\": \"output\",\n      \"left_value\": {\n        \"output\": \"bad\"\n      },\n      \"right_value\": {\n        \"output\": \"good\"\n      }\n    }\n  ],\n  \"compared_fields\": null\n}\n"
       },
-      "input_artifact": "D:\\Coding\\Agent-Casuality\\benchmark\\results\\baseline-inputs\\distractor.json",
+      "input_artifact": "D:\\Coding\\Agent-Causality\\benchmark\\results\\baseline-inputs\\distractor.json",
       "normalized_metrics": {
         "cause_identification": {
           "exact_match": true,
@@ -719,7 +719,7 @@ The named historical Phase 2 memory baseline was passed through its adapter for 
       },
       "execution": {
         "commands": [
-          "C:\\Users\\Nyx\\AppData\\Roaming\\npm\\agent-replay.cmd ingest D:\\Coding\\Agent-Casuality\\benchmark\\results\\baseline-inputs\\memory_contamination.json --dir C:\\Users\\Nyx\\AppData\\Local\\Temp\\agent-replay-memory_contamination-wvju0u8u\\store",
+          "C:\\Users\\Nyx\\AppData\\Roaming\\npm\\agent-replay.cmd ingest D:\\Coding\\Agent-Causality\\benchmark\\results\\baseline-inputs\\memory_contamination.json --dir C:\\Users\\Nyx\\AppData\\Local\\Temp\\agent-replay-memory_contamination-wvju0u8u\\store",
           "C:\\Users\\Nyx\\AppData\\Roaming\\npm\\agent-replay.cmd list --json --dir C:\\Users\\Nyx\\AppData\\Local\\Temp\\agent-replay-memory_contamination-wvju0u8u\\store",
           "C:\\Users\\Nyx\\AppData\\Roaming\\npm\\agent-replay.cmd diff --json trc_TeSXcXr2ivcP trc_ZNUsggvl3qxt --dir C:\\Users\\Nyx\\AppData\\Local\\Temp\\agent-replay-memory_contamination-wvju0u8u\\store"
         ],
@@ -776,7 +776,7 @@ The named historical Phase 2 memory baseline was passed through its adapter for 
         "stderr": "",
         "stdout": "{\n  \"left_trace_id\": \"trc_TeSXcXr2ivcP\",\n  \"right_trace_id\": \"trc_ZNUsggvl3qxt\",\n  \"divergence_step\": 1,\n  \"left_step_count\": 4,\n  \"right_step_count\": 4,\n  \"diffs\": [\n    {\n      \"step_number\": 1,\n      \"field\": \"output\",\n      \"left_value\": {\n        \"after\": \"bad\",\n        \"after_found\": true,\n        \"before\": null,\n        \"before_found\": false,\n        \"key\": \"approval\",\n        \"operation\": \"set\",\n        \"resource_uri\": \"mem://shared/approval\"\n      },\n      \"right_value\": {\n        \"after\": \"good\",\n        \"after_found\": true,\n        \"before\": null,\n        \"before_found\": false,\n        \"key\": \"approval\",\n        \"operation\": \"set\",\n        \"resource_uri\": \"mem://shared/approval\"\n      }\n    },\n    {\n      \"step_number\": 2,\n      \"field\": \"output\",\n      \"left_value\": {\n        \"found\": true,\n        \"key\": \"approval\",\n        \"resource_uri\": \"mem://shared/approval\",\n        \"value\": \"bad\"\n      },\n      \"right_value\": {\n        \"found\": true,\n        \"key\": \"approval\",\n        \"resource_uri\": \"mem://shared/approval\",\n        \"value\": \"good\"\n      }\n    }\n  ],\n  \"compared_fields\": null\n}\n"
       },
-      "input_artifact": "D:\\Coding\\Agent-Casuality\\benchmark\\results\\baseline-inputs\\memory_contamination.json",
+      "input_artifact": "D:\\Coding\\Agent-Causality\\benchmark\\results\\baseline-inputs\\memory_contamination.json",
       "normalized_metrics": {
         "cause_identification": {
           "exact_match": true,
@@ -801,7 +801,7 @@ The named historical Phase 2 memory baseline was passed through its adapter for 
 
 ## Capability Comparison
 
-| Scenario | Capability | Baseline | Agent-Casuality | Comparable |
+| Scenario | Capability | Baseline | Agent-Causality | Comparable |
 | --- | --- | --- | --- | --- |
 | single_cause | cause_identification | supported | measured by deterministic benchmark | yes |
 | single_cause | multiple_parents | unsupported | measured by deterministic benchmark | no |
@@ -857,12 +857,12 @@ Repository head: `be5fcdda9d2f68b3062fbfd03960b2aeed09f70f`
 - OpenCode 1.18.32 was installed but explicitly excluded by the task.
 - The current ResourceRegistry and causal engine are not substituted for the baseline.
 - Unsupported capabilities have no precision, recall, or failure score.
-- The paired counterfactual traces are adapter inputs derived from existing event records; agent-replay does not execute Agent-Casuality scenarios itself.
+- The paired counterfactual traces are adapter inputs derived from existing event records; agent-replay does not execute Agent-Causality scenarios itself.
 
 ## Reproduction
 
 ```powershell
-uv run casuality-benchmark baseline
+uv run causality-benchmark baseline
 ```
 
 The available Git executable was audited but rejected as a baseline because it does not consume these execution artifacts or produce causal analysis.

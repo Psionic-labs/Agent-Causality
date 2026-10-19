@@ -8,7 +8,7 @@ accidentally excludes the frontend bundle or the explorer modules:
 - ``explorer.server.get_frontend_dir()`` must resolve inside the ``explorer``
   package without relying on CWD or the ``frontend/`` checkout layout.
 - ``pyproject.toml`` must declare the static package-data and the
-  ``casuality-explorer`` / ``casuality-opencode-ingest`` entry points.
+  ``causality-explorer`` / ``causality-opencode-ingest`` entry points.
 """
 
 from __future__ import annotations
@@ -108,8 +108,8 @@ def test_pyproject_declares_static_and_entry_points() -> None:
         f"explorer package-data must include the vendored frontend: {explorer_data}"
     )
     scripts = data["project"]["scripts"]
-    assert scripts.get("casuality-explorer") == "explorer.server:main"
-    assert scripts.get("casuality-opencode-ingest") == "adapters.opencode.server:main"
+    assert scripts.get("causality-explorer") == "explorer.server:main"
+    assert scripts.get("causality-opencode-ingest") == "adapters.opencode.server:main"
     assert (ROOT / "MANIFEST.in").is_file()
     manifest = (ROOT / "MANIFEST.in").read_text(encoding="utf-8")
     assert "explorer/static" in manifest

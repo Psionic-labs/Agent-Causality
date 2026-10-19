@@ -7,13 +7,13 @@ All notable changes to this project will be documented in this file.
 ### Capture adapters package + LangGraph integration
 
 - **Breaking (pre-1.0):** direct imports of `opencode_adapter` must move to
-  `adapters.opencode`; the `casuality-opencode-ingest` entry point is
+  `adapters.opencode`; the `causality-opencode-ingest` entry point is
   unchanged.
 - New `adapters/` package: the OpenCode runtime capture moved from
   `opencode_adapter/` to `adapters/opencode/` (history preserved; the
-  `casuality-opencode-ingest` entry point now targets
+  `causality-opencode-ingest` entry point now targets
   `adapters.opencode.server:main`).
-- New LangGraph adapter: `CasualityCallbackHandler`
+- New LangGraph adapter: `CausalityCallbackHandler`
   (`adapters/langgraph/mapping.py`) records every chain/tool/LLM/retriever
   callback as causal events — one root run becomes one agent, unknown
   parents are dropped, frontier chaining orders siblings, resource
@@ -21,7 +21,7 @@ All notable changes to this project will be documented in this file.
   deterministic and idempotent, payloads are deeply redacted and coerced
   JSON-safe, and capture is fail-open (`handler.errors`, never raises into
   the agent). `langchain-core` stays optional; extras:
-  `agent-casuality[langgraph]`.
+  `agent-causality[langgraph]`.
 - Shared deep-redaction helper (`adapters/redaction.py`); the sensitive-key
   regex was tightened so keys like `token_usage` are no longer redacted
   while `access_token`-style keys still are.
@@ -29,7 +29,7 @@ All notable changes to this project will be documented in this file.
   documented July 2025 Replit incident as a captured causal graph
   (write-up: `docs/case-study-replit.md`). Runs start from a fresh database
   by default (`--append` keeps prior captures) and print the exact
-  `casuality-explorer` command for the result.
+  `causality-explorer` command for the result.
 - Visual DAG Explorer: node labels now fall back to the generic callback
   `name` field, so LangGraph runs render meaningful labels
   (`tool_call · write_sql`) instead of repeating the event type; the DAG,
@@ -38,7 +38,7 @@ All notable changes to this project will be documented in this file.
   documentation-table rows (PyPI and npm copies re-synced byte-identical,
   also picking up the previously missing demo-video section).
 - The root `.opencode/` directory (an installed copy of the canonical
-  plugin at `packages/opencode-agent-casuality/src/index.ts`) is now
+  plugin at `packages/opencode-agent-causality/src/index.ts`) is now
   git-ignored and no longer tracked; the plugin-compat script installs the
   canonical source into `<workdir>/.opencode/plugins/` before running.
 
@@ -47,9 +47,9 @@ All notable changes to this project will be documented in this file.
 ### Unified README for both registries (docs only)
 
 - Root `README.md` (PyPI long description) and
-  `packages/opencode-agent-casuality/README.md` (npm) are now byte-identical:
+  `packages/opencode-agent-causality/README.md` (npm) are now byte-identical:
   badges, quick-nav, both-packages install callout, single-run
-  ingest → opencode → explorer loop (example `.casuality/single-run.db`
+  ingest → opencode → explorer loop (example `.causality/single-run.db`
   placeholder, any path works; `--port 8797`), `explain` extra install for
   `pip` and `uv`, and absolute GitHub links so both registries render.
 - `GETTING_STARTED.md`, `docs/opencode.md`, and `docs/reference.md` carry
@@ -61,7 +61,7 @@ All notable changes to this project will be documented in this file.
 
 ### Visual DAG Explorer ships in the PyPI wheel (packaging fix)
 
-- The `agent-casuality` wheel now bundles the compiled Visual DAG frontend
+- The `agent-causality` wheel now bundles the compiled Visual DAG frontend
   (`explorer/static/`, 20 files: `index.html` + `_next/` JS/CSS), vendored
   from `frontend/out/` via `scripts/sync-explorer-static.py`. Previously the
   wheel/sdist contained only `explorer/*.py` + demo JSONs, so
@@ -70,11 +70,11 @@ All notable changes to this project will be documented in this file.
 - `explorer.server.get_frontend_dir()` resolves `explorer/static/` inside the
   installed package without relying on CWD or the checkout layout (legacy
   `frontend/out/` fallback kept for development).
-- New `casuality-explorer` console entry point (`explorer.server:main`),
-  alongside the existing `casuality-opencode-ingest` receiver. Consumer flow
-  with no clone: `pip install agent-casuality` → install the OpenCode plugin
-  → `casuality-opencode-ingest --db .casuality/opencode.db` → run OpenCode →
-  `casuality-explorer --db .casuality/opencode.db`.
+- New `causality-explorer` console entry point (`explorer.server:main`),
+  alongside the existing `causality-opencode-ingest` receiver. Consumer flow
+  with no clone: `pip install agent-causality` → install the OpenCode plugin
+  → `causality-opencode-ingest --db .causality/opencode.db` → run OpenCode →
+  `causality-explorer --db .causality/opencode.db`.
 - `MANIFEST.in` + `package-data` (`explorer: demo/*.json, static/*,
   static/**/*`) guarantee wheel + sdist coverage; `tests/test_packaging.py`
   fails if the frontend bundle, the asset references, the entry points, or
@@ -83,14 +83,14 @@ All notable changes to this project will be documented in this file.
 ### OpenCode plugin telemetry 
 
 - Batched delivery: envelopes drain in batches of up to
-  `CASUALITY_OPENCODE_BATCH_MAX` (default 25) per POST; singletons stay
+  `CAUSALITY_OPENCODE_BATCH_MAX` (default 25) per POST; singletons stay
   single objects. Short `persisted`/`accepted` counts retry the batch;
   count-less 2xx bodies still count as delivered.
 - Quiet fail-open by default: delivery warnings emit only when
-  `CASUALITY_OPENCODE_LOG_TELEMETRY_FAILURES=1`/`true`, rate-limited, with
+  `CAUSALITY_OPENCODE_LOG_TELEMETRY_FAILURES=1`/`true`, rate-limited, with
   the first warning naming the endpoint and receiver start command.
 - Per-request config: endpoint, bearer token, timeout
-  (`CASUALITY_OPENCODE_INGEST_TIMEOUT_MS`, default 5000), and batch size
+  (`CAUSALITY_OPENCODE_INGEST_TIMEOUT_MS`, default 5000), and batch size
   resolve per request; retry backoff is 200ms/400ms.
 - CI frontend job now uses Node.js 24.
 
@@ -136,7 +136,7 @@ All notable changes to this project will be documented in this file.
 ### OpenCode plugin loader compatibility
 
 - The plugin default export is now the V1 server-plugin module
-  (`{ id: "agent-casuality", server: AgentCasualityPlugin }`), supported
+  (`{ id: "agent-causality", server: AgentCausalityPlugin }`), supported
   since OpenCode `1.18.29`. Previously the bare-function default export
   fell through to the legacy loader, where the `telemetryStats` object
   export silently disabled the whole plugin on OpenCode `>= 1.19`
@@ -148,7 +148,7 @@ All notable changes to this project will be documented in this file.
 
 ### Real OpenCode benchmark (fresh rerun, 2026-10-11)
 
-- `uv run casuality-benchmark opencode --model
+- `uv run causality-benchmark opencode --model
   openrouter/deepseek/deepseek-v4-flash`: 5 runs / 5 tasks on OpenCode
   `1.19.0`, all completed, 0 deviations; artifacts committed under
   `benchmark/results/opencode/`.
@@ -170,14 +170,14 @@ All notable changes to this project will be documented in this file.
   `shared_state_contamination` trace (240 events, 6 causal edges,
   `docs/screenshots/explorer-shared-state-fresh.png`); the reproducible
   capture → serve → view flow is documented in `docs/opencode.md`.
-- Scope note: `@psionic-labs/opencode-agent-casuality@0.1.1` is the
+- Scope note: `@psionic-labs/opencode-agent-causality@0.1.1` is the
   telemetry-capture plugin only (hooks, buffering, fail-open delivery) —
   installing it does not install the visual interface, which ships with
-  the `agent-casuality` Python distribution.
+  the `agent-causality` Python distribution.
 
 ## [0.1.0] - 2026-10-06
 
-First public release. Published to PyPI as `agent-casuality==0.1.0`.
+First public release. Published to PyPI as `agent-causality==0.1.0`.
 
 ### Causal graph / capture
 
@@ -214,7 +214,7 @@ First public release. Published to PyPI as `agent-casuality==0.1.0`.
 ### Benchmark suite
 
 - Offline, provider-neutral suite calling the same capture/graph/replay
-  APIs as the application (`uv run casuality-benchmark ...`):
+  APIs as the application (`uv run causality-benchmark ...`):
   - five deterministic scenarios (`single_cause`, `multiple_parents`,
     `interaction`, `distractor`, `memory_contamination`): 5/5 pass;
   - Experiment 2 (shared-state dependency recovery): 100/100;
@@ -222,7 +222,7 @@ First public release. Published to PyPI as `agent-casuality==0.1.0`.
     successes, raw-deletion failure rate 0.7 (target > 0.35 met);
   - failure-injection controls: 3/3 pass.
 - Experiment 1 (offline): deterministic 2x2 counterfactual evaluation passes
-  (12 true positives / 12 true negatives for both Agent-Casuality Shapley and
+  (12 true positives / 12 true negatives for both Agent-Causality Shapley and
   the naive 2x2 contrast).
 - Experiment 1 (external, Fastino): explicitly provider-blocked and deferred.
   The current Fastino catalog exposes no structured-output capability and
@@ -232,7 +232,7 @@ First public release. Published to PyPI as `agent-casuality==0.1.0`.
 
 ### `agent-replay` baseline
 
-- `uv run casuality-benchmark baseline` runs real `ingest` / `list` / `diff`
+- `uv run causality-benchmark baseline` runs real `ingest` / `list` / `diff`
   with `clay-good/agent-replay 0.2.0` (commit
   `ccda6229a9451692fb6f1d6d323dd825c2be9dbb`) against all five scenarios.
 - Scored as divergence localization only; multi-parent causality,
@@ -241,17 +241,17 @@ First public release. Published to PyPI as `agent-casuality==0.1.0`.
 
 ### OpenCode adapter
 
-- Fail-open OpenCode V1 plugin at `.opencode/plugins/agent-casuality.ts`
+- Fail-open OpenCode V1 plugin at `.opencode/plugins/agent-causality.ts`
   (global `event` hook plus `tool.execute.before/after`, `permission.ask`,
   `command.execute.before`, `chat.message`, `chat.params`; 256-envelope
   buffer, 3 retries, telemetry never interrupts OpenCode).
-- Local ingest receiver `casuality-opencode-ingest`
+- Local ingest receiver `causality-opencode-ingest`
   (`POST /v1/opencode/events`, optional bearer token, privacy redaction
   before SQLite storage).
 
 ### Real OpenCode benchmark
 
-- `uv run casuality-benchmark opencode` runs real OpenCode coding-agent
+- `uv run causality-benchmark opencode` runs real OpenCode coding-agent
   sessions (`1.18.34`) with the plugin enabled, then scores minimum expected
   event-class coverage and diagnosis quality.
 - Committed result: capture micro-average `0.928`, macro-average `0.967`
@@ -264,9 +264,9 @@ First public release. Published to PyPI as `agent-casuality==0.1.0`.
 
 ### Availability
 
-- Python: install with `uv add agent-casuality` or `uv pip install agent-casuality`
-  (`agent-casuality==0.1.0` on PyPI).
-- OpenCode plugin: `opencode plugin add @psionic-labs/opencode-agent-casuality`
-  (`@psionic-labs/opencode-agent-casuality==0.1.0` on npm).
+- Python: install with `uv add agent-causality` or `uv pip install agent-causality`
+  (`agent-causality==0.1.0` on PyPI).
+- OpenCode plugin: `opencode plugin add @psionic-labs/opencode-agent-causality`
+  (`@psionic-labs/opencode-agent-causality==0.1.0` on npm).
 - Ground-truth JSONs ship inside the distribution (`benchmark/ground_truth`,
   `benchmark/opencode/ground_truth`).

@@ -1,5 +1,5 @@
 [project]
-name = "agent-casuality"
+name = "agent-causality"
 version = "0.2.0"
 description = "Causal capture SDK for branching multi-agent systems"
 readme = "README.md"
@@ -8,8 +8,8 @@ requires-python = ">=3.11"
 dependencies = []
 
 [project.urls]
-Homepage = "https://github.com/Psionic-labs/Agent-Casuality"
-Repository = "https://github.com/Psionic-labs/Agent-Casuality"
+Homepage = "https://github.com/Psionic-labs/Agent-Causality"
+Repository = "https://github.com/Psionic-labs/Agent-Causality"
 
 [project.optional-dependencies]
 postgres = ["psycopg[binary]>=3.2.0"]
@@ -22,7 +22,7 @@ requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools.packages.find]
-include = ["adapters*", "benchmark*", "casuality*", "cli*", "core*", "explorer*", "sdk*", "storage*", "examples*"]
+include = ["adapters*", "benchmark*", "causality*", "cli*", "core*", "explorer*", "sdk*", "storage*", "examples*"]
 
 [tool.setuptools.package-data]
 benchmark = ["ground_truth/*.json"]
@@ -30,11 +30,11 @@ benchmark = ["ground_truth/*.json"]
 explorer = ["demo/*.json", "static/*", "static/**/*"]
 
 [project.scripts]
-casuality = "cli.main:main"
-agent-casuality = "cli.main:main"
-casuality-benchmark = "benchmark.runner:main"
-casuality-opencode-ingest = "adapters.opencode.server:main"
-casuality-explorer = "explorer.server:main"
+causality = "cli.main:main"
+agent-causality = "cli.main:main"
+causality-benchmark = "benchmark.runner:main"
+causality-opencode-ingest = "adapters.opencode.server:main"
+causality-explorer = "explorer.server:main"
 
 [dependency-groups]
 dev = [

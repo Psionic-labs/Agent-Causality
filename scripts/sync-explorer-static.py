@@ -1,7 +1,7 @@
 """Sync the built Next.js static export into the Python package.
 
 Source: ``frontend/out/`` (produced by ``npm run build`` in ``frontend/``).
-Destination: ``explorer/static/`` (shipped inside the ``agent-casuality`` wheel).
+Destination: ``explorer/static/`` (shipped inside the ``agent-causality`` wheel).
 
 The vendored copy is committed so ``uv build`` works without Node, and so
 PyPI installs render the Visual DAG without cloning the repository.
