@@ -266,6 +266,3 @@ npm-debug.log*
 # IS the distributable asset and must stay committed — never ignore it.
 !explorer/static/
 
-# Local agent hook config and design-review artifacts
-.github/hooks/
-.taste-skill/
