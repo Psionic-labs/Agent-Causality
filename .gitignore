@@ -12,9 +12,16 @@ NEXT.md
 node_modules/
 test_pics/
 paper.tex
+.causality/
 
 # Installed OpenCode plugin (canonical source: packages/opencode-agent-causality/src/index.ts)
 .opencode/
+
+# Local agent hooks
+.github/hooks/
+
+# Local design-review artifacts (design-taste-frontend skill)
+.taste-skill/
 
 # Distribution / packaging
 .Python
@@ -258,3 +265,7 @@ npm-debug.log*
 # but its synced copy under explorer/static/ (via scripts/sync-explorer-static.py)
 # IS the distributable asset and must stay committed — never ignore it.
 !explorer/static/
+
+# Local agent hook config and design-review artifacts
+.github/hooks/
+.taste-skill/
