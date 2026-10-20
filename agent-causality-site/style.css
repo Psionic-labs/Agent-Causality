@@ -436,8 +436,8 @@ h3 {
 
 .hero-meta {
   display: flex;
-  align-items: center;
-  flex-wrap: wrap;
+  align-items: flex-start;
+  flex-wrap: nowrap;
   gap: 9px;
   margin: 24px 0 0;
   color: var(--faint);
@@ -445,6 +445,12 @@ h3 {
   font-size: 9px;
   letter-spacing: 0.09em;
   text-transform: uppercase;
+  text-wrap: balance;
+}
+
+.hero-meta .led {
+  flex: none;
+  margin-top: 0.56em;
 }
 
 .meta-sep {
@@ -3839,13 +3845,7 @@ h3 {
 
 @media (max-width: 640px) {
   .hero-meta {
-    display: block;
-  }
-
-  .hero-meta .led {
-    display: inline-block;
-    margin-right: 8px;
-    vertical-align: middle;
+    gap: 8px;
   }
 }
 /* ------------------------------------------------------------------
