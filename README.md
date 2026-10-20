@@ -4,6 +4,7 @@
 [![npm version](https://img.shields.io/npm/v/@psionic-labs/opencode-agent-causality)](https://www.npmjs.com/package/@psionic-labs/opencode-agent-causality)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue)](https://www.python.org/)
 [![License: AGPL-3.0](https://img.shields.io/badge/license-AGPL--3.0-green)](https://github.com/Psionic-labs/Agent-Causality/blob/main/LICENSE)
+[![Website](https://img.shields.io/badge/website-live-orange)](https://psionic-labs.github.io/Agent-Causality/)
 [![OpenCode 1.19+](https://img.shields.io/badge/opencode-1.19%2B-purple)](https://opencode.ai)
 
 *Causal debugging for branching multi-agent systems — plus capture adapters for OpenCode and LangGraph.*
@@ -24,6 +25,7 @@ explains failures with grounded evidence instead of guesses.
 >
 > Source: <https://github.com/Psionic-labs/Agent-Causality>
 
+[Website](https://psionic-labs.github.io/Agent-Causality/) ·
 [Demo video](#demo-video) ·
 [Install](#install--you-need-both-packages) ·
 [30-second demo](#try-it-in-30-seconds-no-server-key-or-network) ·
@@ -40,6 +42,8 @@ explains failures with grounded evidence instead of guesses.
 [![Agent-Causality demo — watch on YouTube](https://img.youtube.com/vi/bogmzYe9Hzs/maxresdefault.jpg)](https://www.youtube.com/watch?v=bogmzYe9Hzs)
 
 *Full walkthrough, click the thumbnail to watch on YouTube.*
+
+*The reel also plays in-page on the [website](https://psionic-labs.github.io/Agent-Causality/#demo), alongside the interactive walkthrough.*
 
 *The Video follows the Single-run capture given below*
 
