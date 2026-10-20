@@ -13,6 +13,7 @@ node_modules/
 test_pics/
 paper.tex
 .causality/
+agent-causality-site/DESIGN.md
 
 # Installed OpenCode plugin (canonical source: packages/opencode-agent-causality/src/index.ts)
 .opencode/
