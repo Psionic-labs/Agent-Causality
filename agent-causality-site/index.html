@@ -59,7 +59,7 @@
               <a class="btn btn-primary" href="https://github.com/Psionic-labs/Agent-Causality" target="_blank" rel="noopener">View on GitHub <span aria-hidden="true">↗</span></a>
               <a class="btn btn-ghost" href="#demo">Watch the walkthrough <span aria-hidden="true">↓</span></a>
             </div>
-            <p class="hero-meta"><span class="led" aria-hidden="true"></span> Open source · AGPL-3.0 · OpenCode and LangGraph adapters</p>
+            <p class="hero-meta"><span class="led" aria-hidden="true"></span> Open source · AGPL-3.0 · OpenCode, LangGraph adapters & more coming soon</p>
           </div>
         </div>
 
@@ -123,7 +123,7 @@
       <div class="wrap">
         <div class="section-head">
           <h2 id="demo-title">Watch the walkthrough.</h2>
-          <p class="section-lede">One instrumented run, from capture to causal diagnosis. Nothing is requested from YouTube until you press play.</p>
+          <p class="section-lede">One instrumented run, from capture to causal diagnosis. The reel is bundled with this page: no redirect, no player embed, no third-party request.</p>
         </div>
 
         <figure class="video-figure">
@@ -131,7 +131,10 @@
             <div class="bezel">
               <div class="screen screen--video">
                 <div class="video-slot" id="video-slot">
-                  <button class="video-facade" id="video-facade" type="button" aria-label="Play the Agent-Causality product walkthrough, 2 minutes 56 seconds. The video loads from YouTube after you press play.">
+                  <video class="video-player" id="video-player" playsinline controls preload="none" width="1280" height="720" poster="media/walkthrough-poster.jpg" aria-label="Agent-Causality product walkthrough, 2 minutes 56 seconds">
+                    <source src="media/walkthrough.mp4" type="video/mp4">
+                  </video>
+                  <button class="video-facade" id="video-facade" type="button" aria-label="Play the Agent-Causality product walkthrough, 2 minutes 56 seconds. It plays inside this page.">
                     <span class="facade-art" aria-hidden="true">
                       <img class="facade-poster" src="media/explorer-poster.png" alt="" width="1280" height="720" loading="lazy" decoding="async">
                     </span>
@@ -158,7 +161,7 @@
           <figcaption class="video-caption">
             <span class="caption-main">Watch the walkthrough <span class="caption-len">2:56</span></span>
             <span class="caption-sub">A single instrumented OpenCode run: capture, graph, trace, attribution.</span>
-            <span class="video-fallback">Player not loading? <a href="https://www.youtube.com/watch?v=bogmzYe9Hzs" target="_blank" rel="noopener">Watch on YouTube</a>.</span>
+            <span class="video-fallback">Video not playing? <a href="https://www.youtube.com/watch?v=bogmzYe9Hzs" target="_blank" rel="noopener">Watch on YouTube</a>.</span>
           </figcaption>
         </figure>
       </div>
@@ -527,7 +530,7 @@
       </nav>
     </div>
     <div class="wrap footer-legal">
-      <p>Built by Psionic Labs · © 2026 · Agent-Causality is open source under AGPL-3.0.</p>
+      <p>Built by Psionics · © 2026 · Agent-Causality is open source under AGPL-3.0.</p>
       <p class="footer-credit">Visual style inspired by the timeline monitors in the Loki series. Not affiliated with or endorsed by Marvel, Disney, or the creators of the show.</p>
     </div>
   </footer>

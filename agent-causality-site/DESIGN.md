@@ -183,6 +183,12 @@ Type scale (fluid where useful):
   provenance, replays, adapters) — no invented metrics or instrument names.
 - Semantic landmarks, one H1, ordered headings, skip link, descriptive labels, alt/role text
   for figures, and keyboard-operable demo nodes and timeline controls.
-- External requests: one Google Fonts stylesheet, and the YouTube iframe only after the user
-  presses play. The facade and OG image are local original artwork.
+- External requests: one Google Fonts stylesheet. The walkthrough reel
+  (`media/walkthrough.mp4`, 1280×720 H.264/AAC, 2:56, 15 MB) and its poster are bundled with
+  the page, so playback never leaves the site and never depends on a third-party player.
+- Pressing the facade reveals the native `<video>` inside the monitor, starts playback, and
+  switches the bezel plate and LED to `IN-PAGE` / `PLAYING` (`ENDED` when finished). The
+  facade is hidden from assistive tech once the player takes over; native controls keep
+  seeking, volume, captions and fullscreen keyboard-accessible. The caption keeps a plain
+  "Watch on YouTube" link as the only outbound video path.
 - No show names, terminology, or branding anywhere except the exact footer credit line.

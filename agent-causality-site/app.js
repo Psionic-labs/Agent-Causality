@@ -523,29 +523,44 @@
   }
 
   function setupVideo() {
+    var slot = document.getElementById("video-slot");
     var facade = document.getElementById("video-facade");
-    if (!facade) return;
+    var player = document.getElementById("video-player");
+    if (!slot || !facade || !player) return;
 
     facade.addEventListener("click", function () {
-      if (window.location.protocol === "file:") {
-        var link = document.createElement("a");
-        link.href = "https://www.youtube.com/watch?v=bogmzYe9Hzs";
-        link.target = "_blank";
-        link.rel = "noopener";
-        link.click();
-        return;
+      slot.classList.add("is-playing");
+      facade.setAttribute("aria-hidden", "true");
+      facade.tabIndex = -1;
+
+      var led = slot.closest(".monitor") &&
+        slot.closest(".monitor").querySelector(".bezel-foot .bezel-led");
+      if (led) {
+        led.classList.add("is-live");
+        led.innerHTML = "<i aria-hidden=\"true\"></i> PLAYING";
       }
-      var iframe = document.createElement("iframe");
-      iframe.src = "https://www.youtube-nocookie.com/embed/bogmzYe9Hzs?autoplay=1&rel=0";
-      iframe.title = "Agent-Causality product walkthrough";
-      iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
-      iframe.allowFullscreen = true;
-      iframe.referrerPolicy = "strict-origin-when-cross-origin";
-      iframe.tabIndex = 0;
-      facade.replaceWith(iframe);
+      var plate = slot.closest(".monitor") &&
+        slot.closest(".monitor").querySelector(".bezel-foot .bezel-plate");
+      if (plate) plate.textContent = "DEMO REEL / IN-PAGE";
+
+      var attempt = player.play();
+      if (attempt && typeof attempt.catch === "function") {
+        attempt.catch(function () {
+          player.controls = true;
+        });
+      }
       window.requestAnimationFrame(function () {
-        iframe.focus({ preventScroll: true });
+        player.focus({ preventScroll: true });
       });
+    });
+
+    player.addEventListener("play", function () {
+      slot.classList.add("is-playing");
+    });
+    player.addEventListener("ended", function () {
+      var led = slot.closest(".monitor") &&
+        slot.closest(".monitor").querySelector(".bezel-foot .bezel-led");
+      if (led) led.innerHTML = "<i aria-hidden=\"true\"></i> ENDED";
     });
   }
 
