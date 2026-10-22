@@ -70,9 +70,9 @@ Agent execution → event capture → causal graph → slice / provenance / inte
 
 ## Install — you need BOTH packages
 
-Published as `agent-causality==0.1.4`
+Published as `agent-causality==0.2.1`
 ([PyPI](https://pypi.org/project/agent-causality/)) and
-`@psionic-labs/opencode-agent-causality==0.1.4`
+`@psionic-labs/opencode-agent-causality==0.1.6`
 ([npm](https://www.npmjs.com/package/@psionic-labs/opencode-agent-causality)).
 Requires Python 3.11+ and [`uv`](https://docs.astral.sh/uv/)
 for source checkouts; PyPI/npm consumers only need `pip`/`opencode`.
@@ -197,17 +197,26 @@ Then open <http://127.0.0.1:8766> (or `:8797` for the single-run variant).
 The bundled demo trace loads: a failing test, the fix edit, and the passing
 retry, with the failure path highlighted.
 
+![Animated tour of the Visual DAG Explorer — graph, timeline, and metrics views](https://github.com/Psionic-labs/Agent-Causality/raw/main/docs/media/explorer-demo.gif)
+
+*Short tour of the bundled demo trace: select the failing `tool_result`,
+switch to the Timeline view, open the Metrics census, then return to the
+graph. Also available as [MP4](https://github.com/Psionic-labs/Agent-Causality/raw/main/docs/media/explorer-demo.mp4).*
+
 ![Visual DAG Explorer — live OpenCode trace with the failure target selected, causal edges, and inspector](https://github.com/Psionic-labs/Agent-Causality/raw/main/docs/screenshots/explorer-shared-state-fresh.png)
 
 *Freshly captured `shared_state_contamination` run (240 events, 6 causal
-edges) — the checker's failure node selected, its causal chain in the
-inspector.*
+edges) — the checker's failing `tool_result` selected. The header reads
+**Fallback target** because the diagnosis target came from the last-event
+fallback; its command and result are in the inspector.*
 
 ![Visual DAG Explorer Timeline view — per-agent lanes in sequence order, the failure target selected, with minimap and event inspector](https://github.com/Psionic-labs/Agent-Causality/raw/main/docs/screenshots/timeline.png)
 
 *Bundled demo trace in the Timeline view — per-agent lanes (run, bash, edit),
 the retry's `tool_result` ("app tests pass") selected as the failure target,
-with the "Why did it fail?" strip and event inspector alongside.*
+with the "Why did it fail?" strip and event inspector alongside. The chrome
+is cosmetic; the top strip reads **Read-only** because the explorer never
+writes to a capture.*
 
 What you get:
 

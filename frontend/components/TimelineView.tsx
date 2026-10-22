@@ -346,6 +346,7 @@ export function TimelineView({ overview, selectedId, lit, parentOf, apiRef }: Pr
     return (
       <div id="timeline">
         <p className="hint">no events</p>
+        <div className="viz-scanlines tl-scanlines" aria-hidden="true" />
       </div>
     );
   }
@@ -460,6 +461,7 @@ export function TimelineView({ overview, selectedId, lit, parentOf, apiRef }: Pr
         Lines show declared causal parents of the selected event only. Position is sequence
         order; influence is not proven.
       </p>
+      <div className="viz-scanlines tl-scanlines" aria-hidden="true" />
     </div>
   );
 }

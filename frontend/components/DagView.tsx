@@ -137,13 +137,14 @@ export function DagView({ overview, selectedId, lit, apiRef }: Props) {
   const { ordered, pos, bounds } = layout;
   return (
     <div className="dag-wrap">
-      <svg
-        id="dag"
-        role="img"
-        aria-label="causal DAG"
-        ref={svgRef}
-        viewBox={`0 0 ${bounds.w} ${bounds.h}`}
-      >
+      <div className="dag-stage">
+        <svg
+          id="dag"
+          role="img"
+          aria-label="causal DAG"
+          ref={svgRef}
+          viewBox={`0 0 ${bounds.w} ${bounds.h}`}
+        >
         <g id="viewport" ref={gRef}>
           {overview.edges.map((e, i) => {
             const a = pos[e.parent];
@@ -179,8 +180,8 @@ export function DagView({ overview, selectedId, lit, apiRef }: Props) {
                 transform={`translate(${p.x} ${p.y})`}
                 onClick={onClick}
               >
-                <circle r={13} />
-                <text x={17} y={4}>
+                <rect x={-9} y={-9} width={18} height={18} rx={1} />
+                <text x={16} y={4}>
                   {n.logical_seq}: {n.event_type}
                 </text>
                 <title>{n.label + (n.role ? ` [role: ${n.role}]` : "")}</title>
@@ -188,7 +189,9 @@ export function DagView({ overview, selectedId, lit, apiRef }: Props) {
             );
           })}
         </g>
-      </svg>
+        </svg>
+        <div className="viz-scanlines" aria-hidden="true" />
+      </div>
       <div className="dag-foot">
         <Legend />
       </div>

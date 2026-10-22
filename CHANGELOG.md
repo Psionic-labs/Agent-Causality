@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.1] - 2026-10-22
+
+### Visual DAG Explorer — CRT monitor skin
+
+- The explorer now wears the marketing site's CRT causal-monitor system: a
+  beige chassis with red control strips, a crimson screen with vignette and
+  glare, HUD-style amber labels, and scanlines confined to the graph/timeline
+  surfaces. The top strip reads **Read-only**, not REC.
+- IBM Plex Mono 400/500/600 ships locally as woff2 (SIL OFL); the explorer
+  makes no external font requests. DAG events render as 18px squares, and the
+  Timeline uses the same warm palette (gold slice, deep-red failure, dashed
+  teal terminal, amber selection).
+- README media refreshed: four regenerated stills plus
+  `docs/media/explorer-demo.gif` and `.mp4`, produced by the new
+  zero-dependency `scripts/capture-explorer-media.mjs` (Edge/Chrome CDP +
+  ffmpeg). `docs/opencode.md` documents the capture flow.
+- No backend, endpoint, selection, status-language, or §8 terminology changes;
+  the read-only contract is unchanged.
+- npm `@psionic-labs/opencode-agent-causality` 0.1.6 republishes the
+  README with the new visual tour; plugin runtime code is unchanged.
+
 ## [0.2.0] - 2026-10-18
 
 ### Capture adapters package + LangGraph integration

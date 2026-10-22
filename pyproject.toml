@@ -1,6 +1,6 @@
 [project]
 name = "agent-causality"
-version = "0.2.0"
+version = "0.2.1"
 description = "Causal capture SDK for branching multi-agent systems"
 readme = "README.md"
 license = "AGPL-3.0-or-later"

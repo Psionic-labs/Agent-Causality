@@ -88,8 +88,20 @@ uv run python -m explorer.server --db benchmark/results/opencode/runs/<run-id>/t
 #    analysis tabs load from the trace's recorded causal edges.
 ```
 
-The screenshot in [README](../README.md) (`docs/screenshots/explorer-shared-state-fresh.png`)
-was produced exactly this way from a `shared_state_contamination` run.
+The screenshots and animated tour in [README](../README.md)
+(`docs/screenshots/explorer-shared-state-fresh.png`,
+`docs/media/explorer-demo.gif`) were produced this way from a
+`shared_state_contamination` run, the bundled demo trace, and the live
+multi-session `.causality/opencode.db` capture (fallback state). With the
+explorer running, regenerate them with:
+
+```bash
+node scripts/capture-explorer-media.mjs --base http://127.0.0.1:8766 --scenario all
+```
+
+The script needs an installed Edge/Chrome and ffmpeg on `PATH`; it has no npm
+dependencies. Use `--scenario fallback --session ses_ee839702` against
+`.causality/opencode.db` for the live fallback still.
 
 ## What the benchmark numbers mean
 

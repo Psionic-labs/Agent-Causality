@@ -339,17 +339,18 @@ Expected result: HTTP `200` with `{status: "ok", model, generated_at, sections: 
 
 1. Header pill reads "Resolved" (demo) or "Fallback target" (live, amber) with an explanatory title — never "failure resolved".
 2. "Why did it fail?" shows the one-sentence lede plus clickable role chips (demo) or the slice-size note (live, no ground-truth roles).
-3. Graph|Timeline toggle: DAG shows depth-lane nodes with gold ancestor highlight on selection; Timeline shows run/model/context/tool lanes, ruler scrub, playhead, and minimap with viewport rectangle.
+3. Graph|Timeline toggle: DAG shows depth-lane square markers with a gold ancestor highlight on selection; Timeline shows run/model/context/tool lanes, ruler scrub, amber playhead, and minimap with viewport rectangle.
 4. Filter bar: Key-events preset hides `context_update`/`model_call` streaming noise; the failure node stays pinned visible even when its type is hidden; session picker defaults to latest activity; counter reads "showing X of Y events".
 5. Clicking any node/clip updates the inspector (Command + Result heroes for tool events, full field list, copy buttons) — Graph clicks must select, never misfire after a drag (6px drag-vs-click threshold).
 6. Tabs: Causal chain lists slice events; Provenance shows per-resource chains (grounded grades when recorded, "Discovered in this trace" chains otherwise); Interaction shows recorded fan-out/fan-in or an honest linear-chain note; Evidence leads with the tool story; Metrics leads with the capture census — benchmark scoring stays collapsed under "Benchmark scoring"/"Technical metric details".
 7. "Generate AI analysis" renders a dashed "Model interpretation — not evidence" block with model name and timestamp; nothing AI-related fetches on page load.
+8. The explorer renders inside the beige CRT chassis; the top strip reads **Read-only** (not REC), the foot reads **Online**, and scanlines appear only over the graph/timeline surfaces — never over prose or controls.
 
-Reference states (live 1625-event capture, `ses_ee839702` session, Key events):
+Reference states (live 2,528-event `opencode.db` capture, `ses_ee839702` session showing 216 events, Key events):
 
-![Timeline view with Metrics census](docs/screenshots/explorer-timeline-metrics.png)
+![Timeline view with the Metrics census tab open](docs/screenshots/explorer-timeline-metrics.png)
 
-![Graph view with fallback target](docs/screenshots/explorer-graph-fallback.png)
+![Graph view with a live fallback target and the Key events filter](docs/screenshots/explorer-graph-fallback.png)
 
 
 

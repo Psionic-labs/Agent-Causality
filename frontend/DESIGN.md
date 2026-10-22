@@ -66,13 +66,14 @@ Tab bar + panels: Causal chain · Provenance · Interaction · Evidence · Metri
 minimal scrolling. The two-column grid gives the DAG most of the visual
 space (it is the main focus) while keeping the inspector one click away.
 Research detail lives behind tabs/collapsibles, never in the first viewport.
-Both columns share one height budget (46vh, min 300px): the inspector
-scrolls internally rather than stretching the grid row, so the tab bar
-always sits directly under the views instead of dropping into dead space
-below a long inspector dump. Graph and Timeline are tab alternatives in
-the same card, so both view slots render at exactly that budget and the
-card never changes size when switching tabs: shallow DAGs letterbox via
-the SVG meet fit, overflowing timelines scroll internally.
+Both columns share one height budget (`clamp(280px, 34vh, 430px)`): the
+inspector scrolls internally (its max-height adds the 146px head/foot
+allowance) rather than stretching the grid row, so the tab bar always sits
+directly under the views instead of dropping into dead space below a long
+inspector dump. Graph and Timeline are tab alternatives in the same card,
+so both view slots render at exactly that budget and the card never changes
+size when switching tabs: shallow DAGs letterbox via the SVG meet fit,
+overflowing timelines scroll internally.
 
 ## 4. Diagnosis section
 
@@ -108,9 +109,12 @@ evidence's authority.
   timeline, and inspector — no divergent selection states. React subscribes
   through `useSyncExternalStore` (with a null server snapshot for the
   prerendered shell), so the store stays framework-free and unit-testable.
+- Nodes render as 18×18 square markers (`rect`, 1px radius) with labels to
+  the right, mirroring the monitor's captured-event squares.
 - Highlight: failure node red, slice ancestors gold, terminal (`run_finish`)
-  dashed green ring, unrelated nodes dimmed; selected node's ancestor set
-  is computed by walking real edges only.
+  dashed teal, selected node a 2px amber outline; unrelated nodes dim to 55%
+  at most. The selected node's ancestor set is computed by walking real edges
+  only.
 - Viewport: fit-all on load (bounds padded for labels), Reset restores fit,
   drag-to-pan, cursor-anchored scroll zoom (0.2–10x). A 6px movement
   threshold separates drags from clicks so panning never selects nodes.
@@ -146,8 +150,9 @@ payload 90% of the time, so they get hero treatment. Explicit sourcing and
 
 ## 7. Status language
 
-- Pill reads **"Resolved"** (green, selector matched) or **"Fallback
-  target"** (amber, last-event fallback) — never "failure resolved".
+- Status readout reads **"Resolved"** (green dot, selector matched) or
+  **"Fallback target"** (amber dot, last-event fallback) — never "failure
+  resolved".
 - Info lines use "Failure status: …". Capability flags (`not_measurable`,
   `unsupported`) render as neutral grey pills, never error-styled.
 
@@ -236,10 +241,17 @@ instead of hiding them. Real branching exists only in the live
   TypeScript, run directly by Node's type stripping.
 - `npx tsc --noEmit` (strict) and `npm run build` (static export) must pass.
 - `uv run ruff check .`, `uv run ty check .`, `uv run pytest -q`
-  (198 passed, 7 postgres/env skips).
-- Live-server smoke: static 200s (including `/_next/*` assets with correct
-  MIME), demo slice/diagnosis/provenance values, live 1625-event overview.
+  (218 passed, 7 postgres/env skips).
+- Live-server smoke: static 200s (including `/_next/*` assets and local
+  woff2 fonts with correct MIME), demo slice/diagnosis/provenance values,
+  live 2,528-event overview.
 - Manual acceptance procedure with reference screenshots: TEST.md §29.
+- Documentation media: with the explorer running, run
+  `node scripts/capture-explorer-media.mjs --base http://127.0.0.1:8766 --scenario all`.
+  It drives installed Edge/Chrome over CDP (no npm dependencies) and uses
+  ffmpeg to write the four stills plus `docs/media/explorer-demo.mp4` and
+  `.gif`. Use `--scenario fallback --session ses_ee839702` against
+  `.causality/opencode.db` for the live fallback still.
 
 ## 13. Ideas for a future redesign (not yet built)
 
@@ -251,7 +263,7 @@ their § reference so nobody rebuilds them):
 - **Branching demo**: bundle a recorded trace with real fan-out/merge so
   the DAG demonstrates `Branch A ─┐ ├──→ merge → failure` instead of a
   line. (Requires capturing such a trace; never synthesize one.)
-- **SVG virtualization / canvas renderer**: the 1625-node live DAG still
+- **SVG virtualization / canvas renderer**: the multi-thousand-node live DAG still
   mounts every node (only the timeline clips are culled); cap, window, or
   switch renderers.
 - **Chain-tab pagination**: beyond the 80-row cap, page instead of
@@ -293,10 +305,11 @@ lanes; both views share the selection, inspector, and highlight classes.
 - **Clips:** one `<button>` per event, positioned by sequence index — never
   wall-clock time (demo timestamps are synthetic). Below a width threshold
   only the sequence number shows. States reuse the DAG vocabulary: failure
-  target red, slice ancestors gold, normal blue-grey, `run_finish` dashed
-  green outline, selected white outline, unrelated dimmed.
+  target deep red with pale text, slice ancestors gold, normal warm bronze,
+  `run_finish` dashed teal outline, selected 2px amber outline, unrelated
+  dimmed to 55%.
 - **Ruler + playhead:** sequence numbers across the top (selected
-  highlighted); dragging the ruler scrubs the shared selection. A blue
+  highlighted); dragging the ruler scrubs the shared selection. An amber
   vertical line and knob mark the selected event.
 - **Edges:** a single SVG overlay path (`vector-effect:
   non-scaling-stroke`) drawn only for the selected event's ancestor chain,
@@ -310,42 +323,73 @@ lanes; both views share the selection, inspector, and highlight classes.
   ends), Enter activates the focused clip natively, an ARIA live region
   announces each selection.
 - **Large traces:** only clips intersecting the visible window mount (plus
-  one clip of margin); the 1625-event live trace renders a ~15-clip slice.
+  one clip of margin); the multi-session live trace renders a ~15-clip slice.
 
-### 14.1 Visual tokens (whole UI, not just Timeline)
+### 14.1 Visual system: CRT monitor
 
-One flat dev-tool palette, applied to Graph, inspector, tabs, and Timeline
-alike. No shadows, no glows, no pill shapes; 2px radius on controls and
-clips; 1px `#111`/`#333` borders; base font is the system UI stack at 12px,
-monospace reserved for commands, results, IDs/lane names, and raw blocks.
+The explorer wears the same causal-monitor skin as the marketing site: a
+beige physical chassis around a warm, dark CRT screen. The chassis is
+decorative; the screen is the working surface. This is a presentation-layer
+change only — endpoints, selection state, and terminology are untouched.
+
+**Chassis.** `.monitor` fills `100dvh`; `.bezel` is a beige gradient with
+asymmetric radii and a soft drop shadow. The 28px top strip carries a red
+`CGM-7` chip, `Causal desk`, and a green-dot **Read-only** readout; the 34px
+foot carries `CGM`, `File Edit View Mode Help`, vents, and `Online`. Both
+strips are `aria-hidden` — the real `<h1>DAG Explorer</h1>` lives in the
+screen header. The app scrolls inside `.screen-scroll`, so the chassis stays
+fixed. The top strip intentionally says **Read-only**, never REC: the
+explorer cannot write or record.
+
+**Screen.** Crimson-to-black radial well with a teal inset hairline, a
+vignette/glare overlay, and no refresh sweep. `.viz-scanlines` (3px
+repeating black lines at 0.5 opacity) sit only over the DAG stage and
+timeline and are `pointer-events: none`; prose, inspector, tabs, forms, and
+the chassis never get scanlines. Reduced-motion disables the blink and any
+transition.
+
+**Typography.** IBM Plex Mono 400/500/600 is bundled locally as woff2
+(`frontend/public/fonts`, OFL) and loaded with `font-display: swap`; the
+explorer makes zero font requests to Google. Mono is used for HUD labels,
+headings, event data, commands, results, IDs, and lane names; prose uses the
+system sans stack. Primary controls and prose are 12–13px. Short uppercase
+chrome labels may be 9–10.5px with tracking; that size is never used for
+sentences or data the user must read at length.
 
 | Token            | Value                                              |
 |------------------|----------------------------------------------------|
-| Ground           | `#1e1e1e`                                          |
-| Panels           | `#252525`                                          |
-| Track header     | `#2a2a2a`                                          |
-| Track body / alt | `#232323` / `#272727` (1px `#1c1c1c` dividers)     |
-| Text / muted     | `#d4d4d4` / `#8a8a8a`                              |
-| Accent           | `#9cc4ec` (links, playhead, focus rings)           |
-| Slice clip       | fill `#6f5f2a`, border `#8f7c36`, text `#f3ead0`   |
-| Failure clip     | fill `#a8403b`, white text                         |
-| Normal clip      | fill `#36424f`, text `#a9b6c6`                     |
-| Terminal         | transparent, 1px dashed `#6aa97e`                  |
-| Selected         | 2px solid `#fff`                                   |
-| Timeline edges   | `#d9bf5c`, 1.25px, `non-scaling-stroke`            |
-| Command / Result | plain `#1a1a1a` blocks, no accent borders           |
-| Status           | text with a dot (`● Resolved`), not a pill          |
+| Room / screen    | `#070402` / `#0e0905` (deep `#090503`)             |
+| Panels           | `#171009` / `#1f160d` / `#2a1c11`                  |
+| Text / muted     | `#f3e8d4` / `#d6c7b0` / `#b6a589` / `#97866e`      |
+| Amber / bright   | `#f0a63c` / `#ffcb78`                              |
+| Gold / node      | `#d9a847` / `#ffd35f`                              |
+| Failure          | `#ef4130` / `#ff6b52` / fill `#7e1f15`             |
+| Terminal         | `#7fc4b3` (dashed, transparent fill)               |
+| Hairlines        | `rgba(230,183,106,.16)` / `.34`                    |
+| Bezel            | `#ddcba5` / `#b39b6f` / `#786342`                  |
 
-Chrome rules: the header is a plain bar; "Why did it fail?" is a paragraph
-with `Causal path:` as inline underlined accent links (sentence case, no
-letter-spaced labels); Graph | Timeline and the page tabs are flat text
-with a 2px accent underline on the active one; DAG and inspector are flat
-regions split by a 1px divider; the inspector is a label/value list with
-1px dividers and plain-text tags; the minimap uses square segments with
-1px gaps and a 1px accent viewport outline; the playhead is a 1px accent
-line with a small triangle knob; buttons and clips keep 2px accent focus
-rings. Clip text always meets 4.5:1 on its fill — dimming is opacity 0.5
-at most, never a lower-contrast repaint.
+| Mark             | Treatment                                          |
+|------------------|----------------------------------------------------|
+| Normal event     | warm bronze `#2b1d10`, text `#e6d6bd`              |
+| In failure slice | `#6b5220`, border `#b98c32`, text `#ffe9bd`        |
+| Failure target   | `#7e1f15`, border `#d34a38`, text `#ffe3da`        |
+| Terminal         | transparent, 1px dashed `#7fc4b3`                  |
+| Selected         | 2px `#ffcb78` outline on DAG, Timeline, minimap    |
+| Default edge     | `rgba(245,238,218,.28)`, 1.25px                    |
+| Lit edge         | `#d9a847`, 1.6px, soft gold glow                   |
+| Dimmed           | opacity 0.55 at most, never a low-contrast repaint |
+
+Chrome rules: the header is a sticky dark bar; the dataset line is mono and
+the event count is large amber; status is a dot plus uppercase mono text,
+not a rounded pill. "Why did it fail?" is a diagnosis band with uppercase
+amber headings, dotted labels, and underlined causal-path buttons. Graph |
+Timeline and the page tabs read as monitor keys with an amber underline on
+the active one. Panels are flat inside the screen, separated by 1px amber
+hairlines with a 2px radius — no nested rounded cards. Command/Result blocks
+get amber/gold left rules. The minimap uses square segments with 1px gaps and
+an amber viewport outline; the playhead is a 1px amber line with a small
+triangle knob. Focus rings are 2px `--amber-bright`; coarse-pointer targets
+are at least 44px. Clip text always meets 4.5:1 on its fill.
 
 Timeline geometry fixes this pass also made: the edge SVG renders
 **below** the clip layer with straight parent-right-edge → child-left-edge
@@ -386,9 +430,10 @@ Pure logic lives in `lib/filter.ts` (`filterOverview`, `countByType`,
 
 ### 14.3 Session scope + zoom that copes with any size
 
-The overview endpoint returns *every* captured session at once (1625 events
-after the live `sort_items` run), so "All events" meant all sessions mashed
-into one unnavigable view. Two changes, both frontend-only:
+The overview endpoint returns *every* captured session at once (2,528 events
+across all sessions in the current `.causality/opencode.db`), so "All events"
+meant all sessions mashed into one unnavigable view. Two changes, both
+frontend-only:
 - **Session picker:** a `Session` select in the filter bar, defaulting to
   the latest activity and listing each session as `short id (count)` with
   an opt-in `All sessions (N)`. Pure logic in `lib/filter.ts`
@@ -397,7 +442,7 @@ into one unnavigable view. Two changes, both frontend-only:
   type filter then applies *within* the session, and the counter reads
   `showing X of Y events`.
 - **Zoom limits that scale:** the DAG's historic 0.2–10x clamp made labels
-  unreachable once content exceeded ~10 screenfuls (1625 nodes squeeze
+  unreachable once content exceeded ~10 screenfuls (thousands of nodes squeeze
   ~179,000 content units into ~1000px). The ceiling is now content-aware
   (`fitZoomMax`: at max zoom ~600 units fill the screen, never below 10x —
   small graphs behave exactly as before; k = 1 still always fits because
@@ -414,9 +459,9 @@ row beneath the DAG. Both views render one shared `components/Legend.tsx`
 — the swatch classes (`.sw.*`) live once in `globals.css` next to the
 node/clip rules, so the key and the marks can never drift apart. Same
 colors by construction: normal `clip-fill`, slice `slice-fill`, failure
-`fail-fill`, terminal dashed `terminal` outline, selected 2px `#fff`.
-`tests/api_contract.test.ts` locks it: Legend defines all five swatches,
-both views render `<Legend`, neither keeps an inline copy.
+`fail-fill`, terminal dashed `terminal` outline, selected 2px
+`--amber-bright`. `tests/api_contract.test.ts` locks it: Legend defines all
+five swatches, both views render `<Legend`, neither keeps an inline copy.
 
 ## 15. Stack change log (do not silently regress)
 
@@ -430,3 +475,8 @@ both views render `<Legend`, neither keeps an inline copy.
   plus the additive `/api/ai-diagnosis` route;
   the five evidence endpoints, the causal engine, the benchmark, the adapter, and
   storage are untouched, and the demo dataset is byte-identical.
+- 2026-10-22 — CRT monitor reskin: beige chassis around a crimson screen,
+  bundled IBM Plex Mono (no external font requests), square DAG markers,
+  warm Timeline palette, scanlines confined to visualization surfaces, and a
+  zero-dependency media capture script. Graph/Timeline behavior, status
+  language, §8 vocabulary, and the read-only contract are unchanged.

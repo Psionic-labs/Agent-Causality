@@ -29,13 +29,22 @@ export function Header({ overview }: { overview: GraphOverview }) {
   return (
     <header className="topbar">
       <div className="brand">
+        <span className="brand-kicker" aria-hidden="true">
+          Causal graph monitor
+        </span>
         <h1>DAG Explorer</h1>
         <span id="dataset-line" className="muted">
           {overview.source} · {overview.event_count} events · {overview.edge_count} causal edges
         </span>
       </div>
-      <div id="failure-banner" className={pill.className} title={pill.title}>
-        {pill.text}
+      <div className="header-readout">
+        <div className="readout">
+          <span className="readout-label">Events captured</span>
+          <strong className="readout-value">{overview.event_count}</strong>
+        </div>
+        <div id="failure-banner" className={pill.className} title={pill.title}>
+          {pill.text}
+        </div>
       </div>
     </header>
   );
