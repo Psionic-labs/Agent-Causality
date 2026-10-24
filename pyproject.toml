@@ -41,6 +41,7 @@ dev = [
     "httpx>=0.27.0",
     "langchain-core>=0.3.0",
     "langgraph>=0.4.0",
+    "pre-commit>=4.7.0",
     "psycopg[binary]>=3.2.0",
     "pytest>=8.0.0",
     "ruff>=0.9.0",
@@ -55,7 +56,26 @@ markers = ["integration: requires a reachable PostgreSQL database"]
 [tool.ruff]
 target-version = "py311"
 line-length = 100
-exclude = ["fixture"]
+exclude = [
+    "fixture",
+    ".agents",
+    ".opencode",
+    ".causality",
+    ".next",
+    ".pytest_cache",
+    ".ruff_cache",
+    ".taste-skill",
+    ".uv-cache",
+    ".venv",
+    "agent_causality.egg-info",
+    "brag-output",
+    "dist",
+    "explorer/static",
+    "frontend",
+    "node_modules",
+    "paper",
+    "test_pics",
+]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B"]
@@ -63,3 +83,24 @@ select = ["E", "F", "I", "UP", "B"]
 [tool.ty.environment]
 python-version = "3.11"
 root = ["."]
+
+[tool.ty.src]
+exclude = [
+    ".agents",
+    ".opencode",
+    ".causality",
+    ".next",
+    ".pytest_cache",
+    ".ruff_cache",
+    ".taste-skill",
+    ".uv-cache",
+    ".venv",
+    "agent_causality.egg-info",
+    "brag-output",
+    "dist",
+    "explorer/static",
+    "frontend",
+    "node_modules",
+    "paper",
+    "test_pics",
+]
