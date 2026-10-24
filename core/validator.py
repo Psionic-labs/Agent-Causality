@@ -65,7 +65,7 @@ class GraphValidator:
                 result = set(ancestors_fn(event_id))
                 result.discard(event_id)
                 return result
-            except Exception:
+            except Exception:  # noqa: BLE001
                 pass  # fallback to in-memory traversal
 
         ancestors: set[str] = set()

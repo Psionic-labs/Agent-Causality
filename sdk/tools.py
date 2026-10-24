@@ -142,7 +142,7 @@ def _run_captured_tool(
     # source_event_id does not exist in the backing store (prevents FK violations
     # and dangling in-memory edges on idempotent replays).
     if field_sources is not None and result_stored:
-        if isinstance(field_sources, dict):
+        if isinstance(field_sources, dict):  # noqa: SIM108
             sources = field_sources
         else:
             sources = field_sources(result)

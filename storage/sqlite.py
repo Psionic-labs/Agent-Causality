@@ -96,7 +96,7 @@ class SQLiteEventStore(InMemoryEventLog):
         )
         if existing is not None:
             return existing
-        with self._db_lock:
+        with self._db_lock:  # noqa: SIM117
             with self.connection:
                 self.connection.execute(
                     "INSERT INTO events (id, run_id, agent_id, logical_seq, wall_time, event_type, "
@@ -158,7 +158,7 @@ class SQLiteEventStore(InMemoryEventLog):
         return result
 
     def record_provenance_edge(self, edge: ProvenanceEdge) -> ProvenanceEdge:
-        with self._db_lock:
+        with self._db_lock:  # noqa: SIM117
             with self.connection:
                 self.connection.execute(
                     "INSERT OR IGNORE INTO provenance_edges (id, data) VALUES (?, ?)",

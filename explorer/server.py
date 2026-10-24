@@ -50,7 +50,7 @@ def get_frontend_dir() -> Path:
         # helps for single files, so only accept a real filesystem dir.
         if isinstance(candidate, Path) and (candidate / "index.html").is_file():
             return candidate
-    except Exception:
+    except Exception:  # noqa: BLE001
         pass
     legacy = Path(__file__).resolve().parent.parent / "frontend" / "out"
     return legacy
@@ -162,7 +162,7 @@ def main(argv: list[str] | None = None) -> int:
     dataset = loader.load_sqlite(args.db) if args.db else loader.load_demo()
     server = create_server(dataset, args.host, args.port)
     print(f"serving {dataset.source} at http://{args.host}:{args.port}/")
-    try:
+    try:  # noqa: SIM105
         server.serve_forever()
     except KeyboardInterrupt:
         pass

@@ -217,7 +217,7 @@ class AgentReplayAdapter:
             )
             commands.append(diff_command)
             output: dict[str, object] | None = None
-            try:
+            try:  # noqa: SIM105
                 output = json.loads(diff.stdout)
             except json.JSONDecodeError:
                 pass

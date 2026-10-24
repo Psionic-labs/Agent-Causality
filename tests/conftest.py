@@ -56,7 +56,7 @@ def postgres_connect_or_skip(psycopg: Any, dsn: str) -> Any:
     """
     try:
         return psycopg.connect(dsn, connect_timeout=5)
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001
         pytest.skip(f"PostgreSQL unreachable, skipping integration test: {exc}")
 
 

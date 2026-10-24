@@ -60,7 +60,7 @@ def test_get_frontend_dir_prefers_packaged_static(tmp_path, monkeypatch) -> None
     # CWD independence: the wheel never relies on where the user runs it from.
     monkeypatch.chdir(tmp_path)
     assert get_frontend_dir() == resolved
-    assert FRONTEND_DIR == resolved
+    assert FRONTEND_DIR == resolved  # noqa: SIM300
 
 
 def test_server_serves_packaged_static_and_api() -> None:

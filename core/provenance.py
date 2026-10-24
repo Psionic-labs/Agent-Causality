@@ -208,7 +208,7 @@ def _extract_edges_from_source(
         if callable(edges_source):
             edges_source = edges_source()
         for raw in edges_source:
-            if isinstance(raw, ProvenanceEdge) and raw.field_path == field_path:
+            if isinstance(raw, ProvenanceEdge) and raw.field_path == field_path:  # noqa: SIM114
                 raw_edges.append(raw)
             elif isinstance(raw, dict) and raw.get("field_path") == field_path:
                 raw_edges.append(raw)

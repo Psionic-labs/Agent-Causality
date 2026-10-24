@@ -178,7 +178,7 @@ def load_env_file() -> None:
                     val = val.strip().strip("'\"")
                     if key and key not in os.environ:
                         os.environ[key] = val
-        except Exception:
+        except Exception:  # noqa: BLE001
             pass
 
 
@@ -308,7 +308,7 @@ def build_evidence_package(
                 "reduction_ratio": round(1.0 - (len(min_ids) / max(len(slice_event_ids), 1)), 3),
                 "method": "ddmin",
             }
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001
             minimal_slice_summary = {"error": str(e), "method": "ddmin"}
 
         # 5. Shapley Interaction Analysis
@@ -316,13 +316,13 @@ def build_evidence_package(
             interaction_summary = compute_shapley_interaction(
                 contract, samples_per_cell=samples_per_cell
             )
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001
             interaction_summary = {"error": str(e)}
 
     # 6. Provenance Chains
     provenance_paths_to_check: list[str] = []
     # If contract exists, check its decision outputs and inputs
-    if contract is not None:
+    if contract is not None:  # noqa: SIM102
         if contract.decision_event_id:
             provenance_paths_to_check.append(f"{contract.decision_event_id}.output.approve")
             for port in contract.ports:
@@ -363,7 +363,7 @@ def build_evidence_package(
                         "has_coarse": any(g == "coarse" for g in grades),
                     }
                 )
-        except Exception:
+        except Exception:  # noqa: BLE001
             pass
 
     # 7. Agent State Reconstruction
@@ -379,7 +379,7 @@ def build_evidence_package(
                 "open_tools": st.open_tools,
                 "context": st.context,
             }
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001
             agent_states[target_event["agent_id"]] = {"error": str(e)}
 
     return {
@@ -490,7 +490,7 @@ def explain(
                 try:
                     err_json = response.json()
                     err_msg = err_json.get("error", {}).get("message", err_msg)
-                except Exception:
+                except Exception:  # noqa: BLE001
                     pass
                 raise RuntimeError(
                     f"OpenRouter model '{resolved_model}' rate-limited (HTTP 429): {err_msg}. "

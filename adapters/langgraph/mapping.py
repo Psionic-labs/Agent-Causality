@@ -528,7 +528,7 @@ class CausalityCallbackHandler(_BaseCallbackHandler):  # ty: ignore[unsupported-
         """Run a callback body; telemetry errors must never break the agent."""
         try:
             return callback(*args, **kwargs)
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001
             self.errors.append(f"{type(exc).__name__}: {exc}")
             return None
 
@@ -665,7 +665,7 @@ class CausalityCallbackHandler(_BaseCallbackHandler):  # ty: ignore[unsupported-
             event, stored = self._record(
                 state, agent_id, clock, kind, "end", event_type, payload, parents
             )
-            if stored and kind == _KIND_TOOL and state.resource_uri is not None:
+            if stored and kind == _KIND_TOOL and state.resource_uri is not None:  # noqa: SIM102
                 if _is_write_tool(state.name):
                     self.registry.register_write(
                         resource_uri=state.resource_uri,

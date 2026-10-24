@@ -67,7 +67,7 @@ def _check_payload_for_side_effects(payload: dict[str, Any] | None) -> bool:
         return False
     
     # Check keys
-    for key in payload.keys():
+    for key in payload.keys():  # noqa: SIM118
         if any(pattern in key.lower() for pattern in SIDE_EFFECT_PAYLOAD_PATTERNS):
             return True
     

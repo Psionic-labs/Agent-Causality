@@ -242,7 +242,7 @@ def test_anthropic_stream_cleanup_errors_are_captured() -> None:
         messages=[{"role": "user", "content": "hello"}],
         stream=True,
     )
-    with pytest.raises(RuntimeError, match="cleanup failed"):
+    with pytest.raises(RuntimeError, match="cleanup failed"):  # noqa: SIM117
         with stream:
             next(stream)
 

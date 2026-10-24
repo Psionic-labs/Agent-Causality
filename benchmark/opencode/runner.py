@@ -65,7 +65,7 @@ def opencode_version(opencode_bin: str) -> str:
             timeout=30,
         )
         return result.stdout.strip() or result.stderr.strip() or "unknown"
-    except Exception:
+    except Exception:  # noqa: BLE001
         return "unknown"
 
 
@@ -267,7 +267,7 @@ def _dimension_values(
         dim = record.get("diagnosis", {}).get(canonical, {})
         if not isinstance(dim, dict) or dim.get("status") != "ok":
             continue
-        if dimension == "cause_identification":
+        if dimension == "cause_identification":  # noqa: SIM114
             values.append(float(dim["recall"]))
         elif dimension == "causal_slice":
             values.append(float(dim["recall"]))

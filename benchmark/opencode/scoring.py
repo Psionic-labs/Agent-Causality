@@ -235,7 +235,7 @@ def _event_matches(event: Any, selector: dict[str, Any]) -> bool:
         if not any(str(item).endswith(str(suffix)) for item in candidates):
             return False
     text = selector.get("text_contains")
-    if text and str(text) not in json.dumps(common, default=str):
+    if text and str(text) not in json.dumps(common, default=str):  # noqa: SIM103
         return False
     return True
 
@@ -372,7 +372,7 @@ def score_diagnosis(
             "roles": slice_roles,
             **set_metrics(slice_roles, expected_structural),
         }
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001
         result["causal_slice"] = {"status": "error", "error": str(exc)}
         slice_ids = []
 
@@ -386,7 +386,7 @@ def score_diagnosis(
             "missed": sorted(set(required_roles) - set(identified)),
             "recall": round(len(identified) / max(1, len(required_roles)), 3),
         }
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001
         result["cause_identification"] = {"status": "error", "error": str(exc)}
 
     try:
@@ -437,7 +437,7 @@ def score_diagnosis(
         # Explicit alias so consumers do not mistake the legacy key for a
         # causal-minimality claim.
         result["minimality_proxy"] = result["minimal_slice"]
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001
         result["minimal_slice"] = {"status": "error", "error": str(exc)}
 
     try:
@@ -474,7 +474,7 @@ def score_diagnosis(
             "expected_edges": edge_checks,
             "edges_present": sum(1 for e in edge_checks if e["present"]),
         }
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001
         result["provenance"] = {"status": "error", "error": str(exc)}
 
     try:
@@ -535,7 +535,7 @@ def score_diagnosis(
                 "must not be called causal interaction"
             ),
         }
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001
         result["interaction"] = {"status": "error", "error": str(exc)}
 
     try:
@@ -557,7 +557,7 @@ def score_diagnosis(
             "roles": distractor_status,
             "leaked": sum(1 for d in distractor_status if d["state"] == "leaked"),
         }
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001
         result["distractors"] = {"status": "error", "error": str(exc)}
 
     try:
@@ -598,7 +598,7 @@ def score_diagnosis(
                 len(mentions) / max(1, len(spec.get("explanation_must_mention", []))), 3
             ),
         }
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001
         result["explanation_grounding"] = {"status": "error", "error": str(exc)}
 
     return result

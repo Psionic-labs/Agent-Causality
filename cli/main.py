@@ -229,7 +229,7 @@ def cmd_replay(log: Any, decision_id: str, intervention_args: list[str]) -> None
         port_id, raw_val = item.split("=", 1)
         try:
             val = json.loads(raw_val)
-        except Exception:
+        except Exception:  # noqa: BLE001
             val = raw_val
         interventions.append(PortIntervention(port_id=port_id, substitute_value=val))
 

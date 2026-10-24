@@ -78,7 +78,7 @@ exclude = [
 ]
 
 [tool.ruff.lint]
-select = ["E", "F", "I", "UP", "B"]
+select = ["E", "F", "I", "UP", "B", "BLE", "SIM", "PGH003"]
 
 [tool.ty.environment]
 python-version = "3.11"

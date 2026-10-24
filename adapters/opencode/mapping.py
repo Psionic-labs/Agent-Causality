@@ -264,7 +264,7 @@ class OpenCodeEventMapper:
                 "permission.replied",
             }:
                 event_type = "tool_call"
-            elif kind in {"event:message.part.updated", "message.part.updated"}:
+            elif kind in {"event:message.part.updated", "message.part.updated"}:  # noqa: SIM114
                 event_type = "context_update"
             elif kind in {"event:session.updated", "session.updated"}:
                 event_type = "context_update"
@@ -296,7 +296,7 @@ class OpenCodeEventMapper:
                     run_id=self.run_id,
                 )
             return capture
-        except Exception:
+        except Exception:  # noqa: BLE001
             # Telemetry error swallowed: fail-open guarantee
             return None
 
