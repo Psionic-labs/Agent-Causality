@@ -6,6 +6,7 @@
 - `npm ci --prefix frontend`
 - `npm ci --prefix packages/opencode-agent-causality`
 - `npx --prefix frontend playwright install chromium`
+- `uv run pre-commit install`
 
 ## Verify
 
