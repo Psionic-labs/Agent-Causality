@@ -301,6 +301,11 @@ def static_steps(*, full: bool) -> list[Step]:
             (sys.executable, "tools/verify/import_boundaries.py"),
             must_contain=("PASS import boundaries",),
         ),
+        Step(
+            "plugin copy",
+            (sys.executable, "scripts/sync-opencode-plugin.py", "--check"),
+            must_contain=("plugin copy check passed",),
+        ),
         Step("frontend tests", (npm, "test"), cwd=FRONTEND),
         Step("frontend typecheck", (_tool("npx"), "tsc", "--noEmit"), cwd=FRONTEND),
         Step("plugin tests", (npm, "test"), cwd=PLUGIN),
