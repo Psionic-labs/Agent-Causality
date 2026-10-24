@@ -9,7 +9,7 @@ from core.decision import create_fixture_decision
 from core.explain import build_evidence_package
 from core.provenance import ProvenanceEdge, provenance
 from core.reducer import reconstruct
-from core.replay import compute_shapley_interaction, ddmin, test_fn_from
+from core.replay import build_failure_predicate, compute_shapley_interaction, ddmin
 from core.slicing import structural_slice
 from core.validator import GraphValidator
 from sdk.events import AgentClock, Event, record_event
@@ -56,7 +56,10 @@ def test_customer_approval_fixture_is_a_real_runtime_regression(tmp_path: Path) 
     chain = provenance("A3.output.approve", reopened)
     assert {edge.source_event_id for edge in chain.edges} >= {"B3", "C3"}
     assert (
-        ddmin(list(structural_slice("A4", reopened).event_ids), test_fn_from(contract, "A4"))
+        ddmin(
+            list(structural_slice("A4", reopened).event_ids),
+            build_failure_predicate(contract, "A4"),
+        )
         == truth["minimal_slice"]
     )
     interaction = compute_shapley_interaction(contract, samples_per_cell=1, num_bootstrap=20)

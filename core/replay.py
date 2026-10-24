@@ -7,8 +7,8 @@ This module provides the shared counterfactual reasoning machinery (thesis §16,
    bootstrap confidence intervals isolating multi-branch joint interactions under model noise.
 3. ``ddmin``: Delta debugging minimal slicing over structural candidate events, with
    caching and replay budget bounds.
-4. ``test_fn_from``: Helper constructing a failure-reproducing test function from
-   a DecisionContract.
+4. ``build_failure_predicate``: Helper constructing a failure-reproducing
+   predicate from a DecisionContract.
 """
 
 from __future__ import annotations
@@ -28,8 +28,8 @@ __all__ = [
     "ReplayUnsafe",
     "compute_shapley_interaction",
     "counterfactual_replay",
+    "build_failure_predicate",
     "ddmin",
-    "test_fn_from",
 ]
 
 # Explicit tools considered side-effecting per thesis §16.2 & §30.7
@@ -404,11 +404,11 @@ def compute_shapley_interaction(
     return result
 
 
-def test_fn_from(
+def build_failure_predicate(
     contract: DecisionContract,
     failure_event_id: str | None = None,
 ) -> Callable[[list[str]], bool]:
-    """Create a failure-reproduction test function for ddmin from a DecisionContract.
+    """Create a failure-reproduction predicate for ddmin from a DecisionContract.
 
     A subset of candidate event IDs reproduces the failure if:
     1. The decision event itself (and downstream failure event if specified) are present.
@@ -450,10 +450,6 @@ def test_fn_from(
         return bool(outcome == expected_outcome)
 
     return test_subset
-
-
-# Prevent pytest from treating helper test_fn_from as a test case
-setattr(test_fn_from, "__test__", False)  # noqa: B010
 
 
 class _BudgetExhausted(Exception):

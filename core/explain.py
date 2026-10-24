@@ -25,7 +25,7 @@ if TYPE_CHECKING:
 from core.decision import DecisionContract, create_fixture_decision
 from core.provenance import provenance
 from core.reducer import reconstruct
-from core.replay import compute_shapley_interaction, ddmin, test_fn_from
+from core.replay import build_failure_predicate, compute_shapley_interaction, ddmin
 from core.slicing import structural_slice
 
 OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions"
@@ -299,7 +299,7 @@ def build_evidence_package(
 
         # 4. Minimal Slice (ddmin)
         try:
-            test_fn = test_fn_from(contract, failure_event_id=event_id)
+            test_fn = build_failure_predicate(contract, failure_event_id=event_id)
             min_ids = ddmin(slice_event_ids, test_fn, budget=ddmin_budget)
             minimal_slice_summary = {
                 "event_ids": min_ids,

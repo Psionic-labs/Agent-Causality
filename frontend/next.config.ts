@@ -6,6 +6,9 @@ const nextConfig: NextConfig = {
   // No Node server is needed in production; `python -m explorer.server`
   // remains the single run command.
   output: "export",
+  // Stable build ID: repeated builds must produce the same vendored asset
+  // paths, otherwise scripts/sync-explorer-static.py --check fails every time.
+  generateBuildId: () => "explorer",
   // In `npm run dev` the page runs on the Next dev server, so API calls are
   // proxied to a locally running explorer backend (default port 8766).
   async rewrites() {

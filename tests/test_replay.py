@@ -30,10 +30,10 @@ from core.replay import (
     SIDE_EFFECTING_TOOLS,
     PortIntervention,
     ReplayUnsafe,
+    build_failure_predicate,
     compute_shapley_interaction,
     counterfactual_replay,
     ddmin,
-    test_fn_from,
 )
 from core.slicing import structural_slice
 
@@ -164,7 +164,7 @@ def test_fixture_matches_ground_truth(fixture_log: FixtureEventLog):
 
     # Minimal slice reduction over structural slice
     slice_result = structural_slice("A4", fixture_log)
-    minimal = ddmin(slice_result.event_ids, test_fn_from(contract))
+    minimal = ddmin(slice_result.event_ids, build_failure_predicate(contract))
     assert set(minimal) == {"B3", "C3", "A3", "A4"}
 
 
@@ -177,7 +177,7 @@ def test_ddmin_respects_budget_cap_and_falls_back():
     """ddmin must not exceed its budget and must fall back to the unminimized slice."""
     contract = create_fixture_decision()
     candidates = ["A1", "B1", "C1", "B2", "C2", "B3", "C3", "A3", "A4"]
-    test_fn = test_fn_from(contract)
+    test_fn = build_failure_predicate(contract)
 
     # Force exhaustion with budget=1 (where initial check or 1st chunk exceeds budget)
     minimal = ddmin(candidates, test_fn, budget=1)

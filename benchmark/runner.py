@@ -29,10 +29,10 @@ from core.explain import build_evidence_package, render_evidence_summary
 from core.provenance import provenance
 from core.replay import (
     PortIntervention,
+    build_failure_predicate,
     compute_shapley_interaction,
     counterfactual_replay,
     ddmin,
-    test_fn_from,
 )
 from core.slicing import structural_slice
 from core.validator import GraphValidator
@@ -191,7 +191,8 @@ def run_scenario(
         raise RuntimeError(f"scenario {scenario.name} generated invalid graph: {report.violations}")
     structural = structural_slice(scenario.failure_event_id, scenario.log)
     minimal = ddmin(
-        list(structural.event_ids), test_fn_from(scenario.contract, scenario.failure_event_id)
+        list(structural.event_ids),
+        build_failure_predicate(scenario.contract, scenario.failure_event_id),
     )
     interaction = compute_shapley_interaction(
         scenario.contract, samples_per_cell=1, seed=seed, num_bootstrap=20
@@ -272,7 +273,7 @@ def run_failure_injections() -> dict[str, Any]:
     tool_source.payload["output"] = "incorrect"
     minimal = ddmin(
         list(structural_slice(tool.failure_event_id, tool.log).event_ids),
-        test_fn_from(tool.contract, tool.failure_event_id),
+        build_failure_predicate(tool.contract, tool.failure_event_id),
     )
     evidence = build_evidence_package(tool.failure_event_id, tool.log, samples_per_cell=1)
     results.append(

@@ -26,10 +26,10 @@ from .replay import (
     SIDE_EFFECTING_TOOLS,
     PortIntervention,
     ReplayUnsafe,
+    build_failure_predicate,
     compute_shapley_interaction,
     counterfactual_replay,
     ddmin,
-    test_fn_from,
 )
 from .slicing import DecisionEvidence, StructuralSlice, structural_slice, why
 from .snapshots import (
@@ -62,6 +62,7 @@ __all__ = [
     "ancestors",
     "assign_causal_parents",
     "build_evidence_package",
+    "build_failure_predicate",
     "compute_shapley_interaction",
     "counterfactual_replay",
     "create_decision_contract",
@@ -81,7 +82,6 @@ __all__ = [
     "register_decision_evaluator",
     "should_snapshot",
     "structural_slice",
-    "test_fn_from",
     "verify_chunk_sensitivity",
     "verify_snapshot",
     "why",

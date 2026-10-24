@@ -36,10 +36,10 @@ from core.provenance import provenance
 from core.reducer import canonical_json, hash_state, reconstruct
 from core.replay import (
     PortIntervention,
+    build_failure_predicate,
     compute_shapley_interaction,
     counterfactual_replay,
     ddmin,
-    test_fn_from,
 )
 from core.slicing import structural_slice, why
 from sdk.events import Event, InMemoryEventLog
@@ -248,7 +248,7 @@ def cmd_interaction(log: Any, decision_id: str, samples: int) -> None:
 def cmd_minimize(log: Any, event_id: str, budget: int) -> None:
     slice_result = structural_slice(event_id, log)
     contract = resolve_decision_contract(event_id, log)
-    test_fn = test_fn_from(contract, failure_event_id=event_id)
+    test_fn = build_failure_predicate(contract, failure_event_id=event_id)
     minimal_events = ddmin(slice_result.event_ids, test_fn, budget=budget)
     print(f"Minimal slice of {event_id}: {len(minimal_events)} events (ddmin)")
     print(", ".join(minimal_events))
