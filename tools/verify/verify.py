@@ -290,9 +290,9 @@ def check_playwright(port: int, run_dir: Path) -> Result:
     return result
 
 
-def static_steps() -> list[Step]:
+def static_steps(*, full: bool) -> list[Step]:
     npm = _tool("npm")
-    return [
+    steps = [
         Step("pytest", (_tool("uv"), "run", "pytest", "-q")),
         Step("ruff", (_tool("uv"), "run", "ruff", "check", ".")),
         Step("ty", (_tool("uv"), "run", "ty", "check", ".")),
@@ -300,13 +300,17 @@ def static_steps() -> list[Step]:
         Step("frontend typecheck", (_tool("npx"), "tsc", "--noEmit"), cwd=FRONTEND),
         Step("plugin tests", (npm, "test"), cwd=PLUGIN),
         Step("plugin typecheck", (npm, "run", "typecheck"), cwd=PLUGIN),
-        Step("frontend build", (npm, "run", "build"), cwd=FRONTEND),
-        Step(
-            "static sync",
-            (sys.executable, "scripts/sync-explorer-static.py", "--check"),
-            must_contain=("in sync",),
-        ),
     ]
+    if full:
+        steps += [
+            Step("frontend build", (npm, "run", "build"), cwd=FRONTEND),
+            Step(
+                "static sync",
+                (sys.executable, "scripts/sync-explorer-static.py", "--check"),
+                must_contain=("in sync",),
+            ),
+        ]
+    return steps
 
 
 def flow_steps() -> list[Step]:
@@ -342,7 +346,9 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--quick",
         action="store_true",
-        help="run static checks only; skip the Explorer server and Playwright",
+        help=(
+            "skip frontend build, static sync, the Explorer server, and Playwright"
+        ),
     )
     args = parser.parse_args(argv)
 
@@ -355,7 +361,7 @@ def main(argv: list[str] | None = None) -> int:
     print()
 
     started = time.perf_counter()
-    results = [run_step(step, run_dir) for step in static_steps()]
+    results = [run_step(step, run_dir) for step in static_steps(full=not args.quick)]
     results += [run_step(step, run_dir) for step in flow_steps()]
 
     if not args.quick:
