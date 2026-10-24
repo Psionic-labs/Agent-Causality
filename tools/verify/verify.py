@@ -302,6 +302,11 @@ def static_steps(*, full: bool) -> list[Step]:
             must_contain=("PASS import boundaries",),
         ),
         Step(
+            "suppression budget",
+            (sys.executable, "tools/verify/suppression_budget.py"),
+            must_contain=("PASS suppression budget",),
+        ),
+        Step(
             "plugin copy",
             (sys.executable, "scripts/sync-opencode-plugin.py", "--check"),
             must_contain=("plugin copy check passed",),
