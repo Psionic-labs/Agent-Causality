@@ -43,6 +43,7 @@ from core.replay import (
 )
 from core.slicing import structural_slice, why
 from sdk.events import Event, InMemoryEventLog
+from storage._psycopg import load_psycopg
 from storage.sqlite import SQLiteEventStore
 
 
@@ -77,7 +78,7 @@ def load_postgres_backend() -> Any:
     dsn = os.environ.get("DATABASE_URL")
     if not dsn:
         sys.exit("DATABASE_URL is not set")
-    import psycopg
+    psycopg = load_psycopg()
 
     from storage.postgres import PostgresEventStore
 

@@ -296,6 +296,11 @@ def static_steps(*, full: bool) -> list[Step]:
         Step("pytest", (_tool("uv"), "run", "pytest", "-q")),
         Step("ruff", (_tool("uv"), "run", "ruff", "check", ".")),
         Step("ty", (_tool("uv"), "run", "ty", "check", ".")),
+        Step(
+            "import boundaries",
+            (sys.executable, "tools/verify/import_boundaries.py"),
+            must_contain=("PASS import boundaries",),
+        ),
         Step("frontend tests", (npm, "test"), cwd=FRONTEND),
         Step("frontend typecheck", (_tool("npx"), "tsc", "--noEmit"), cwd=FRONTEND),
         Step("plugin tests", (npm, "test"), cwd=PLUGIN),

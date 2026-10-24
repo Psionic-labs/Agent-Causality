@@ -1,0 +1,31 @@
+{
+  "import_boundaries": [
+    {
+      "path": "explorer/loader.py",
+      "module": "benchmark.opencode.scoring",
+      "reason": "resolve_failure and resolve_roles live in benchmark; move them to a shared core module. Listed in CLEANUP.md."
+    },
+    {
+      "path": "explorer/queries.py",
+      "module": "benchmark.opencode.scoring",
+      "reason": "score_diagnosis lives in benchmark; move it to a shared core module. Listed in CLEANUP.md."
+    },
+    {
+      "path": "sdk/tools.py",
+      "module": "core.provenance",
+      "reason": "capture_tool lazily imports core provenance to record field sources; sdk must not depend on core. Listed in CLEANUP.md."
+    }
+  ],
+  "psycopg": [
+    {
+      "path": "tests/test_provenance.py",
+      "module": "psycopg",
+      "reason": "Test imports the optional driver directly after pytest.importorskip. Listed in CLEANUP.md."
+    },
+    {
+      "path": "tests/test_postgres_integration.py",
+      "module": "psycopg",
+      "reason": "Integration test imports Jsonb directly after pytest.importorskip. Listed in CLEANUP.md."
+    }
+  ]
+}

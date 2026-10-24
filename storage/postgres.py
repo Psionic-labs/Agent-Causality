@@ -17,6 +17,7 @@ from core.provenance import ProvenanceEdge, ProvenanceGrade
 from core.snapshots import SnapshotRecord
 from sdk.events import AgentClock, Event
 from sdk.lifecycle import AgentRecord
+from storage._psycopg import load_jsonb, load_psycopg
 
 SCHEMA_SQL = """
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
@@ -114,10 +115,7 @@ class PostgresEventStore:
         event_id = self._uuid(record["id"], "Event.id")
         run_id = self._uuid(record["run_id"], "Event.run_id")
         agent_id = self._uuid(record["agent_id"], "Event.agent_id")
-        try:
-            from psycopg.types.json import Jsonb
-        except ImportError as exc:  # pragma: no cover - dependency is declared by the project
-            raise RuntimeError("psycopg is required for PostgresEventStore") from exc
+        Jsonb = load_jsonb()
         columns = (
             "id, run_id, agent_id, logical_seq, wall_time, event_type, "
             "causal_parent_ids, payload, idempotency_key"
@@ -318,10 +316,7 @@ class PostgresEventStore:
             if record.run_id is None
             else self._uuid(record.run_id, "SnapshotRecord.run_id")
         )
-        try:
-            from psycopg.types.json import Jsonb
-        except ImportError as exc:  # pragma: no cover - dependency is declared by the project
-            raise RuntimeError("psycopg is required for PostgresEventStore") from exc
+        Jsonb = load_jsonb()
         try:
             with self.connection.cursor() as cursor:
                 cursor.execute(
@@ -392,10 +387,7 @@ class PostgresEventStore:
     @contextmanager
     def tool_invocation_lock(self, agent_id: str, invocation_id: str) -> Iterator[None]:
         """Serialize one invocation across processes and database connections."""
-        try:
-            import psycopg
-        except ImportError as exc:  # pragma: no cover - dependency is declared by the project
-            raise RuntimeError("psycopg is required for PostgreSQL tool locking") from exc
+        psycopg = load_psycopg()
         dsn = self.lock_dsn or getattr(getattr(self.connection, "info", None), "dsn", None)
         if not dsn:
             raise RuntimeError(
