@@ -31,6 +31,18 @@
   `packages/opencode-agent-causality/src/index.ts`. Never edit it. Run
   `uv run python scripts/sync-opencode-plugin.py`.
 
+## Parallel agents
+
+- Spawn an isolated worktree:
+  `uv run python tools/agents/spawn.py --task "..." --branch agent/<name>`.
+  It caps concurrency at 3, runs setup, then `opencode run`, then full verify.
+- Logs live under `tools/agents/logs/<stamp>-<branch>/`. PASS requires both the
+  agent and full verify to exit 0. Merge and push are opt-in (`--merge`, `--push`).
+- List or remove merged/abandoned worktrees: `uv run python tools/agents/cleanup.py`
+  (prompts before removing; `--list` to inspect, `--yes` for non-interactive).
+- Verify binds ephemeral ports for the Explorer and the OpenCode ingest receiver,
+  so parallel worktrees never collide on fixed ports.
+
 ## Blessed patterns
 
 - New CLI command: parser and handler in `cli/main.py`; logic in `core/`; pytest coverage.
