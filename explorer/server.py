@@ -161,7 +161,8 @@ def main(argv: list[str] | None = None) -> int:
         )
     dataset = loader.load_sqlite(args.db) if args.db else loader.load_demo()
     server = create_server(dataset, args.host, args.port)
-    print(f"serving {dataset.source} at http://{args.host}:{args.port}/")
+    host, port = server.server_address[:2]
+    print(f"serving {dataset.source} at http://{host}:{port}/")
     try:  # noqa: SIM105
         server.serve_forever()
     except KeyboardInterrupt:

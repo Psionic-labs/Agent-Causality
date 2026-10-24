@@ -307,6 +307,11 @@ def static_steps(*, full: bool) -> list[Step]:
             must_contain=("PASS suppression budget",),
         ),
         Step(
+            "ingest receiver",
+            (sys.executable, "tools/verify/ingest_smoke.py"),
+            must_contain=("PASS ingest receiver",),
+        ),
+        Step(
             "plugin copy",
             (sys.executable, "scripts/sync-opencode-plugin.py", "--check"),
             must_contain=("plugin copy check passed",),
