@@ -15,6 +15,7 @@ import argparse
 import json
 import os
 import re
+import shutil
 import subprocess
 import sys
 import time
@@ -96,6 +97,9 @@ def _run(
     timeout: int,
 ) -> int:
     log_path.parent.mkdir(parents=True, exist_ok=True)
+    resolved = shutil.which(command[0])
+    if resolved is not None:
+        command = [resolved, *command[1:]]
     with log_path.open("a", encoding="utf-8") as log:
         log.write(f"\n$ {' '.join(command)}\n")
         log.flush()
