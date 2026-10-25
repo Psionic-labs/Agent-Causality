@@ -85,10 +85,6 @@ metrics in `core/metrics.py`; the explorer and benchmark import them from core.
 
 The sdk violation is fixed: `capture_tool` takes a `provenance_recorder`
 callback, so callers pass `core.provenance.record_tool_result_provenance` and
-the SDK no longer imports `core`.
-
-The sdk violation is fixed: `capture_tool` takes a `provenance_recorder`
-callback, so callers pass `core.provenance.record_tool_result_provenance` and
 the SDK no longer imports `core`. There are no remaining import-boundary
 suppressions.
 

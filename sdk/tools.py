@@ -235,7 +235,7 @@ def _decorate(
                 event: Event,
                 field_sources: dict[str, str],
                 *,
-                store: Any,
+                store: EventLog,
                 transform: str | None,
             ) -> Any:
                 raise TypeError(
@@ -285,7 +285,7 @@ def capture_tool(
     ``resource_uri``, ``field_sources``, ``transform``, and
     ``provenance_recorder``.
 
-    ``field_sources`` requires a ``provenance_recorder``. Pass
+    A non-empty ``field_sources`` mapping requires a ``provenance_recorder``. Pass
     ``core.provenance.record_tool_result_provenance`` (or a wrapper that
     supplies its own store) to persist the declared edges.
     """
