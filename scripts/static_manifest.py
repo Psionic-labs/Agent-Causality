@@ -30,7 +30,7 @@ def manifest_path(static_dir: Path) -> Path:
     return static_dir / MANIFEST_NAME
 
 
-def _files(root: Path) -> list[Path]:
+def _input_files(root: Path) -> list[Path]:
     files: list[Path] = []
     for name in INPUTS:
         path = root / name
@@ -53,8 +53,20 @@ def _normalized_bytes(path: Path) -> bytes:
 
 def input_hash(root: Path) -> str:
     """Hash relative paths and normalized bytes, never absolute checkout paths."""
+    return _hash_files(root, _input_files(root))
+
+
+def _static_files(static_dir: Path) -> list[Path]:
+    return sorted(
+        path
+        for path in static_dir.rglob("*")
+        if path.is_file() and path.name != MANIFEST_NAME
+    )
+
+
+def _hash_files(root: Path, files: list[Path]) -> str:
     digest = hashlib.sha256()
-    for path in _files(root):
+    for path in files:
         digest.update(path.relative_to(root).as_posix().encode("utf-8"))
         digest.update(b"\0")
         digest.update(_normalized_bytes(path))
@@ -62,10 +74,16 @@ def input_hash(root: Path) -> str:
     return digest.hexdigest()
 
 
+def static_hash(static_dir: Path) -> str:
+    """Hash the vendored tree, excluding the manifest that records its hash."""
+    return _hash_files(static_dir, _static_files(static_dir))
+
+
 def write_manifest(root: Path, static_dir: Path) -> dict[str, object]:
     data: dict[str, object] = {
         "input_sha256": input_hash(root),
-        "files": [path.relative_to(root).as_posix() for path in _files(root)],
+        "static_sha256": static_hash(static_dir),
+        "files": [path.relative_to(root).as_posix() for path in _input_files(root)],
     }
     static_dir.mkdir(parents=True, exist_ok=True)
     manifest_path(static_dir).write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
@@ -90,4 +108,6 @@ def check_manifest(root: Path, static_dir: Path) -> tuple[bool, str]:
     current = input_hash(root)
     if data.get("input_sha256") != current:
         return False, "frontend inputs changed since the last sync; rebuild and re-run sync"
+    if data.get("static_sha256") != static_hash(static_dir):
+        return False, "explorer/static files changed since the last sync; rebuild and re-run sync"
     return True, current

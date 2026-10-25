@@ -48,3 +48,19 @@ def test_changed_source_without_regeneration_fails(tmp_path: Path) -> None:
 
     assert ok is False
     assert "changed" in message
+
+
+def test_changed_static_file_without_regeneration_fails(tmp_path: Path) -> None:
+    root = tmp_path / "repo"
+    _make_tree(root)
+    static = root / "explorer" / "static"
+    static.mkdir(parents=True)
+    index = static / "index.html"
+    index.write_text("ok\n", encoding="utf-8")
+    write_manifest(root, static)
+
+    index.write_text("hand edit\n", encoding="utf-8")
+    ok, message = check_manifest(root, static)
+
+    assert ok is False
+    assert "explorer/static files changed" in message
