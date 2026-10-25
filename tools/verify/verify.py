@@ -318,6 +318,7 @@ def static_steps(*, full: bool) -> list[Step]:
         ),
         Step("frontend tests", (npm, "test"), cwd=FRONTEND),
         Step("frontend typecheck", (_tool("npx"), "tsc", "--noEmit"), cwd=FRONTEND),
+        Step("plugin build", (npm, "run", "build"), cwd=PLUGIN),
         Step("plugin tests", (npm, "test"), cwd=PLUGIN),
         Step("plugin typecheck", (npm, "run", "typecheck"), cwd=PLUGIN),
     ]
