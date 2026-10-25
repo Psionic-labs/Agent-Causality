@@ -8,7 +8,7 @@ from threading import Lock
 from typing import TYPE_CHECKING, Any, Protocol, TypeVar, cast
 from uuid import uuid4
 
-from .events import AgentClock, Event, record_event
+from .events import AgentClock, Event, EventLog, record_event
 
 if TYPE_CHECKING:
     from .memory import ResourceRegistry
@@ -27,7 +27,7 @@ class ProvenanceRecorder(Protocol):
         event: Event,
         field_sources: dict[str, str],
         *,
-        store: Any,
+        store: EventLog,
         transform: str | None,
     ) -> Any: ...
 
