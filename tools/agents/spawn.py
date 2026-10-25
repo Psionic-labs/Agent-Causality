@@ -132,7 +132,8 @@ Rules:
 - Run `uv run python tools/verify/verify.py` (full mode) before finishing.
 - If it passes, commit your changes on this branch with a descriptive message.
 - If it fails, leave the worktree in place and report FAIL with the failing step.
-- Do not push or merge. Do not edit generated files; use the sync scripts.
+- Do not push or merge. Never edit, build, or commit `explorer/static` from this
+  worktree; the pre-commit guard rejects generated assets from linked worktrees.
 """
 
 
