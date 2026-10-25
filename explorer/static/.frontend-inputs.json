@@ -1,5 +1,5 @@
 {
-  "input_sha256": "0e66212fea347527a2f9a2acbc958b892590f1378d05994bf022f9feeee3d6b6",
+  "input_sha256": "70a7216956352f48c26fa4d3b61080e0ed8d8443d9397876cf8983f4076d1788",
   "files": [
     "frontend/app/globals.css",
     "frontend/app/layout.tsx",

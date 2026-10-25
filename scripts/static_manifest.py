@@ -46,13 +46,18 @@ def _files(root: Path) -> list[Path]:
     return sorted(set(files))
 
 
+def _normalized_bytes(path: Path) -> bytes:
+    """Ignore CRLF/LF checkout differences; hash the content either way."""
+    return path.read_bytes().replace(b"\r\n", b"\n")
+
+
 def input_hash(root: Path) -> str:
-    """Hash relative paths and bytes, never absolute checkout paths."""
+    """Hash relative paths and normalized bytes, never absolute checkout paths."""
     digest = hashlib.sha256()
     for path in _files(root):
         digest.update(path.relative_to(root).as_posix().encode("utf-8"))
         digest.update(b"\0")
-        digest.update(path.read_bytes())
+        digest.update(_normalized_bytes(path))
         digest.update(b"\0")
     return digest.hexdigest()
 
