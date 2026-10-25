@@ -68,9 +68,12 @@ def sync() -> int:
 
 
 def check() -> int:
-    """Fail if the vendored copy is missing or the frontend inputs changed."""
-    if not (SRC / "index.html").is_file():
-        return _fail("frontend/out/index.html missing; cannot check freshness")
+    """Fail if the vendored copy is missing or the frontend inputs changed.
+
+    The manifest in ``explorer/static`` is the freshness record.
+    ``frontend/out`` is gitignored, and verify runs this check before
+    ``npm run build``, so a missing export is not a freshness failure.
+    """
     if not (DST / "index.html").is_file():
         return _fail(
             "explorer/static/index.html missing; run "

@@ -1,6 +1,9 @@
 from __future__ import annotations
 
+import importlib.util
+import sys
 from pathlib import Path
+from typing import Any
 
 from scripts.static_manifest import check_manifest, input_hash, write_manifest
 from tools.verify.verify import static_steps
@@ -71,3 +74,43 @@ def test_full_verify_checks_static_sync_before_frontend_build() -> None:
     names = [step.name for step in static_steps(full=True)]
 
     assert names.index("static sync") < names.index("frontend build")
+
+
+def _load_sync() -> Any:
+    script = Path("scripts/sync-explorer-static.py").resolve()
+    scripts_dir = str(script.parent)
+    # The script imports its sibling the same way `python scripts/sync-explorer-static.py` does.
+    sys.path.insert(0, scripts_dir)
+    try:
+        spec = importlib.util.spec_from_file_location("sync_explorer_static_under_test", script)
+        if spec is None or spec.loader is None:
+            raise RuntimeError("could not load scripts/sync-explorer-static.py")
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        return module
+    finally:
+        sys.path.remove(scripts_dir)
+
+
+def test_check_uses_manifest_when_frontend_out_is_missing(tmp_path: Path, capsys: Any) -> None:
+    root = tmp_path / "repo"
+    _make_tree(root)
+    static = root / "explorer" / "static"
+    static.mkdir(parents=True)
+    (static / "index.html").write_text("ok\n", encoding="utf-8")
+    write_manifest(root, static)
+
+    module = _load_sync()
+    module.ROOT = root
+    module.SRC = root / "frontend" / "out"
+    module.DST = static
+
+    assert not module.SRC.joinpath("index.html").is_file()
+    assert module.check() == 0
+    assert "in sync" in capsys.readouterr().out
+
+    (root / "frontend" / "app" / "page.tsx").write_text("export default 2\n", encoding="utf-8")
+    assert module.check() == 1
+    err = capsys.readouterr().err
+    assert "frontend inputs changed" in err
+    assert "cannot check freshness" not in err
