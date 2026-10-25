@@ -629,7 +629,7 @@ def test_make_fail_open_append_swallows_storage_errors(capsys: Any) -> None:
     def _bad_append(event: Any) -> Any:
         raise RuntimeError("disk full")
 
-    log.append = _bad_append  # type: ignore  # noqa: PGH003
+    log.append = _bad_append  # type: ignore  # noqa: PGH003 - monkeypatch instance method
 
     fail_open_log = make_fail_open_append(log)
     clock = AgentClock()

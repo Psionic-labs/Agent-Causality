@@ -6,7 +6,7 @@ is the cleanup signal.
 
 - **Ruff:** 44 explicit `# noqa` directives (37 added in `65acc9c`, 7 already
   present). There are no per-file rule ignores.
-- **Import boundaries:** 5 entries in
+- **Import boundaries:** 3 entries in
   `tools/verify/import_boundaries_baseline.json`.
 - **Total:** computed from the tables below by
   `tools/verify/suppression_budget.py`; never hand-edit a total.
@@ -129,25 +129,24 @@ Cleanup: replace broad catches with the narrow exceptions each helper can
 actually raise; let programming errors propagate. Apply the SIM fixes as a
 separate mechanical pass.
 
-## 12. Justified boundary catches and optional imports
+## 12. Justified boundary catches
 
-These are suppressed because the boundary is intentionally fail-open, or the
-test needs the optional driver. They still count as baselines.
+These are suppressed because the boundary is intentionally fail-open. Each
+suppression now states why it is intentional in code. They still count as
+baselines.
 
 | File | Line(s) | Rule / module | Why it is suppressed |
 |---|---|---|---|
 | `adapters/opencode/server.py` | 32, 61, 89 | BLE001 | Ingest is fail-open by design; telemetry must not break the agent. |
 | `explorer/server.py` | 119 | BLE001 | Read-only API converts errors to JSON instead of crashing. |
 | `sdk/privacy.py` | 140 | BLE001 | Redaction fallback is intentionally best-effort. |
-| `tools/verify/verify.py` | 263, 383 | BLE001 | Verifier reports any failure as evidence instead of crashing. |
+| `tools/verify/verify.py` | 263, 394 | BLE001 | Verifier reports any failure as evidence instead of crashing. |
 | `tests/conftest.py` | 59 | BLE001 | Unreachable PostgreSQL is converted into a test skip. |
-| `tests/test_phase2_5.py` | 632 | PGH003 | Monkeypatch helper uses `# type: ignore` with no error code. |
-| `tests/test_provenance.py` | 369 | `psycopg` import | Test imports the optional driver after `pytest.importorskip`. |
-| `tests/test_postgres_integration.py` | 271 | `psycopg.types.json` | Integration test imports `Jsonb` after `pytest.importorskip`. |
+| `tests/test_phase2_5.py` | 632 | PGH003 | Monkeypatch helper assigns over an instance method. |
 
-Cleanup: keep the fail-open boundaries, but document the exception in code.
-For tests, add a small helper in `storage/_psycopg.py` that returns the module
-or skips; then remove the direct imports and both psycopg baseline entries.
+Cleanup: keep the fail-open boundaries documented in code. Tests obtain the
+optional driver through `storage._psycopg.load_psycopg_or_skip`, so there are
+no direct psycopg imports to baseline.
 
 ## 13. Duplicated artifacts
 

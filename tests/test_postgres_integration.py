@@ -15,6 +15,7 @@ from sdk.client import CapturedClient
 from sdk.events import AgentClock, Event, record_event
 from sdk.lifecycle import spawn_agent
 from sdk.tools import capture_tool
+from storage._psycopg import load_jsonb, load_psycopg_or_skip
 from storage.postgres import PostgresEventStore
 from tests.conftest import (
     postgres_connect_or_skip,
@@ -267,8 +268,8 @@ def test_postgres_sequence_allocation_rolls_back_with_failed_append() -> None:
 @pytest.mark.integration
 def test_postgres_graph_rejects_and_isolates_cross_run_parents() -> None:
     database_url = postgres_dsn_or_skip()
-    psycopg = pytest.importorskip("psycopg")
-    from psycopg.types.json import Jsonb
+    psycopg = load_psycopg_or_skip()
+    Jsonb = load_jsonb()
 
     run_a, run_b = str(uuid4()), str(uuid4())
     agent_a, agent_b = str(uuid4()), str(uuid4())

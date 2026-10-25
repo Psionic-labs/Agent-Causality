@@ -50,7 +50,7 @@ def get_frontend_dir() -> Path:
         # helps for single files, so only accept a real filesystem dir.
         if isinstance(candidate, Path) and (candidate / "index.html").is_file():
             return candidate
-    except Exception:  # noqa: BLE001
+    except Exception:  # noqa: BLE001 - importlib lookup is best-effort; fall back to the source tree
         pass
     legacy = Path(__file__).resolve().parent.parent / "frontend" / "out"
     return legacy

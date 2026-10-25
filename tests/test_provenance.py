@@ -366,8 +366,7 @@ def test_cli_provenance_command_renders_grades() -> None:
 
 @pytest.mark.integration
 def test_postgres_provenance_storage_and_recursive_query() -> None:
-    import psycopg
-
+    from storage._psycopg import load_psycopg_or_skip
     from storage.postgres import PostgresEventStore
     from tests.conftest import (
         postgres_connect_or_skip,
@@ -376,6 +375,7 @@ def test_postgres_provenance_storage_and_recursive_query() -> None:
     )
 
     dsn = postgres_dsn_or_skip()
+    psycopg = load_psycopg_or_skip()
     with (
         skip_on_postgres_unavailable(psycopg),
         postgres_connect_or_skip(psycopg, dsn) as conn,

@@ -137,7 +137,7 @@ def make_fail_open_append(log: Any) -> Any:
                 result = self._wrapped.append(event)
                 self._last_append_failed = False
                 return result, True
-            except Exception as exc:  # noqa: BLE001
+            except Exception as exc:  # noqa: BLE001 - fail-open logging must never raise
                 print(
                     f"[agent-causality] WARN: event log append failed (fail_open=True): {exc}",
                     file=sys.stderr,

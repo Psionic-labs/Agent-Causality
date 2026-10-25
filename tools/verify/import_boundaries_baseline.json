@@ -16,16 +16,5 @@
       "reason": "capture_tool lazily imports core provenance to record field sources; sdk must not depend on core. Listed in CLEANUP.md."
     }
   ],
-  "psycopg": [
-    {
-      "path": "tests/test_provenance.py",
-      "module": "psycopg",
-      "reason": "Test imports the optional driver directly after pytest.importorskip. Listed in CLEANUP.md."
-    },
-    {
-      "path": "tests/test_postgres_integration.py",
-      "module": "psycopg",
-      "reason": "Integration test imports Jsonb directly after pytest.importorskip. Listed in CLEANUP.md."
-    }
-  ]
+  "psycopg": []
 }

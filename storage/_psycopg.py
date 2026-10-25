@@ -27,3 +27,18 @@ def load_jsonb() -> Any:
     except ImportError as exc:
         raise RuntimeError(f"psycopg is required for PostgreSQL storage. {_HINT}") from exc
     return Jsonb
+
+
+def load_psycopg_or_skip() -> Any:
+    """Return psycopg for an integration test, or skip when it is not installed.
+
+    Test modules ask for the driver here instead of importing psycopg directly,
+    so the optional-import boundary stays in one place.
+    """
+    try:
+        import psycopg
+    except ImportError:
+        import pytest
+
+        pytest.skip(f"psycopg is not installed. {_HINT}")
+    return psycopg
