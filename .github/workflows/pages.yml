@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - "agent-causality-site/**"
+      - "research_paper/agentic_causality_paper.pdf"
       - ".github/workflows/pages.yml"
   workflow_dispatch:
 
@@ -30,6 +31,9 @@ jobs:
 
       - name: Configure Pages
         uses: actions/configure-pages@v6
+
+      - name: Copy the research paper into the site
+        run: cp research_paper/agentic_causality_paper.pdf agent-causality-site/agentic_causality_paper.pdf
 
       - name: Upload site artifact
         uses: actions/upload-pages-artifact@v5

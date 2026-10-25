@@ -4040,3 +4040,104 @@ h3 {
     overflow-wrap: anywhere;
   }
 }
+
+/* Research paper page */
+
+.paper-page {
+  padding: clamp(36px, 5vw, 72px) 0 clamp(64px, 7vw, 96px);
+}
+
+.paper-title {
+  max-width: none;
+  margin-bottom: 0;
+  font-size: clamp(1.95rem, 4vw, 3.2rem);
+  line-height: 1.05;
+}
+
+.paper-actions {
+  margin: clamp(18px, 2vw, 26px) 0 0;
+}
+
+.paper-layout {
+  display: grid;
+  grid-template-columns: minmax(200px, 280px) minmax(0, 1fr);
+  gap: clamp(22px, 3vw, 40px);
+  align-items: start;
+}
+
+.paper-legend {
+  position: sticky;
+  top: 84px;
+}
+
+.paper-legend h2 {
+  margin-bottom: 12px;
+  max-width: none;
+  font-size: 1.15rem;
+}
+
+.paper-legend ol {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.paper-legend a {
+  display: block;
+  padding: 8px 10px;
+  border-radius: 2px;
+  color: var(--text-soft);
+  font-size: 0.98rem;
+  line-height: 1.35;
+  text-decoration: none;
+}
+
+.paper-legend a:hover {
+  color: var(--amber-bright);
+  background: var(--panel);
+}
+
+.paper-legend a[aria-current="location"] {
+  color: var(--amber-bright);
+  background: var(--panel-2);
+  box-shadow: inset 2px 0 0 var(--amber);
+}
+
+.paper-frame {
+  width: 100%;
+  height: min(78vh, 920px);
+  min-height: 520px;
+  border: 1px solid var(--line-strong);
+  border-radius: 4px;
+  background: var(--bg-deep);
+}
+
+@media (max-width: 800px) {
+  .paper-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .paper-legend {
+    position: static;
+  }
+
+  .paper-legend ol {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    gap: 6px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+
+  .paper-legend a {
+    white-space: nowrap;
+  }
+
+  .paper-frame {
+    min-height: 70vh;
+    height: 70vh;
+  }
+}
