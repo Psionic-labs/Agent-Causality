@@ -166,7 +166,11 @@ def _run_captured_tool(
             sources = field_sources
         else:
             sources = field_sources(result)
-        if sources and provenance_recorder is not None:
+        if sources:
+            if provenance_recorder is None:
+                raise TypeError(
+                    "capture_tool(field_sources=...) requires provenance_recorder"
+                )
             provenance_recorder(
                 result_event,
                 sources,
@@ -230,20 +234,6 @@ def _decorate(
             raise TypeError(
                 "capture_tool(field_sources=...) requires provenance_recorder"
             )
-        if callable(field_sources) and provenance_recorder is None:
-            def missing_provenance_recorder(
-                event: Event,
-                field_sources: dict[str, str],
-                *,
-                store: EventLog,
-                transform: str | None,
-            ) -> Any:
-                raise TypeError(
-                    "capture_tool(field_sources=...) requires provenance_recorder"
-                )
-
-            provenance_recorder = missing_provenance_recorder
-
         with _invocation_lock(log, agent_id, invocation_id):
             return _run_captured_tool(
                 fn,
@@ -288,6 +278,7 @@ def capture_tool(
     A non-empty ``field_sources`` mapping requires a ``provenance_recorder``. Pass
     ``core.provenance.record_tool_result_provenance`` (or a wrapper that
     supplies its own store) to persist the declared edges.
+    Callable field sources can raise this error after the tool has run.
     """
     if fn is None:
         return lambda wrapped: _decorate(
