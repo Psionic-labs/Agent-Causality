@@ -166,11 +166,7 @@ def _run_captured_tool(
             sources = field_sources
         else:
             sources = field_sources(result)
-        if sources:
-            if provenance_recorder is None:
-                raise TypeError(
-                    "capture_tool(field_sources=...) requires provenance_recorder"
-                )
+        if sources and provenance_recorder is not None:
             provenance_recorder(
                 result_event,
                 sources,
@@ -211,7 +207,7 @@ def _decorate(
             resource_uri = kwargs.pop("_capture_resource_uri", configured_resource_uri)
             field_sources = kwargs.pop("_capture_field_sources", configured_field_sources)
             transform = kwargs.pop("_capture_transform", configured_transform)
-            provenance_recorder = kwargs.pop(
+            provenance_recorder: ProvenanceRecorder | None = kwargs.pop(
                 "_capture_provenance_recorder", configured_provenance_recorder
             )
         else:
@@ -225,15 +221,28 @@ def _decorate(
             resource_uri = kwargs.pop("resource_uri", configured_resource_uri)
             field_sources = kwargs.pop("field_sources", configured_field_sources)
             transform = kwargs.pop("transform", configured_transform)
-            provenance_recorder = kwargs.pop(
+            provenance_recorder: ProvenanceRecorder | None = kwargs.pop(
                 "provenance_recorder", configured_provenance_recorder
             )
         if agent_id is None or clock is None or log is None:
             raise TypeError("captured tools require agent_id, clock, and log")
-        if field_sources is not None and provenance_recorder is None:
+        if isinstance(field_sources, dict) and field_sources and provenance_recorder is None:
             raise TypeError(
                 "capture_tool(field_sources=...) requires provenance_recorder"
             )
+        if callable(field_sources) and provenance_recorder is None:
+            def missing_provenance_recorder(
+                event: Event,
+                field_sources: dict[str, str],
+                *,
+                store: Any,
+                transform: str | None,
+            ) -> Any:
+                raise TypeError(
+                    "capture_tool(field_sources=...) requires provenance_recorder"
+                )
+
+            provenance_recorder = missing_provenance_recorder
 
         with _invocation_lock(log, agent_id, invocation_id):
             return _run_captured_tool(
