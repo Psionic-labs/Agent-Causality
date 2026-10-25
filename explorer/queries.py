@@ -14,7 +14,7 @@ import time
 from collections.abc import Callable
 from typing import Any
 
-from benchmark.opencode.scoring import score_diagnosis
+from core.diagnosis import score_diagnosis
 from core.explain import build_evidence_package, render_evidence_summary
 from core.slicing import structural_slice
 

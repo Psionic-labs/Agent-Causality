@@ -14,7 +14,7 @@ from pathlib import Path
 from typing import Any
 
 from adapters.opencode.mapping import OpenCodeEventMapper
-from benchmark.opencode.scoring import resolve_failure, resolve_roles
+from core.diagnosis import resolve_failure, resolve_roles
 from sdk.events import InMemoryEventLog
 
 DEMO_DIR = Path(__file__).resolve().parent / "demo"

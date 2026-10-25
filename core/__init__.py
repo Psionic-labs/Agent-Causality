@@ -7,8 +7,10 @@ from .decision import (
     get_decision_evaluator,
     register_decision_evaluator,
 )
+from .diagnosis import resolve_failure, resolve_roles, score_diagnosis
 from .explain import EXPLAIN_SYSTEM_PROMPT, build_evidence_package, explain
 from .graph import ancestors, assign_causal_parents, record_causal_event
+from .metrics import pair_metrics, set_metrics
 from .provenance import (
     InMemoryProvenanceStore,
     ProvenanceChain,
@@ -72,6 +74,7 @@ __all__ = [
     "explain",
     "get_decision_evaluator",
     "hash_state",
+    "pair_metrics",
     "provenance",
     "record_causal_event",
     "record_memory_write_provenance",
@@ -80,6 +83,10 @@ __all__ = [
     "record_tool_result_provenance",
     "reconstruct",
     "register_decision_evaluator",
+    "resolve_failure",
+    "resolve_roles",
+    "score_diagnosis",
+    "set_metrics",
     "should_snapshot",
     "structural_slice",
     "verify_chunk_sensitivity",

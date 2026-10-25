@@ -21,7 +21,8 @@ from benchmark.runner import (
 )
 from benchmark.scenarios import SCENARIOS
 from benchmark.schemas import load_ground_truth
-from benchmark.scoring import pair_metrics, score_prediction, set_metrics
+from benchmark.scoring import score_prediction
+from core.metrics import pair_metrics, set_metrics
 
 
 def test_ground_truth_loading_and_exact_scoring() -> None:
