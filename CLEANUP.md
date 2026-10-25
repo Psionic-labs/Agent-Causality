@@ -8,7 +8,8 @@ is the cleanup signal.
   present). There are no per-file rule ignores.
 - **Import boundaries:** 5 entries in
   `tools/verify/import_boundaries_baseline.json`.
-- **Total:** 49 baselined violations.
+- **Total:** computed from the tables below by
+  `tools/verify/suppression_budget.py`; never hand-edit a total.
 
 Checks:
 

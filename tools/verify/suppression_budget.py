@@ -1,9 +1,10 @@
-"""Fail when the suppression baseline grows beyond CLEANUP.md's stated total.
+"""Fail when suppressions drift from the inventory in CLEANUP.md.
 
 A suppression is a ``# noqa`` for one of the rules enabled during static
 enforcement, a bare ``# type: ignore`` (PGH003), or an entry in the import
-boundary baseline. The budget is the number in CLEANUP.md; adding a new
-suppression requires adding a row there first.
+boundary baseline. The budget is computed from the table rows in CLEANUP.md,
+so the total can never be hand-edited. Adding a suppression requires adding a
+row there first; removing one requires deleting its row.
 """
 
 from __future__ import annotations
@@ -14,6 +15,7 @@ import re
 import tokenize
 from pathlib import Path
 
+from cleanup_inventory import table_suppressions
 from import_boundaries import EXCLUDED_PARTS
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -34,14 +36,6 @@ BASELINE_RULES = {
 }
 NOQA_RE = re.compile(r"#\s*noqa(?::\s*(?P<codes>[A-Z0-9, ]+))?")
 TYPE_IGNORE_RE = re.compile(r"#\s*type:\s*ignore(?:\[(?P<codes>[^\]]+)\])?")
-BUDGET_RE = re.compile(r"\*\*Total:\*\*\s*(\d+)\s+baselined", re.IGNORECASE)
-
-
-def _budget() -> int:
-    match = BUDGET_RE.search(CLEANUP.read_text(encoding="utf-8"))
-    if match is None:
-        raise RuntimeError(f"cannot find '**Total:** N baselined' in {CLEANUP.name}")
-    return int(match.group(1))
 
 
 def _ruff_suppressions() -> int:
@@ -76,16 +70,27 @@ def _import_suppressions() -> int:
 
 
 def main() -> int:
-    budget = _budget()
+    table_total = table_suppressions(CLEANUP.read_text(encoding="utf-8"))
     ruff_count = _ruff_suppressions()
     import_count = _import_suppressions()
     total = ruff_count + import_count
-    if total > budget:
-        print(f"FAIL suppression budget: {total} > {budget} baselined suppressions")
+    if total > table_total:
+        print(
+            f"FAIL suppression budget: {total} suppressions > {table_total} "
+            f"rows in {CLEANUP.name}"
+        )
         print("add a row to CLEANUP.md or fix the code")
         return 1
+    if total < table_total:
+        print(
+            f"FAIL suppression budget: {total} suppressions < {table_total} "
+            f"rows in {CLEANUP.name}"
+        )
+        print("remove the stale rows from CLEANUP.md")
+        return 1
     print(
-        f"PASS suppression budget ({total}/{budget} baselined; "
+        f"PASS suppression budget ({total} suppressions match the "
+        f"{table_total} CLEANUP.md rows; "
         f"ruff={ruff_count}, import_boundaries={import_count})"
     )
     return 0

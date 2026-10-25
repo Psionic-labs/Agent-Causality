@@ -20,7 +20,7 @@
 - Layering: `sdk -> core -> storage/adapters -> explorer/cli`; `explorer` must not import `benchmark`.
 - Import boundaries: `uv run python tools/verify/import_boundaries.py`.
 - Postgres: use `storage._psycopg.load_psycopg` / `load_jsonb`; no direct `psycopg` imports.
-- Suppressions are budgeted at 49 in `CLEANUP.md`. A new `# noqa` or `type: ignore`
+- Suppressions are budgeted by the tables in `CLEANUP.md`. A new `# noqa` or `type: ignore`
   needs a CLEANUP row; `uv run python tools/verify/suppression_budget.py` enforces it.
 
 ## Generated files
