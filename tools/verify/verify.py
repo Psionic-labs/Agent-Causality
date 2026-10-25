@@ -1,8 +1,11 @@
 """Run the repository's deterministic checks and the Explorer smoke test.
 
 Usage:
-    uv run python tools/verify/verify.py --quick   # static checks only
-    uv run python tools/verify/verify.py           # full: checks + app + browser
+    uv run python tools/verify/verify.py --quick
+    uv run python tools/verify/verify.py
+
+``--quick`` skips the frontend build, static sync, the Explorer server, and
+Playwright. The full command runs those steps too.
 
 Every step writes a log under tools/verify/artifacts/<run>/. Failures print the
 tail of the log, and the exit code is non-zero if any step fails.

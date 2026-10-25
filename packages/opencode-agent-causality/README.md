@@ -66,7 +66,7 @@ Agent execution → event capture → causal graph → slice / provenance / inte
 
 ## Install — you need BOTH packages
 
-Published as `agent-causality==0.2.1`
+Published as `agent-causality==0.3.0`
 ([PyPI](https://pypi.org/project/agent-causality/)) and
 `@psionic-labs/opencode-agent-causality==0.1.6`
 ([npm](https://www.npmjs.com/package/@psionic-labs/opencode-agent-causality)).

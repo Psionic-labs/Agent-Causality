@@ -3,8 +3,8 @@
 How each user-facing feature is reached, where it lives, and whether the
 deterministic verifier exercises it.
 
-Run `uv run python tools/verify/verify.py` (full) or
-`uv run python tools/verify/verify.py --quick` (static checks only).
+Run `uv run python tools/verify/verify.py` for every check.
+`uv run python tools/verify/verify.py --quick` skips the frontend build, the static sync check, the Explorer server, and Playwright.
 Evidence is written under `tools/verify/artifacts/<run>/`.
 
 Legend: **covered** = exercised by the verify CLI; **partial** = some path is
