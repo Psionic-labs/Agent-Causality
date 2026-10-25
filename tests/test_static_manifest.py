@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import importlib.util
 import sys
 from pathlib import Path
@@ -22,6 +23,32 @@ def test_input_hash_is_path_independent(tmp_path: Path) -> None:
     _make_tree(second)
 
     assert input_hash(first) == input_hash(second)
+
+
+def test_input_hash_uses_case_sensitive_path_order(tmp_path: Path) -> None:
+    root = tmp_path / "repo"
+    fonts = root / "frontend" / "public" / "fonts"
+    fonts.mkdir(parents=True)
+    (fonts / "OFL.txt").write_bytes(b"license\n")
+    (fonts / "ibm-plex.txt").write_bytes(b"font\n")
+    rels = [
+        "frontend/public/fonts/OFL.txt",
+        "frontend/public/fonts/ibm-plex.txt",
+    ]
+
+    def digest(order: list[str]) -> str:
+        hashed = hashlib.sha256()
+        for rel in order:
+            hashed.update(rel.encode())
+            hashed.update(b"\0")
+            hashed.update((root / rel).read_bytes())
+            hashed.update(b"\0")
+        return hashed.hexdigest()
+
+    case_sensitive = digest(sorted(rels))
+    casefolded = digest(sorted(rels, key=str.lower))
+    assert case_sensitive != casefolded
+    assert input_hash(root) == case_sensitive
 
 
 def test_input_hash_ignores_line_endings(tmp_path: Path) -> None:

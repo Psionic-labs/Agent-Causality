@@ -43,7 +43,7 @@ def _input_files(root: Path) -> list[Path]:
                 if candidate.is_file()
                 and not any(part in IGNORED for part in candidate.relative_to(root).parts)
             )
-    return sorted(set(files))
+    return _posix_sort(root, set(files))
 
 
 def _normalized_bytes(path: Path) -> bytes:
@@ -57,16 +57,27 @@ def input_hash(root: Path) -> str:
 
 
 def _static_files(static_dir: Path) -> list[Path]:
-    return sorted(
+    files = [
         path
         for path in static_dir.rglob("*")
         if path.is_file() and path.name != MANIFEST_NAME
-    )
+    ]
+    return _posix_sort(static_dir, files)
+
+
+def _posix_sort(root: Path, files: set[Path] | list[Path]) -> list[Path]:
+    """Sort by case-sensitive relative POSIX path.
+
+    ``Path`` ordering lowercases parts on Windows, so ``OFL.txt`` sorts after
+    ``ibm-plex`` there and before it on Linux. The manifest hash has to match
+    on both.
+    """
+    return sorted(files, key=lambda path: path.relative_to(root).as_posix())
 
 
 def _hash_files(root: Path, files: list[Path]) -> str:
     digest = hashlib.sha256()
-    for path in files:
+    for path in _posix_sort(root, files):
         digest.update(path.relative_to(root).as_posix().encode("utf-8"))
         digest.update(b"\0")
         digest.update(_normalized_bytes(path))
