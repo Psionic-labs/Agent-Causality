@@ -1,10 +1,4 @@
 {
-  "import_boundaries": [
-    {
-      "path": "sdk/tools.py",
-      "module": "core.provenance",
-      "reason": "capture_tool lazily imports core provenance to record field sources; sdk must not depend on core. Listed in CLEANUP.md."
-    }
-  ],
+  "import_boundaries": [],
   "psycopg": []
 }
