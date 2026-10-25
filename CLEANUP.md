@@ -6,7 +6,7 @@ is the cleanup signal.
 
 - **Ruff:** 44 explicit `# noqa` directives (37 added in `65acc9c`, 7 already
   present). There are no per-file rule ignores.
-- **Import boundaries:** 3 entries in
+- **Import boundaries:** 0 entries in
   `tools/verify/import_boundaries_baseline.json`.
 - **Total:** computed from the tables below by
   `tools/verify/suppression_budget.py`; never hand-edit a total.
@@ -79,14 +79,18 @@ the `EventLog` protocol explicit and reject non-conforming backends.
 
 | File | Module imported | Why it is suppressed |
 |---|---|---|
-| `sdk/tools.py` | `core.provenance` | `capture_tool` lazily records field sources, creating sdk -> core. |
-
 The explorer violations are fixed: `resolve_failure`, `resolve_roles`, and
 `score_diagnosis` now live in `core/diagnosis.py`, with the shared set/pair
 metrics in `core/metrics.py`; the explorer and benchmark import them from core.
 
-Cleanup: remove the sdk -> core lazy import by moving provenance recording
-behind an sdk callback or into the caller.
+The sdk violation is fixed: `capture_tool` takes a `provenance_recorder`
+callback, so callers pass `core.provenance.record_tool_result_provenance` and
+the SDK no longer imports `core`.
+
+The sdk violation is fixed: `capture_tool` takes a `provenance_recorder`
+callback, so callers pass `core.provenance.record_tool_result_provenance` and
+the SDK no longer imports `core`. There are no remaining import-boundary
+suppressions.
 
 ## 9. Script-local hacks
 
@@ -121,7 +125,7 @@ All 29 rows below are cleanup candidates, not boundary code.
 | `core/provenance.py` | 211 | SIM114 |
 | `core/replay.py` | 70 | SIM118 |
 | `core/validator.py` | 68 | BLE001 |
-| `sdk/tools.py` | 145 | SIM108 |
+| `sdk/tools.py` | 165 | SIM108 |
 | `storage/sqlite.py` | 99, 161 | SIM117 |
 | `tests/test_packaging.py` | 63 | SIM300 |
 | `tests/test_phase1.py` | 245 | SIM117 |

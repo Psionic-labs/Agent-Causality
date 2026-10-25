@@ -285,6 +285,7 @@ def test_capture_tool_with_field_sources_decorator() -> None:
         run_id="run-test",
         field_sources={"output.customer_status": "invocation.user_id"},
         transform="customer_lookup",
+        provenance_recorder=record_tool_result_provenance,
     )
     def fetch_customer(user_id: str) -> dict[str, str]:
         return {"customer_status": "verified"}
@@ -300,6 +301,22 @@ def test_capture_tool_with_field_sources_decorator() -> None:
     assert edge.source_path == "invocation.user_id"
     assert edge.grade == "exact"
     assert edge.transform == "customer_lookup"
+
+
+def test_capture_tool_field_sources_require_provenance_recorder() -> None:
+    log = InMemoryEventLog()
+
+    @capture_tool(
+        agent_id="Worker",
+        clock=AgentClock(),
+        log=log,
+        field_sources={"output.customer_status": "invocation.user_id"},
+    )
+    def fetch_customer(user_id: str) -> dict[str, str]:
+        return {"customer_status": "verified"}
+
+    with pytest.raises(TypeError, match="provenance_recorder"):
+        fetch_customer("user_99")
 
 
 # ============================================================================

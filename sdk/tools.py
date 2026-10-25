@@ -5,13 +5,32 @@ from __future__ import annotations
 import functools
 from collections.abc import Callable
 from threading import Lock
-from typing import TYPE_CHECKING, Any, TypeVar, cast
+from typing import TYPE_CHECKING, Any, Protocol, TypeVar, cast
 from uuid import uuid4
 
 from .events import AgentClock, Event, record_event
 
 if TYPE_CHECKING:
     from .memory import ResourceRegistry
+
+
+class ProvenanceRecorder(Protocol):
+    """Callable that persists provenance for a captured tool result.
+
+    ``capture_tool`` accepts one when ``field_sources`` is declared; the SDK
+    stays independent of ``core`` while callers keep full control over how
+    edges are stored.
+    """
+
+    def __call__(
+        self,
+        event: Event,
+        field_sources: dict[str, str],
+        *,
+        store: Any,
+        transform: str | None,
+    ) -> Any: ...
+
 
 F = TypeVar("F", bound=Callable[..., Any])
 _fallback_lock_guard = Lock()
@@ -60,6 +79,7 @@ def _run_captured_tool(
     resource_uri: str | None = None,
     field_sources: dict[str, str] | Callable[[Any], dict[str, str]] | None = None,
     transform: str | None = "tool_call",
+    provenance_recorder: ProvenanceRecorder | None = None,
 ) -> Any:
     prior = _find_events(log, agent_id, invocation_id)
     prior_result = next((event for event in prior if event.event_type == "tool_result"), None)
@@ -147,9 +167,11 @@ def _run_captured_tool(
         else:
             sources = field_sources(result)
         if sources:
-            from core.provenance import record_tool_result_provenance
-
-            record_tool_result_provenance(
+            if provenance_recorder is None:
+                raise TypeError(
+                    "capture_tool(field_sources=...) requires provenance_recorder"
+                )
+            provenance_recorder(
                 result_event,
                 sources,
                 store=log,
@@ -170,6 +192,7 @@ def _decorate(
     configured_resource_uri: str | None = None,
     configured_field_sources: dict[str, str] | Callable[[Any], dict[str, str]] | None = None,
     configured_transform: str | None = "tool_call",
+    configured_provenance_recorder: ProvenanceRecorder | None = None,
 ) -> Any:
     @functools.wraps(fn)
     def wrapper(*args: Any, **kwargs: Any) -> Any:
@@ -188,6 +211,9 @@ def _decorate(
             resource_uri = kwargs.pop("_capture_resource_uri", configured_resource_uri)
             field_sources = kwargs.pop("_capture_field_sources", configured_field_sources)
             transform = kwargs.pop("_capture_transform", configured_transform)
+            provenance_recorder = kwargs.pop(
+                "_capture_provenance_recorder", configured_provenance_recorder
+            )
         else:
             agent_id = kwargs.pop("agent_id", None)
             clock = kwargs.pop("clock", None)
@@ -199,8 +225,15 @@ def _decorate(
             resource_uri = kwargs.pop("resource_uri", configured_resource_uri)
             field_sources = kwargs.pop("field_sources", configured_field_sources)
             transform = kwargs.pop("transform", configured_transform)
+            provenance_recorder = kwargs.pop(
+                "provenance_recorder", configured_provenance_recorder
+            )
         if agent_id is None or clock is None or log is None:
             raise TypeError("captured tools require agent_id, clock, and log")
+        if field_sources is not None and provenance_recorder is None:
+            raise TypeError(
+                "capture_tool(field_sources=...) requires provenance_recorder"
+            )
 
         with _invocation_lock(log, agent_id, invocation_id):
             return _run_captured_tool(
@@ -217,6 +250,7 @@ def _decorate(
                 resource_uri=resource_uri,
                 field_sources=field_sources,
                 transform=transform,
+                provenance_recorder=provenance_recorder,
             )
 
     return cast(F, wrapper)
@@ -233,12 +267,18 @@ def capture_tool(
     resource_uri: str | None = None,
     field_sources: dict[str, str] | Callable[[Any], dict[str, str]] | None = None,
     transform: str | None = "tool_call",
+    provenance_recorder: ProvenanceRecorder | None = None,
 ) -> Any:
     """Decorate a tool with trace context supplied at decoration or call time.
 
     The documented call-time form reserves ``agent_id``, ``clock``, ``log``,
     ``run_id``, ``causal_parent_ids``, ``invocation_id``, ``registry``,
-    ``resource_uri``, ``field_sources``, and ``transform``.
+    ``resource_uri``, ``field_sources``, ``transform``, and
+    ``provenance_recorder``.
+
+    ``field_sources`` requires a ``provenance_recorder``. Pass
+    ``core.provenance.record_tool_result_provenance`` (or a wrapper that
+    supplies its own store) to persist the declared edges.
     """
     if fn is None:
         return lambda wrapped: _decorate(
@@ -251,6 +291,7 @@ def capture_tool(
             resource_uri,
             field_sources,
             transform,
+            provenance_recorder,
         )
     return _decorate(
         fn,
@@ -262,5 +303,6 @@ def capture_tool(
         resource_uri,
         field_sources,
         transform,
+        provenance_recorder,
     )
 
