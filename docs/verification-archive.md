@@ -554,7 +554,7 @@ The selected tests cover:
 | `test_record_tool_result_provenance_helper` | Helper emits exact edges tagged `tool_call` per `field_sources` mapping. |
 | `test_record_model_call_provenance_helper` | Helper emits coarse edges with `source_path=None` for each downstream field. |
 | `test_record_memory_write_provenance_helper` | Helper emits an exact edge for a memory write with `source_path` set. |
-| `test_capture_tool_with_field_sources_decorator` | `@capture_tool(field_sources=…)` automatically persists provenance on tool completion. |
+| `test_capture_tool_with_field_sources_decorator` | `@capture_tool(field_sources=…, provenance_recorder=…)` automatically persists provenance on tool completion. |
 | `test_verify_chunk_sensitivity` | `verify_chunk_sensitivity` returns `True` when perturbing a chunk changes the model call output. |
 | `test_cli_provenance_command_renders_grades` | CLI `provenance` command output contains `[exact]` and `[coarse]` strings. |
 
