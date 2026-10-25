@@ -14,6 +14,10 @@ test_pics/
 paper.tex
 .causality/
 agent-causality-site/DESIGN.md
+.agents
+brag-output/
+paper/
+.audit/
 
 # Installed OpenCode plugin (canonical source: packages/opencode-agent-causality/src/index.ts)
 .opencode/*

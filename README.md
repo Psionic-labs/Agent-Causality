@@ -33,6 +33,7 @@ explains failures with grounded evidence instead of guesses.
 [Explorer](#see-it-visual-dag-explorer) ·
 [OpenCode](#works-with-opencode) ·
 [LangGraph](#works-with-langgraph) ·
+[Research paper](#research-paper) ·
 [Docs](#documentation)
 
 ---
@@ -350,6 +351,29 @@ and `benchmark/results/`.
 
 ---
 
+## Research paper
+
+[Agent-Causality: Declared Dependency Tracing and Counterfactual Sensitivity Analysis for Multi-Agent Systems](https://github.com/Psionic-labs/Agent-Causality/blob/main/research_paper/agentic_causality_paper.pdf), by Vasant Kumar Mogia, Psionics. The file is [`research_paper/agentic_causality_paper.pdf`](https://github.com/Psionic-labs/Agent-Causality/blob/main/research_paper/agentic_causality_paper.pdf). Source is [`research_paper/main.tex`](https://github.com/Psionic-labs/Agent-Causality/blob/main/research_paper/main.tex).
+
+The paper describes declared parent links, structural slices, provenance grades, decision contracts, and counterfactual replay of registered merge decisions.
+
+Each name links to the PDF page where that section starts.
+
+1. [Introduction](https://github.com/Psionic-labs/Agent-Causality/blob/main/research_paper/agentic_causality_paper.pdf#page=1)
+2. [The problem](https://github.com/Psionic-labs/Agent-Causality/blob/main/research_paper/agentic_causality_paper.pdf#page=2)
+3. [The core idea](https://github.com/Psionic-labs/Agent-Causality/blob/main/research_paper/agentic_causality_paper.pdf#page=2)
+4. [How the system works](https://github.com/Psionic-labs/Agent-Causality/blob/main/research_paper/agentic_causality_paper.pdf#page=3)
+5. [Fixture walkthrough: customer approval](https://github.com/Psionic-labs/Agent-Causality/blob/main/research_paper/agentic_causality_paper.pdf#page=5)
+6. [What the tool supports on its own](https://github.com/Psionic-labs/Agent-Causality/blob/main/research_paper/agentic_causality_paper.pdf#page=6)
+7. [Combinations with other tools](https://github.com/Psionic-labs/Agent-Causality/blob/main/research_paper/agentic_causality_paper.pdf#page=6)
+8. [Case study: a documented agent incident](https://github.com/Psionic-labs/Agent-Causality/blob/main/research_paper/agentic_causality_paper.pdf#page=8)
+9. [Evaluation](https://github.com/Psionic-labs/Agent-Causality/blob/main/research_paper/agentic_causality_paper.pdf#page=8)
+10. [Limitations and future work](https://github.com/Psionic-labs/Agent-Causality/blob/main/research_paper/agentic_causality_paper.pdf#page=10)
+11. [Related work](https://github.com/Psionic-labs/Agent-Causality/blob/main/research_paper/agentic_causality_paper.pdf#page=11)
+12. [Conclusion](https://github.com/Psionic-labs/Agent-Causality/blob/main/research_paper/agentic_causality_paper.pdf#page=11)
+
+---
+
 ## Documentation
 
 | Topic | Link |
@@ -361,6 +385,7 @@ and `benchmark/results/`.
 | CLI and Python reference | [docs/reference.md](https://github.com/Psionic-labs/Agent-Causality/blob/main/docs/reference.md) |
 | Benchmarks and results | [docs/benchmarks.md](https://github.com/Psionic-labs/Agent-Causality/blob/main/docs/benchmarks.md) |
 | Scope and limits | [docs/reference.md](https://github.com/Psionic-labs/Agent-Causality/blob/main/docs/reference.md) |
+| Research paper | [`research_paper/agentic_causality_paper.pdf`](https://github.com/Psionic-labs/Agent-Causality/blob/main/research_paper/agentic_causality_paper.pdf) |
 | Research background | [docs/thesis.md](https://github.com/Psionic-labs/Agent-Causality/blob/main/docs/thesis.md), [docs/research-memo.md](https://github.com/Psionic-labs/Agent-Causality/blob/main/docs/research-memo.md) |
 | Contributing and tests | [TEST.md](https://github.com/Psionic-labs/Agent-Causality/blob/main/TEST.md), [CONTRIBUTING.md](https://github.com/Psionic-labs/Agent-Causality/blob/main/CONTRIBUTING.md) |
 | Release notes | [CHANGELOG.md](https://github.com/Psionic-labs/Agent-Causality/blob/main/CHANGELOG.md) |
