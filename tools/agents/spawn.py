@@ -120,7 +120,46 @@ def _run(
     return code
 
 
-def _task_prompt(task: str, branch: str, worktree: Path) -> str:
+def _git_output(*args: str, cwd: Path) -> str:
+    completed = subprocess.run(
+        ["git", *args],
+        cwd=cwd,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+        check=False,
+    )
+    return completed.stdout if completed.returncode == 0 else ""
+
+
+def _changed_paths(worktree: Path, base: str) -> list[str]:
+    paths = set(_git_output("diff", "--name-only", f"{base}...HEAD", cwd=worktree).splitlines())
+    for line in _git_output("status", "--porcelain", cwd=worktree).splitlines():
+        if len(line) < 4:
+            continue
+        path = line[3:]
+        if " -> " in path:
+            path = path.split(" -> ", 1)[1]
+        paths.add(path)
+    return sorted(path for path in paths if path)
+
+
+def _out_of_scope(paths: list[str], allowed: list[str]) -> list[str]:
+    if not allowed:
+        return []
+    normalized = [item.strip().strip("/") for item in allowed if item.strip()]
+    offending: list[str] = []
+    for path in paths:
+        if not any(path == item or path.startswith(f"{item}/") for item in normalized):
+            offending.append(path)
+    return offending
+
+
+def _task_prompt(task: str, branch: str, worktree: Path, allowed: list[str]) -> str:
+    scope = ""
+    if allowed:
+        scope = "\n- Only modify these paths: " + ", ".join(allowed) + "."
     return f"""You are working in an isolated git worktree: {worktree}
 Branch: {branch}
 
@@ -128,7 +167,7 @@ Task:
 {task}
 
 Rules:
-- Implement only this task. Do not edit files outside this worktree.
+- Implement only this task. Do not edit files outside this worktree.{scope}
 - Run `uv run python tools/verify/verify.py` (full mode) before finishing.
 - If it passes, commit your changes on this branch with a descriptive message.
 - If it fails, leave the worktree in place and report FAIL with the failing step.
@@ -144,6 +183,7 @@ def _summary(
     task: str,
     agent_code: int,
     verify_code: int,
+    scope: dict[str, object],
 ) -> dict[str, object]:
     data = {
         "branch": branch,
@@ -151,7 +191,8 @@ def _summary(
         "task": task,
         "agent_exit": agent_code,
         "verify_exit": verify_code,
-        "passed": agent_code == 0 and verify_code == 0,
+        "scope": scope,
+        "passed": agent_code == 0 and verify_code == 0 and bool(scope["ok"]),
         "finished": datetime.now(UTC).isoformat(),
     }
     log_dir.mkdir(parents=True, exist_ok=True)
@@ -165,12 +206,22 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--branch", required=True, help="new branch name")
     parser.add_argument("--base", default="main", help="base branch (default: main)")
     parser.add_argument("--model", default=DEFAULT_MODEL, help="provider/model")
+    parser.add_argument(
+        "--allow-paths",
+        action="append",
+        default=[],
+        help="comma-separated path prefixes the task may change (repeatable)",
+    )
     parser.add_argument("--max-concurrent", type=int, default=MAX_CONCURRENT, choices=[1, 2, 3])
     parser.add_argument("--agent-timeout", type=int, default=3600)
     parser.add_argument("--verify-timeout", type=int, default=900)
     parser.add_argument("--merge", action="store_true", help="merge the branch after PASS")
     parser.add_argument("--push", action="store_true", help="push the branch after PASS")
     args = parser.parse_args(argv)
+
+    allowed: list[str] = []
+    for chunk in args.allow_paths:
+        allowed.extend(item.strip() for item in chunk.split(",") if item.strip())
 
     branch_slug = _slug(args.branch)
     worktree = WORKTREES / branch_slug
@@ -215,19 +266,35 @@ def main(argv: list[str] | None = None) -> int:
                     args.model,
                     "--title",
                     f"{args.branch}: {args.task[:60]}",
-                    _task_prompt(args.task, args.branch, worktree),
+                    _task_prompt(args.task, args.branch, worktree, allowed),
                 ],
                 worktree,
                 agent_log,
                 args.agent_timeout,
             )
+            changed = _changed_paths(worktree, args.base)
+            offending = _out_of_scope(changed, allowed)
+            scope: dict[str, object] = {
+                "allowed": allowed,
+                "changed": changed,
+                "offending": offending,
+                "ok": not offending,
+            }
+            if offending:
+                print(
+                    f"FAIL scope {args.branch}: touched paths outside --allow-paths: "
+                    + ", ".join(offending),
+                    file=sys.stderr,
+                )
             verify_code = _run(
                 ["uv", "run", "python", "tools/verify/verify.py"],
                 worktree,
                 verify_log,
                 args.verify_timeout,
             )
-            data = _summary(log_dir, args.branch, worktree, args.task, agent_code, verify_code)
+            data = _summary(
+                log_dir, args.branch, worktree, args.task, agent_code, verify_code, scope
+            )
             status = "PASS" if data["passed"] else "FAIL"
             print(f"{status} {args.branch}  logs: {log_dir}", flush=True)
             if not data["passed"]:
