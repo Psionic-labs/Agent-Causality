@@ -19,14 +19,10 @@ from typing import Any
 from uuid import uuid4
 
 from adapters.opencode.server import OpenCodeIngestServer
+from core.diagnosis import resolve_failure, resolve_roles, score_diagnosis
 from storage.sqlite import SQLiteEventStore
 
-from .scoring import (
-    capture_completeness,
-    resolve_failure,
-    resolve_roles,
-    score_diagnosis,
-)
+from .scoring import capture_completeness
 from .tasks import (
     TASK_NAMES,
     list_tasks,

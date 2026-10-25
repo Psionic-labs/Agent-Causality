@@ -6,15 +6,7 @@ from typing import Any
 
 from adapters.opencode.mapping import OpenCodeEventMapper
 from benchmark.opencode.runner import render_markdown
-from benchmark.opencode.scoring import (
-    EVENT_CLASSES,
-    ancestors_of,
-    capture_completeness,
-    classify_event,
-    resolve_failure,
-    resolve_roles,
-    score_diagnosis,
-)
+from benchmark.opencode.scoring import EVENT_CLASSES, capture_completeness, classify_event
 from benchmark.opencode.tasks import (
     TASK_NAMES,
     list_tasks,
@@ -23,6 +15,7 @@ from benchmark.opencode.tasks import (
     resolve_opencode_binary,
     setup_workdir,
 )
+from core.diagnosis import ancestors_of, resolve_failure, resolve_roles, score_diagnosis
 from sdk.events import InMemoryEventLog
 
 RECORDED = Path("benchmark/opencode/recorded")

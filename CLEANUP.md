@@ -79,13 +79,14 @@ the `EventLog` protocol explicit and reject non-conforming backends.
 
 | File | Module imported | Why it is suppressed |
 |---|---|---|
-| `explorer/loader.py` | `benchmark.opencode.scoring` | `resolve_failure` and `resolve_roles` live in benchmark. |
-| `explorer/queries.py` | `benchmark.opencode.scoring` | `score_diagnosis` lives in benchmark. |
 | `sdk/tools.py` | `core.provenance` | `capture_tool` lazily records field sources, creating sdk -> core. |
 
-Cleanup: move the three scoring helpers into a shared `core` module; remove
-the sdk -> core lazy import by moving provenance recording behind an sdk
-callback or into the caller.
+The explorer violations are fixed: `resolve_failure`, `resolve_roles`, and
+`score_diagnosis` now live in `core/diagnosis.py`, with the shared set/pair
+metrics in `core/metrics.py`; the explorer and benchmark import them from core.
+
+Cleanup: remove the sdk -> core lazy import by moving provenance recording
+behind an sdk callback or into the caller.
 
 ## 9. Script-local hacks
 
@@ -111,10 +112,10 @@ All 29 rows below are cleanup candidates, not boundary code.
 | `adapters/opencode/mapping.py` | 267 | SIM114 |
 | `adapters/opencode/mapping.py` | 299 | BLE001 |
 | `benchmark/baseline.py` | 220 | SIM105 |
-| `benchmark/opencode/runner.py` | 68 | BLE001 |
-| `benchmark/opencode/runner.py` | 270 | SIM114 |
-| `benchmark/opencode/scoring.py` | 238 | SIM103 |
-| `benchmark/opencode/scoring.py` | 375, 389, 440, 477, 538, 560, 601 | BLE001 |
+| `benchmark/opencode/runner.py` | 64 | BLE001 |
+| `benchmark/opencode/runner.py` | 266 | SIM114 |
+| `core/diagnosis.py` | 85 | SIM103 |
+| `core/diagnosis.py` | 222, 236, 287, 324, 385, 407, 448 | BLE001 |
 | `core/explain.py` | 311, 319, 366, 382, 493 | BLE001 |
 | `core/explain.py` | 325 | SIM102 |
 | `core/provenance.py` | 211 | SIM114 |

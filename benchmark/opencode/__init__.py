@@ -10,8 +10,6 @@ from .scoring import (
     EVENT_CLASSES,
     capture_completeness,
     classify_event,
-    resolve_roles,
-    score_diagnosis,
 )
 from .tasks import TASK_NAMES, get_task, list_tasks, load_spec
 
@@ -23,6 +21,4 @@ __all__ = [
     "get_task",
     "list_tasks",
     "load_spec",
-    "resolve_roles",
-    "score_diagnosis",
 ]
