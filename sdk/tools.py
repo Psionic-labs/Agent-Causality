@@ -84,6 +84,15 @@ def _run_captured_tool(
     prior = _find_events(log, agent_id, invocation_id)
     prior_result = next((event for event in prior if event.event_type == "tool_result"), None)
     if prior_result is not None:
+        if field_sources is not None:
+            if isinstance(field_sources, dict):
+                sources = field_sources
+            else:
+                sources = field_sources(prior_result.payload.get("output"))
+            if sources and provenance_recorder is None:
+                raise TypeError(
+                    "capture_tool(field_sources=...) requires provenance_recorder"
+                )
         # Restore registry state so downstream reads still inherit the
         # tool-result causal edge (e.g. after restart or a fresh registry).
         restore_uri = resource_uri or prior_result.payload.get("resource_uri")
