@@ -50,6 +50,9 @@ EXCLUDED_PARTS = {
     "node_modules",
     "paper",
     "test_pics",
+    "tools/agents/logs",
+    "tools/agents/state",
+    "tools/agents/worktrees",
     "tools/verify/artifacts",
 }
 
