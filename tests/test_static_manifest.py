@@ -3,6 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from scripts.static_manifest import check_manifest, input_hash, write_manifest
+from tools.verify.verify import static_steps
 
 
 def _make_tree(root: Path) -> None:
@@ -64,3 +65,9 @@ def test_changed_static_file_without_regeneration_fails(tmp_path: Path) -> None:
 
     assert ok is False
     assert "explorer/static files changed" in message
+
+
+def test_full_verify_checks_static_sync_before_frontend_build() -> None:
+    names = [step.name for step in static_steps(full=True)]
+
+    assert names.index("static sync") < names.index("frontend build")

@@ -324,12 +324,12 @@ def static_steps(*, full: bool) -> list[Step]:
     ]
     if full:
         steps += [
-            Step("frontend build", (npm, "run", "build"), cwd=FRONTEND),
             Step(
                 "static sync",
                 (sys.executable, "scripts/sync-explorer-static.py", "--check"),
                 must_contain=("in sync",),
             ),
+            Step("frontend build", (npm, "run", "build"), cwd=FRONTEND),
         ]
     return steps
 
