@@ -58,7 +58,7 @@ jobs:
 
   pr-review:
     name: Advisory PR review
-    # Same-repository pull requests only: forks never receive the secret.
+    # Same-repository pull requests only. Forks never receive the secrets.
     if: >-
       github.event_name == 'pull_request' &&
       github.event.pull_request.head.repo.full_name == github.repository
@@ -70,23 +70,17 @@ jobs:
       contents: read
       pull-requests: write
     steps:
-      - name: Check for review credentials
-        id: gate
-        env:
-          OPENCODE_API_KEY: ${{ secrets.OPENCODE_API_KEY }}
-        run: |
-          if [ -n "$OPENCODE_API_KEY" ]; then
-            echo "enabled=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "enabled=false" >> "$GITHUB_OUTPUT"
-            echo "OPENCODE_API_KEY is not set; skipping the advisory review."
-          fi
-
       - name: Check out repository
-        if: steps.gate.outputs.enabled == 'true'
         uses: actions/checkout@v7
         with:
           fetch-depth: 0
+
+      - name: Select review credential
+        id: gate
+        env:
+          OPENCODE_API_KEY: ${{ secrets.OPENCODE_API_KEY }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        run: python3 scripts/advisory_review.py --github-output "$GITHUB_OUTPUT"
 
       - name: Install OpenCode
         if: steps.gate.outputs.enabled == 'true'
@@ -96,6 +90,8 @@ jobs:
         if: steps.gate.outputs.enabled == 'true'
         env:
           OPENCODE_API_KEY: ${{ secrets.OPENCODE_API_KEY }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          REVIEW_MODEL: ${{ steps.gate.outputs.model }}
           GH_TOKEN: ${{ github.token }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
           PR_TITLE: ${{ github.event.pull_request.title }}
@@ -128,7 +124,7 @@ jobs:
             echo "END $boundary"
           } > prompt.md
           opencode run \
-            --model opencode/deepseek-v4.1-flash-free \
+            --model "$REVIEW_MODEL" \
             --auto \
             --title "PR review #$PR_NUMBER" \
             "$(cat prompt.md)" > review.md
