@@ -319,6 +319,37 @@ def test_capture_tool_field_sources_require_provenance_recorder() -> None:
         fetch_customer("user_99")
 
 
+def test_capture_tool_empty_callable_field_sources_need_no_provenance_recorder() -> None:
+    log = InMemoryEventLog()
+
+    @capture_tool(
+        agent_id="Worker",
+        clock=AgentClock(),
+        log=log,
+        field_sources=lambda result: {},
+    )
+    def fetch_customer(user_id: str) -> dict[str, str]:
+        return {"customer_status": "verified"}
+
+    assert fetch_customer("user_99") == {"customer_status": "verified"}
+
+
+def test_capture_tool_nonempty_callable_field_sources_require_provenance_recorder() -> None:
+    log = InMemoryEventLog()
+
+    @capture_tool(
+        agent_id="Worker",
+        clock=AgentClock(),
+        log=log,
+        field_sources=lambda result: {"output.customer_status": "invocation.user_id"},
+    )
+    def fetch_customer(user_id: str) -> dict[str, str]:
+        return {"customer_status": "verified"}
+
+    with pytest.raises(TypeError, match="provenance_recorder"):
+        fetch_customer("user_99")
+
+
 # ============================================================================
 # 4. Context-Chunk Sensitivity Verification (Thesis §30.8)
 # ============================================================================
