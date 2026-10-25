@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## Unreleased
+
+### Breaking changes
+
+- `capture_tool` now requires `provenance_recorder` when `field_sources`
+  produces a non-empty mapping.
+
 ## [0.2.1] - 2026-10-22
 
 ### Visual DAG Explorer — CRT monitor skin
