@@ -1,0 +1,33 @@
+{
+  "input_sha256": "0e66212fea347527a2f9a2acbc958b892590f1378d05994bf022f9feeee3d6b6",
+  "files": [
+    "frontend/app/globals.css",
+    "frontend/app/layout.tsx",
+    "frontend/app/page.tsx",
+    "frontend/components/Chassis.tsx",
+    "frontend/components/DagView.tsx",
+    "frontend/components/Header.tsx",
+    "frontend/components/Inspector.tsx",
+    "frontend/components/Legend.tsx",
+    "frontend/components/TabsPanels.tsx",
+    "frontend/components/TimelineView.tsx",
+    "frontend/components/WhyStrip.tsx",
+    "frontend/lib/api.ts",
+    "frontend/lib/filter.ts",
+    "frontend/lib/render.ts",
+    "frontend/lib/store.ts",
+    "frontend/lib/timeline.ts",
+    "frontend/lib/tracefacts.ts",
+    "frontend/lib/types.ts",
+    "frontend/lib/use-selection.ts",
+    "frontend/lib/viewport.ts",
+    "frontend/next.config.ts",
+    "frontend/package-lock.json",
+    "frontend/package.json",
+    "frontend/public/fonts/ibm-plex-mono-400.woff2",
+    "frontend/public/fonts/ibm-plex-mono-500.woff2",
+    "frontend/public/fonts/ibm-plex-mono-600.woff2",
+    "frontend/public/fonts/OFL.txt",
+    "frontend/tsconfig.json"
+  ]
+}

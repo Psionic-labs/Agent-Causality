@@ -6,6 +6,10 @@ Destination: ``explorer/static/`` (shipped inside the ``agent-causality`` wheel)
 The vendored copy is committed so ``uv build`` works without Node, and so
 PyPI installs render the Visual DAG without cloning the repository.
 
+Next.js embeds checkout-dependent module IDs in its chunks. The committed
+``.frontend-inputs.json`` hashes the source inputs instead, so ``--check`` is
+path-independent and works in linked worktrees.
+
 Usage:
     uv run python scripts/sync-explorer-static.py
     uv run python scripts/sync-explorer-static.py --check   # CI: fail if stale
@@ -14,10 +18,11 @@ Usage:
 from __future__ import annotations
 
 import argparse
-import filecmp
 import shutil
 import sys
 from pathlib import Path
+
+from static_manifest import check_manifest, write_manifest
 
 ROOT = Path(__file__).resolve().parent.parent
 SRC = ROOT / "frontend" / "out"
@@ -53,13 +58,17 @@ def sync() -> int:
     body = index.read_text(encoding="utf-8")
     if "DAG Explorer" not in body:
         return _fail("explorer/static/index.html does not contain 'DAG Explorer'")
+    manifest = write_manifest(ROOT, DST)
     n_files = sum(1 for _ in DST.rglob("*") if _.is_file())
-    print(f"synced {n_files} files: frontend/out/ -> explorer/static/")
+    print(
+        f"synced {n_files} files: frontend/out/ -> explorer/static/ "
+        f"(inputs {str(manifest['input_sha256'])[:12]})"
+    )
     return 0
 
 
 def check() -> int:
-    """Fail if the vendored copy is missing or differs from frontend/out/."""
+    """Fail if the vendored copy is missing or the frontend inputs changed."""
     if not (SRC / "index.html").is_file():
         return _fail("frontend/out/index.html missing; cannot check freshness")
     if not (DST / "index.html").is_file():
@@ -67,21 +76,13 @@ def check() -> int:
             "explorer/static/index.html missing; run "
             "`uv run python scripts/sync-explorer-static.py`"
         )
-    src_files = sorted(p.relative_to(SRC) for p in SRC.rglob("*") if p.is_file())
-    dst_files = sorted(p.relative_to(DST) for p in DST.rglob("*") if p.is_file())
-    if [str(p) for p in src_files] != [str(p) for p in dst_files]:
-        only_src = sorted(set(map(str, src_files)) - set(map(str, dst_files)))
-        only_dst = sorted(set(map(str, dst_files)) - set(map(str, src_files)))
-        details = []
-        if only_src:
-            details.append(f"only in frontend/out: {only_src[:5]}")
-        if only_dst:
-            details.append(f"only in explorer/static: {only_dst[:5]}")
-        return _fail("vendored copy is stale (" + "; ".join(details) + "); re-run sync")
-    for rel in src_files:
-        if not filecmp.cmp(SRC / rel, DST / rel, shallow=False):
-            return _fail(f"vendored copy differs at {rel}; re-run sync")
-    print("explorer/static/ is in sync with frontend/out/")
+    ok, detail = check_manifest(ROOT, DST)
+    if not ok:
+        return _fail(
+            f"{detail}; run `uv run python scripts/sync-explorer-static.py` "
+            "after building frontend/out"
+        )
+    print(f"explorer/static/ is in sync with frontend inputs ({detail[:12]})")
     return 0
 
 
