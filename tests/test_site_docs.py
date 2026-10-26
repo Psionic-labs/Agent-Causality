@@ -63,6 +63,8 @@ def test_home_chrome_is_idempotent_and_keeps_the_page_body() -> None:
     assert 'class="nav-toggle"' in once
     assert "nav-more" not in once
     assert 'data-nav="closed"' in once
+    assert "data-nav-script" not in once
+    assert 'src="nav.js"' in once
 
 
 def test_paper_section_links_return_to_the_home_page() -> None:

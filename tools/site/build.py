@@ -31,6 +31,10 @@ from tools.site.catalog import (
 FONT = "https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap"
 HAND_KINDS = frozenset({"home", "paper"})
 NAV_RE = re.compile(r'<nav class="site-nav"[^>]*>.*?</nav>', re.DOTALL)
+INLINE_NAV_RE = re.compile(
+    r"  <script>\n    document\.documentElement\.setAttribute\(\"data-nav-script\", \"on\"\);\n"
+    r"  </script>\n"
+)
 FOOTER_NAV_RE = re.compile(
     r'<nav class="footer-nav" aria-label="Footer">.*?</nav>',
     re.DOTALL,
@@ -120,12 +124,7 @@ def render_footer_nav(catalog: Catalog, current: Page) -> str:
 
 
 def _boot(path: str) -> str:
-    return (
-        "  <script>\n"
-        '    document.documentElement.setAttribute("data-nav-script", "on");\n'
-        "  </script>\n"
-        f'  <script src="{prefix(path)}nav.js" defer></script>\n'
-    )
+    return f'  <script src="{prefix(path)}nav.js" defer></script>\n'
 
 
 def _button() -> str:
@@ -142,12 +141,13 @@ def _button() -> str:
 def apply_chrome(source: str, catalog: Catalog, page: Page) -> str:
     if page.kind not in HAND_KINDS:
         raise ValueError(page.id)
-    updated = source.replace(
+    updated = INLINE_NAV_RE.sub("", source, count=1)
+    updated = updated.replace(
         '<html lang="en">',
         '<html lang="en" data-nav="closed">',
         1,
     )
-    if "data-nav-script" not in updated:
+    if "nav.js" not in updated:
         boot = _boot(page.path)
         app_tag = '<script src="app.js"'
         if app_tag in updated:

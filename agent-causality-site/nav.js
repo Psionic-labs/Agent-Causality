@@ -61,22 +61,17 @@
     }
   });
 
-  nav.addEventListener("click", function (event) {
-    var element = fromEvent(event.target);
-    if (!element || !element.closest("a")) return;
-    setNav("closed", false);
-  });
-
   document.addEventListener("click", function (event) {
     if (html.getAttribute("data-nav") !== "open") return;
     var element = fromEvent(event.target);
-    if (element && element.closest(".site-header")) return;
-    setNav("closed");
+    if (element && element.closest(".nav-toggle")) return;
+    setNav("closed", element && element.closest("a") ? false : undefined);
   });
 
   window.addEventListener("resize", function () {
     if (!isNarrow()) setNav("closed");
   });
 
+  html.setAttribute("data-nav-script", "on");
   setNav(isNarrow() && html.getAttribute("data-nav") === "open" ? "open" : "closed");
 })();
