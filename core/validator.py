@@ -60,13 +60,9 @@ class GraphValidator:
         """Return only the parent ancestors of the given event (excluding the event itself)."""
         ancestors_fn = getattr(self.log, "ancestors", None)
         if callable(ancestors_fn):
-            try:
-                # Filter out the event itself from the result
-                result = set(ancestors_fn(event_id))
-                result.discard(event_id)
-                return result
-            except Exception:  # noqa: BLE001
-                pass  # fallback to in-memory traversal
+            result = set(ancestors_fn(event_id))
+            result.discard(event_id)
+            return result
 
         ancestors: set[str] = set()
         queue: list[str] = [event_id]

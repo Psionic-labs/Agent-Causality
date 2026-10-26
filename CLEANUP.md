@@ -24,39 +24,27 @@ Do not add a suppression without adding a row here.
 
 ## 1. CLI assumes the demo fixture / silent JSON fallback
 
-| File | Line | Rule | Why it is suppressed |
-|---|---:|---|---|
-| `cli/main.py` | 233 | BLE001 | `json.loads` failure silently falls back to the raw string for replay interventions. |
-
-Cleanup: parse interventions at the CLI boundary and return a usage error for
-invalid JSON. Remove the broad catch.
+Fixed. Replay intervention values are parsed at the CLI boundary. JSON
+literals stay JSON, a bare identifier is a string, and other text is a
+usage error.
 
 ## 2. Explorer has multiple fallback paths
 
-| File | Line | Rule | Why it is suppressed |
-|---|---:|---|---|
-| `explorer/queries.py` | 78 | BLE001 | Failure-slice construction returns an empty set on any error. |
-| `explorer/queries.py` | 258 | BLE001 | AI diagnosis converts any unexpected model-layer error into a 502. |
-| `explorer/server.py` | 53 | BLE001 | `importlib.resources` frontend lookup is best-effort. |
-| `explorer/server.py` | 165 | SIM105 | `KeyboardInterrupt` shutdown uses `try/except/pass` instead of `contextlib.suppress`. |
-
-Cleanup: resolve the frontend directory once and fail with one explicit error;
-replace the shutdown `pass` with `contextlib.suppress(KeyboardInterrupt)`.
+Fixed. The frontend directory is ``explorer/static`` next to the server
+module, and ``main`` exits when ``index.html`` is missing. Shutdown uses
+``contextlib.suppress(KeyboardInterrupt)``. A missing failure event yields
+an empty slice. Model transport failures are ``RuntimeError`` from
+``explain`` and stay HTTP 502. Other errors propagate.
 
 ## 3. Core library reads the repo fixture
 
-No lint suppression. `core/decision.py:198-203` still opens
-`fixture/fixture.json` relative to the checkout. Cleanup: accept fixture data
-as an argument or move the loader into the CLI/example layer.
+Fixed. ``create_fixture_decision`` takes the loaded fixture document.
+Callers open the file.
 
 ## 4. Duplicated, side-effectful `.env` loading
 
-| File | Line | Rule | Why it is suppressed |
-|---|---:|---|---|
-| `core/explain.py` | 181 | BLE001 | Unreadable `.env` files are ignored during environment loading. |
-
-Cleanup: one explicit environment loader at the CLI boundary; no library
-imports should read `.env`.
+Fixed. ``sdk.env.load_env_file`` reads the current directory's ``.env``.
+The causality CLI and the explorer entry point call it. ``explain`` does not.
 
 ## 5. Pytest collection hack
 
@@ -71,9 +59,8 @@ return a context object.
 
 ## 7. SDK append introspection
 
-No lint suppression. `sdk/events.py:96-113` still introspects
-`append_with_status` and treats non-Event returns as dropped. Cleanup: make
-the `EventLog` protocol explicit and reject non-conforming backends.
+Fixed. ``AppendWithStatus`` is the fail-open protocol. A plain ``append``
+that does not return an ``Event`` raises ``TypeError``.
 
 ## 8. Layering violations
 
@@ -103,24 +90,22 @@ assertions.
 
 ## 11. Broad catches and simplification debt
 
-All 29 rows below are cleanup candidates, not boundary code.
+The rows below are cleanup candidates, not boundary code.
 
 | File | Line(s) | Rule |
 |---|---|---|
 | `adapters/langgraph/mapping.py` | 531 | BLE001 |
 | `adapters/langgraph/mapping.py` | 668 | SIM102 |
-| `adapters/opencode/mapping.py` | 267 | SIM114 |
-| `adapters/opencode/mapping.py` | 299 | BLE001 |
+| `adapters/opencode/mapping.py` | 266 | SIM114 |
 | `benchmark/baseline.py` | 220 | SIM105 |
 | `benchmark/opencode/runner.py` | 64 | BLE001 |
 | `benchmark/opencode/runner.py` | 266 | SIM114 |
 | `core/diagnosis.py` | 85 | SIM103 |
-| `core/diagnosis.py` | 222, 236, 287, 324, 385, 407, 448 | BLE001 |
-| `core/explain.py` | 311, 319, 366, 382, 493 | BLE001 |
-| `core/explain.py` | 325 | SIM102 |
+| `core/diagnosis.py` | 222, 236, 283, 320, 376, 398, 439 | BLE001 |
+| `core/explain.py` | 290, 298, 345, 361 | BLE001 |
+| `core/explain.py` | 304 | SIM102 |
 | `core/provenance.py` | 211 | SIM114 |
 | `core/replay.py` | 70 | SIM118 |
-| `core/validator.py` | 68 | BLE001 |
 | `sdk/tools.py` | 165 | SIM108 |
 | `storage/sqlite.py` | 99, 161 | SIM117 |
 | `tests/test_packaging.py` | 63 | SIM300 |
@@ -138,8 +123,8 @@ baselines.
 
 | File | Line(s) | Rule / module | Why it is suppressed |
 |---|---|---|---|
-| `adapters/opencode/server.py` | 32, 61, 89 | BLE001 | Ingest is fail-open by design; telemetry must not break the agent. |
-| `explorer/server.py` | 119 | BLE001 | Read-only API converts errors to JSON instead of crashing. |
+| `adapters/opencode/server.py` | 29, 56, 81 | BLE001 | Ingest is fail-open by design; telemetry must not break the agent. |
+| `explorer/server.py` | 96 | BLE001 | Read-only API converts errors to JSON instead of crashing. |
 | `sdk/privacy.py` | 140 | BLE001 | Redaction fallback is intentionally best-effort. |
 | `tools/verify/verify.py` | 263, 394 | BLE001 | Verifier reports any failure as evidence instead of crashing. |
 | `tests/conftest.py` | 59 | BLE001 | Unreachable PostgreSQL is converted into a test skip. |

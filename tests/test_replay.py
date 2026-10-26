@@ -55,9 +55,9 @@ def fixture_log(fixture_data: dict[str, Any]) -> FixtureEventLog:
 # ============================================================================
 
 
-def test_counterfactual_replay_all_baselines_reverses_failure():
+def test_counterfactual_replay_all_baselines_reverses_failure(fixture_data: dict[str, Any]):
     """Evaluating the fixture decision with all ports at baseline must not produce failure."""
-    contract = create_fixture_decision()
+    contract = create_fixture_decision(fixture_data)
     # Substitute all ports to their baseline values
     interventions = [
         PortIntervention(port_id=p.port_id, substitute_value=p.baseline_value)
@@ -70,9 +70,9 @@ def test_counterfactual_replay_all_baselines_reverses_failure():
     assert cf_outcome == "success"
 
 
-def test_counterfactual_replay_unmodified_reproduces_failure():
+def test_counterfactual_replay_unmodified_reproduces_failure(fixture_data: dict[str, Any]):
     """Replaying with zero interventions must reproduce recorded failure."""
-    contract = create_fixture_decision()
+    contract = create_fixture_decision(fixture_data)
     outcome = counterfactual_replay(contract, [], mode="recorded_output")
     assert outcome == contract.outcome
     assert outcome == "failure"
@@ -83,9 +83,9 @@ def test_counterfactual_replay_unmodified_reproduces_failure():
 # ============================================================================
 
 
-def test_counterfactual_replay_refuses_when_is_side_effecting():
+def test_counterfactual_replay_refuses_when_is_side_effecting(fixture_data: dict[str, Any]):
     """Decisions marked is_side_effecting must raise ReplayUnsafe immediately."""
-    contract = create_fixture_decision()
+    contract = create_fixture_decision(fixture_data)
     side_effecting_contract = create_decision_contract(
         decision_id=contract.decision_id,
         run_id=contract.run_id,
@@ -100,9 +100,11 @@ def test_counterfactual_replay_refuses_when_is_side_effecting():
         counterfactual_replay(side_effecting_contract, [])
 
 
-def test_counterfactual_replay_refuses_structured_side_effect_category():
+def test_counterfactual_replay_refuses_structured_side_effect_category(
+    fixture_data: dict[str, Any],
+):
     """Decisions with metadata['tool_category'] in SIDE_EFFECTING_TOOLS must raise ReplayUnsafe."""
-    contract = create_fixture_decision()
+    contract = create_fixture_decision(fixture_data)
     for tool_cat in SIDE_EFFECTING_TOOLS:
         cat_contract = create_decision_contract(
             decision_id=contract.decision_id,
@@ -118,9 +120,9 @@ def test_counterfactual_replay_refuses_structured_side_effect_category():
             counterfactual_replay(cat_contract, [])
 
 
-def test_counterfactual_replay_allows_safe_metadata():
+def test_counterfactual_replay_allows_safe_metadata(fixture_data: dict[str, Any]):
     """Decisions with non-side-effecting metadata must be allowed to replay."""
-    contract = create_fixture_decision()
+    contract = create_fixture_decision(fixture_data)
     safe_contract = create_decision_contract(
         decision_id=contract.decision_id,
         run_id=contract.run_id,
@@ -140,14 +142,16 @@ def test_counterfactual_replay_allows_safe_metadata():
 # ============================================================================
 
 
-def test_fixture_matches_ground_truth(fixture_log: FixtureEventLog):
+def test_fixture_matches_ground_truth(
+    fixture_log: FixtureEventLog, fixture_data: dict[str, Any]
+):
     """The system must reproduce fixture.json's ground truth exactly.
 
     - B3 x C3 interaction must be large and positive, p < 0.01.
     - Neither B3 nor C3 alone explains the failure.
     - Minimal slice of A4 via ddmin must reduce to exactly {B3, C3, A3, A4}.
     """
-    contract = create_fixture_decision()
+    contract = create_fixture_decision(fixture_data)
     interaction = compute_shapley_interaction(contract, samples_per_cell=5, seed=42)
 
     # B3 x C3 interaction must be large and positive, bootstrap_sign_proportion < 0.01
@@ -173,9 +177,9 @@ def test_fixture_matches_ground_truth(fixture_log: FixtureEventLog):
 # ============================================================================
 
 
-def test_ddmin_respects_budget_cap_and_falls_back():
+def test_ddmin_respects_budget_cap_and_falls_back(fixture_data: dict[str, Any]):
     """ddmin must not exceed its budget and must fall back to the unminimized slice."""
-    contract = create_fixture_decision()
+    contract = create_fixture_decision(fixture_data)
     candidates = ["A1", "B1", "C1", "B2", "C2", "B3", "C3", "A3", "A4"]
     test_fn = build_failure_predicate(contract)
 
@@ -239,9 +243,11 @@ def test_shapley_rejects_more_than_four_ports():
 # ============================================================================
 
 
-def test_downstream_replay_mode(fixture_log: FixtureEventLog):
+def test_downstream_replay_mode(
+    fixture_log: FixtureEventLog, fixture_data: dict[str, Any]
+):
     """Downstream replay mode is not yet implemented; raises NotImplementedError."""
-    contract = create_fixture_decision()
+    contract = create_fixture_decision(fixture_data)
     error_msg = "downstream_replay mode validation is not yet fully implemented"
     with pytest.raises(NotImplementedError, match=error_msg):
         counterfactual_replay(
@@ -273,6 +279,19 @@ def test_cli_replay_subcommand():
     output = buf.getvalue()
     assert "Original outcome: failure" in output
     assert "Counterfactual outcome: success" in output
+
+
+def test_cli_replay_rejects_broken_intervention_json():
+    with pytest.raises(SystemExit):
+        main(
+            [
+                "--fixture",
+                str(FIXTURE_PATH),
+                "replay",
+                "dec_customer_approval_A3",
+                "customer_status={",
+            ]
+        )
 
 
 def test_cli_interaction_subcommand():

@@ -2,11 +2,9 @@
 
 from __future__ import annotations
 
-import json
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from enum import StrEnum
-from pathlib import Path
 from threading import Lock
 from typing import Any
 
@@ -195,13 +193,8 @@ register_decision_evaluator("policy_merge", _evaluate_fixture_policy)
 register_decision_evaluator("policy_check_v2", _evaluate_fixture_policy)
 
 
-def create_fixture_decision(fixture_data: dict[str, Any] | None = None) -> DecisionContract:
-    """Construct the canonical Customer Approval DecisionContract from fixture.json (Event A3)."""
-    if fixture_data is None:
-        fixture_path = Path(__file__).parent.parent / "fixture" / "fixture.json"
-        with fixture_path.open("r", encoding="utf-8") as f:
-            fixture_data = json.load(f)
-
+def create_fixture_decision(fixture_data: dict[str, Any]) -> DecisionContract:
+    """Build the customer-approval DecisionContract from a loaded fixture document."""
     run_id = fixture_data.get("run", {}).get("id", "run_7f42")
     return create_decision_contract(
         decision_id="dec_customer_approval_A3",

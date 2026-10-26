@@ -17,11 +17,10 @@ import pytest
 
 from sdk.memory import default_resource_registry
 
-# Snapshot DATABASE_URL at collection time, before any test can leak `.env`
-# into os.environ (e.g. generate_explanation(load_env=True) loads the whole
-# file, including DATABASE_URL). Plain `uv run pytest -q` must stay a fast
-# unit run that skips integration; explicit opt-in (`uv run --env-file .env
-# pytest`, `$env:DATABASE_URL=...`, CI postgres job) is captured here.
+# Snapshot DATABASE_URL at collection time. Plain `uv run pytest -q` must stay
+# a fast unit run that skips integration. Explicit opt-in
+# (`uv run --env-file .env pytest`, `$env:DATABASE_URL=...`, CI postgres job)
+# is captured here.
 _INITIAL_DATABASE_URL = os.environ.get("DATABASE_URL")
 
 

@@ -237,10 +237,6 @@ def score_diagnosis(
         result["cause_identification"] = {"status": "error", "error": str(exc)}
 
     try:
-        # NOTE: live OpenCode traces carry no DecisionContract, so there is
-        # no observable failure/decision predicate to re-evaluate after
-        # removing events. The predicate below preserves ground-truth event
-        # membership only. It must NOT be reported as causal minimality.
         must_keep = {failure_event_id, *required_ids}
 
         def membership(subset: list[str]) -> bool:
@@ -357,11 +353,6 @@ def score_diagnosis(
                     "mutually_independent": independent,
                 }
             )
-        # NOTE: this checks joint ancestry (both branches reachable from
-        # the failure via declared causal parents). It performs no
-        # counterfactual intervention and no Shapley computation, so it
-        # must NOT be reported as causal interaction. True causal
-        # interaction is not measurable from a live OpenCode trace.
         result["interaction"] = {
             "status": "ok",
             "metric": "joint_ancestry",

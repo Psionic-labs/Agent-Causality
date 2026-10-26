@@ -31,11 +31,8 @@ test("explorer loads the demo and supports graph, timeline, and tabs", async ({
   expect(await nodes.count()).toBeGreaterThan(0);
   await expect(page.locator("#dag")).toBeVisible();
 
-  // The default selection is the failure target, so the inspector must resolve
-  // an event without any user click.
   await expect(page.locator("#event-detail")).toContainText("Event ID");
 
-  // Selecting another node updates the shared selection status and inspector.
   await nodes.first().click();
   await expect(page.getByRole("status")).toContainText("Selected event");
 

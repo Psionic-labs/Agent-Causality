@@ -6,7 +6,7 @@ from collections.abc import Iterable
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from threading import Lock
-from typing import Any, Protocol
+from typing import Any, Protocol, runtime_checkable
 from uuid import uuid4
 
 
@@ -78,14 +78,18 @@ class Event:
 class EventLog(Protocol):
     """Storage contract for event capture.
 
-    ``append`` must be fail-closed: it either returns the stored Event or
-    raises. Backends that swallow storage errors must instead implement
-    ``append_with_status(event) -> tuple[Event, bool]`` so capture code can
-    distinguish stored from dropped events; returning without an Event
-    (e.g. returning None) is treated as not stored.
+    ``append`` returns the stored Event or raises. A log that can drop a
+    write implements ``AppendWithStatus`` and reports that call as not stored.
     """
 
     def append(self, event: Event) -> Event: ...
+
+
+@runtime_checkable
+class AppendWithStatus(Protocol):
+    """Fail-open log that reports whether this exact append persisted."""
+
+    def append_with_status(self, event: Event) -> tuple[Event, bool]: ...
 
 
 def next_seq(agent_state: AgentClock, causal_parents: Iterable[int]) -> int:
@@ -93,23 +97,24 @@ def next_seq(agent_state: AgentClock, causal_parents: Iterable[int]) -> int:
     return agent_state.allocate(causal_parents)
 
 
-def _append(log: Any, event: Event) -> tuple[Event, bool]:
-    """Append event to log and return (event, was_stored).
+def _append(log: EventLog, event: Event) -> tuple[Event, bool]:
+    """Return ``(event, stored)`` for this call.
 
-    was_stored is False when a fail-open wrapper reports that this exact
-    append failed via ``append_with_status``, or when a plain ``append``
-    returns without an Event (a silent-swallow backend). Conforming
-    fail-closed logs raise on failure, so a normal Event return means
-    stored. The status is per-call, so concurrent appends on a shared
-    fail-open log cannot observe each other's results.
+    ``stored`` is false only when the log implements ``AppendWithStatus``
+    and reports a drop. The status belongs to the call, so concurrent
+    appends on one fail-open log do not observe each other.
     """
-    status_fn = getattr(log, "append_with_status", None)
-    if callable(status_fn):
-        result, was_stored = status_fn(event)
-        return (result if isinstance(result, Event) else event), was_stored
+    if isinstance(log, AppendWithStatus):
+        result, was_stored = log.append_with_status(event)
+        if not isinstance(result, Event):
+            raise TypeError("append_with_status must return an Event")
+        return result, bool(was_stored)
     result = log.append(event)
     if not isinstance(result, Event):
-        return event, False
+        raise TypeError(
+            f"{type(log).__name__}.append must return an Event or raise; "
+            "implement append_with_status to report a dropped write"
+        )
     return result, True
 
 

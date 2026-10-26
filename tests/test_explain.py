@@ -95,7 +95,7 @@ def test_build_evidence_package_non_decision_event(fixture_log: FixtureEventLog)
 def test_explain_missing_api_key(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.delenv("OPENROUTER_API_KEY", raising=False)
     with pytest.raises(ValueError, match="OPENROUTER_API_KEY is not set"):
-        explain({"test": "evidence"}, api_key=None, load_env=False)
+        explain({"test": "evidence"}, api_key=None)
 
 
 def test_explain_with_mock_transport() -> None:
