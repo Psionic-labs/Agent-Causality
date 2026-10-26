@@ -286,7 +286,7 @@ recorded trace. No repository clone is needed.
 > `completed (exit 0), 331 events, capture coverage 1.0, diagnosis scored`
 > (see `benchmark/results/opencode/opencode.md`). No video artifact ships
 > with this release.
-> [Setup guide →](https://github.com/Psionic-labs/Agent-Causality/blob/main/docs/opencode.md)
+> [Setup guide →](https://psionic-labs.github.io/Agent-Causality/docs/opencode.html)
 
 ### What the plugin captures
 
@@ -322,8 +322,8 @@ written, false rollback claim — captured as 22 causally-validated events
 in
 [`examples/replit_incident.py`](https://github.com/Psionic-labs/Agent-Causality/blob/main/examples/replit_incident.py)
 (write-up:
-[docs/case-study-replit.md](https://github.com/Psionic-labs/Agent-Causality/blob/main/docs/case-study-replit.md)).
-[Adapter guide →](https://github.com/Psionic-labs/Agent-Causality/blob/main/docs/langgraph.md)
+[the Replit case study](https://psionic-labs.github.io/Agent-Causality/docs/case-study-replit.html)).
+[Adapter guide →](https://psionic-labs.github.io/Agent-Causality/docs/langgraph.html)
 
 ---
 
@@ -379,9 +379,9 @@ Each name links to the PDF page where that section starts.
 | Topic | Link |
 | --- | --- |
 | Getting started | [GETTING_STARTED.md](https://github.com/Psionic-labs/Agent-Causality/blob/main/GETTING_STARTED.md) |
-| OpenCode integration | [docs/opencode.md](https://github.com/Psionic-labs/Agent-Causality/blob/main/docs/opencode.md) |
-| LangGraph integration | [docs/langgraph.md](https://github.com/Psionic-labs/Agent-Causality/blob/main/docs/langgraph.md) |
-| Replit incident case study | [docs/case-study-replit.md](https://github.com/Psionic-labs/Agent-Causality/blob/main/docs/case-study-replit.md) |
+| OpenCode integration | [OpenCode guide](https://psionic-labs.github.io/Agent-Causality/docs/opencode.html) |
+| LangGraph integration | [LangGraph guide](https://psionic-labs.github.io/Agent-Causality/docs/langgraph.html) |
+| Replit incident case study | [Replit case study](https://psionic-labs.github.io/Agent-Causality/docs/case-study-replit.html) |
 | CLI and Python reference | [docs/reference.md](https://github.com/Psionic-labs/Agent-Causality/blob/main/docs/reference.md) |
 | Benchmarks and results | [docs/benchmarks.md](https://github.com/Psionic-labs/Agent-Causality/blob/main/docs/benchmarks.md) |
 | Scope and limits | [docs/reference.md](https://github.com/Psionic-labs/Agent-Causality/blob/main/docs/reference.md) |
