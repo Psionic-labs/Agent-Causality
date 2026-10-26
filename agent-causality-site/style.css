@@ -4141,3 +4141,274 @@ h3 {
     height: 70vh;
   }
 }
+
+.nav-toggle {
+  display: none;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding: 8px 0;
+  border: 0;
+  background: transparent;
+  color: var(--text-soft);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+}
+
+.nav-toggle-bars {
+  position: relative;
+  display: block;
+  width: 16px;
+  height: 1px;
+  background: currentColor;
+}
+
+.nav-toggle-bars::before,
+.nav-toggle-bars::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  width: 16px;
+  height: 1px;
+  background: currentColor;
+}
+
+.nav-toggle-bars::before {
+  top: -5px;
+}
+
+.nav-toggle-bars::after {
+  top: 5px;
+}
+
+html[data-nav="open"] .nav-toggle-bars {
+  background: transparent;
+}
+
+html[data-nav="open"] .nav-toggle-bars::before {
+  top: 0;
+  transform: rotate(45deg);
+}
+
+html[data-nav="open"] .nav-toggle-bars::after {
+  top: 0;
+  transform: rotate(-45deg);
+}
+
+@media (max-width: 1120px) {
+  html:not([data-nav-script]) .header-inner {
+    flex-wrap: wrap;
+  }
+
+  html:not([data-nav-script]) .site-nav {
+    display: flex;
+    width: 100%;
+    flex-wrap: wrap;
+    gap: 8px 16px;
+  }
+
+  html[data-nav-script] .header-inner {
+    flex-wrap: nowrap;
+    gap: 16px;
+  }
+
+  html[data-nav-script] .nav-toggle {
+    display: inline-flex;
+    margin-left: auto;
+  }
+
+  html[data-nav-script] .site-nav {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 2;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    width: auto;
+    margin: 0;
+    padding: 8px 0 14px;
+    background: var(--bg);
+    border-bottom: 1px solid var(--line);
+  }
+
+  html[data-nav-script][data-nav="open"] .site-nav {
+    display: flex;
+  }
+
+  html[data-nav-script] .site-nav a {
+    padding: 14px var(--gutter-page);
+    font-size: 16px;
+  }
+
+  html[data-nav-script][data-nav="open"] {
+    overflow: hidden;
+  }
+}
+
+.doc-body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 28px;
+  min-width: 0;
+}
+
+.doc-body h2,
+.doc-body h3,
+.doc-body h4,
+.doc-article .paper-title {
+  max-width: none;
+}
+
+.doc-body h2 {
+  margin-top: 12px;
+  font-size: clamp(1.25rem, 2vw, 1.55rem);
+}
+
+.doc-body p,
+.doc-body li,
+.doc-body blockquote {
+  margin: 0;
+  color: var(--text-soft);
+  font-size: 1.02rem;
+  line-height: 1.65;
+}
+
+.doc-body strong {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.doc-body a {
+  color: var(--amber-bright);
+}
+
+.doc-body code {
+  font-family: var(--font-mono);
+  font-size: 0.92em;
+  color: var(--amber-bright);
+  overflow-wrap: anywhere;
+}
+
+.doc-body pre {
+  margin: 0;
+  padding: 14px 16px;
+  overflow-x: auto;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+}
+
+.doc-body pre code {
+  color: var(--text);
+  font-size: 13px;
+}
+
+.doc-body ul,
+.doc-body ol {
+  margin: 0;
+  padding-left: 1.2em;
+}
+
+.doc-body li + li {
+  margin-top: 8px;
+}
+
+.doc-body blockquote {
+  padding-left: 14px;
+  border-left: 2px solid var(--amber);
+}
+
+.doc-body img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+.doc-article,
+.paper-layout > *,
+.doc-table-wrap {
+  min-width: 0;
+}
+
+.doc-table-wrap {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.doc-body table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.doc-body th,
+.doc-body td {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+  vertical-align: top;
+}
+
+@media (max-width: 800px) {
+  .doc-body table {
+    table-layout: fixed;
+  }
+
+  .doc-body th,
+  .doc-body td {
+    overflow-wrap: anywhere;
+  }
+}
+
+.doc-body th {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.doc-index {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.doc-index a {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 16px 18px;
+  text-decoration: none;
+  background: var(--panel);
+  border: 1px solid var(--line);
+}
+
+.doc-index a:hover {
+  border-color: var(--line-strong);
+}
+
+.doc-index-title {
+  color: var(--text);
+  font-size: 1.15rem;
+  font-weight: 600;
+}
+
+.doc-index-desc {
+  color: var(--text-soft);
+  font-size: 0.98rem;
+  line-height: 1.5;
+}
+
+@media (max-width: 640px) {
+  .doc-body pre {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+}

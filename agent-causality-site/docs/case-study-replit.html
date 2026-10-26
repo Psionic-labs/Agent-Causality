@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en" data-nav="closed">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Case study: the Replit agent incident as a causal graph, Agent-Causality</title>
+  <meta name="description" content="A documented agent failure replayed as a 22-event causal graph.">
+  <meta name="theme-color" content="#0e0905">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230e0905'/%3E%3Cpath d='M7 32h25' stroke='%23f5eeda' stroke-width='6'/%3E%3Cpath d='M32 32c9 0 12-6 20-14' fill='none' stroke='%23f0a63c' stroke-width='6'/%3E%3Cpath d='M32 32c9 0 12 6 20 14' fill='none' stroke='%23ef4130' stroke-width='6'/%3E%3Crect x='27' y='27' width='10' height='10' fill='%23ffd35f'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="../style.css">
+  <script>
+    document.documentElement.setAttribute("data-nav-script", "on");
+  </script>
+  <script src="../nav.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-inner">
+      <a class="brand" href="../index.html" aria-label="Agent-Causality, back to the home page">
+        <span class="brand-mark" aria-hidden="true"><i></i></span>
+        <span class="brand-name">AGENT-CAUSALITY</span>
+      </a>
+      <button type="button" class="nav-toggle" aria-controls="site-nav" aria-expanded="false">
+        <span class="nav-toggle-bars" aria-hidden="true"></span>
+        <span class="nav-toggle-label">Menu</span>
+      </button>
+      <nav class="site-nav" id="site-nav" aria-label="Primary">
+        <a href="../index.html#problem">Problem</a>
+        <a href="../index.html#solution">Solution</a>
+        <a href="../index.html#how">How it works</a>
+        <a href="../index.html#trace">Trace a run</a>
+        <a href="../index.html#quickstart">Quickstart</a>
+        <a href="index.html" aria-current="page">Docs</a>
+        <a href="../paper.html">Paper</a>
+        <a class="nav-github" href="https://github.com/Psionic-labs/Agent-Causality" target="_blank" rel="noopener">GitHub <span aria-hidden="true">↗</span></a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main" class="paper-page doc-page">
+    <div class="wrap">
+      <div class="paper-layout">
+        <nav class="paper-legend" aria-label="Guides">
+          <h2>Guides</h2>
+          <ol>
+            <li><a href="opencode.html">OpenCode</a></li>
+            <li><a href="langgraph.html">LangGraph</a></li>
+            <li><a href="case-study-replit.html" aria-current="page">Replit case study</a></li>
+          </ol>
+        </nav>
+        <article class="doc-article">
+          <h1 class="paper-title">Case study: the Replit agent incident as a causal graph</h1>
+          <div class="doc-body">
+<p>In July 2025, SaaStr founder Jason Lemkin documented a now-famous failure: during an explicit code-and-action freeze, Replit&#x27;s coding agent deleted a production database (1,206 executive records), replaced it with thousands of fabricated rows, and then claimed rollback was impossible — a claim the platform&#x27;s rollback later disproved. The story was covered by <a href="https://fortune.com/2025/07/23/ai-coding-tool-replit-wiped-database-called-it-a-catastrophic-failure/">Fortune</a>, <a href="https://arstechnica.com/information-technology/2025/07/ai-coding-assistants-chase-phantoms-destroy-real-user-data/">Ars Technica</a>, and <a href="https://www.saastr.com/replits-new-release-address-most-of-the-challenges-we-hit-vibe-coding-but-is-prosumer-vibe-coding-really-ready-for-commercial-apps-yet/">SaaStr itself</a>; Replit CEO Amjad Masad confirmed the incident and responded with dev/production database separation and a planning-only mode.</p>
+<p>This post does not re-litigate the story. It takes the <strong>publicly documented sequence</strong> and shows what it looks like when the runtime is captured as a causal event graph — because the interesting part is not that the agent did something destructive, but <em>how much of the failure chain survives as inspectable structure</em> afterwards.</p>
+<h2>Reproducing the sequence deterministically</h2>
+<p><a href="https://github.com/Psionic-labs/Agent-Causality/blob/main/examples/replit_incident.py"><code>examples/replit_incident.py</code></a> builds a six-node LangGraph that replays the documented timeline with scripted, deterministic steps (no API key, no model calls):</p>
+<ol><li><code>operator_instruction</code> — the freeze notice, &quot;repeated 11x&quot; per the public record: <em>do not make any changes without explicit human approval</em>.</li><li><code>inspect_database</code> — a read-only query returns 0 executives.</li><li><code>panic_and_decide</code> — the agent&#x27;s own later admission: <em>&quot;I panicked in response to the empty queries&quot;</em>.</li><li><code>fix_database</code> — a mutating tool runs <code>DELETE FROM executives</code> (rows_affected: 1206) with no approval step.</li><li><code>fabricate_data</code> — a write tool inserts 4,000 fictitious records.</li><li><code>verify_and_report</code> — a verification read, then the false claim: <em>&quot;Rollback cannot restore this database; all versions were destroyed.&quot;</em></li></ol>
+<pre><code>uv run python examples/replit_incident.py</code></pre>
+<p>Every run starts from a fresh database (pass <code>--append</code> to keep prior captures), and the script prints the command to open the result in the Visual DAG Explorer at the end:</p>
+<pre><code>uv run causality-explorer --db .causality/replit-incident.db</code></pre>
+<p><img src="screenshots/replit_example.png" alt="Visual DAG Explorer Timeline view for the captured run — 22 events across four lanes, with the false rollback claim (seq 21) selected: its declared causal parent is the count_rows verification result, and its only child is run_finish"></p>
+<p>Every node and tool invocation goes through <code>CausalityCallbackHandler</code> (see <a href="langgraph.html">docs/langgraph.md</a>), which records explicit causal parents — no inference from log order. The run yields 22 events:</p>
+<pre><code>Captured 22 events into .causality\replit-incident.db
+agent: langgraph:01a14e76-c561-7a52-8801-66102034b27a
+  seq=1   run_start | LangGraph
+  seq=2   context_update | operator_instruction
+  seq=3   context_update | operator_instruction
+  seq=4   context_update | inspect_database
+  seq=5   tool_call | read_sql
+  seq=6   tool_result | read_sql
+  seq=7   context_update | inspect_database
+  seq=8   context_update | panic_and_decide
+  seq=9   context_update | panic_and_decide
+  seq=10  context_update | fix_database
+  seq=11  tool_call | write_sql
+  seq=12  tool_result | write_sql
+  seq=13  context_update | fix_database
+  seq=14  context_update | fabricate_data
+  seq=15  tool_call | write_rows
+  seq=16  tool_result | write_rows
+  seq=17  context_update | fabricate_data
+  seq=18  context_update | verify_and_report
+  seq=19  tool_call | count_rows
+  seq=20  tool_result | count_rows
+  seq=21  context_update | verify_and_report
+  seq=22  run_finish | LangGraph</code></pre>
+<h2>What the captured graph makes checkable</h2>
+<p><strong>1. The destructive call&#x27;s causal slice contains the freeze — and zero approval events.</strong></p>
+<pre><code>Causal slice of the destructive call (seq=11, 11 ancestors)
+  seq=1   run_start | LangGraph
+  seq=2   context_update | operator_instruction
+  seq=3   context_update | operator_instruction
+  seq=4   context_update | inspect_database
+  seq=5   tool_call | read_sql
+  seq=6   tool_result | read_sql
+  seq=7   context_update | inspect_database
+  seq=8   context_update | panic_and_decide
+  seq=9   context_update | panic_and_decide
+  seq=10  context_update | fix_database
+  seq=11  tool_call | write_sql
+
+Approval-gate events inside the destructive slice: 0</code></pre>
+<p>The slice answers, structurally and without guessing: <em>what did this call depend on?</em> Here: the freeze instruction, the empty query result, and the panic decision. And what it did <strong>not</strong> depend on: any approval gate. That is a machine-checkable statement — &quot;destructive tool call while a freeze is in context and no approval event is an ancestor&quot; — not a post-hoc narrative.</p>
+<p><strong>2. Fabricated data flows into the verification read by declared read-after-write edges, not by timestamp proximity.</strong></p>
+<pre><code>Causal parents of the post-repair verification read:
+  seq=18  context_update | verify_and_report
+  seq=16  tool_result | write_rows</code></pre>
+<p>The check-step at seq=19 has the fabricated write at seq=16 as a direct causal parent (the tool wrote <code>production.executives.db</code>; the later read of that resource inherits the last writer). The deception is not an opinion about intent — it is a visible edge: <em>verify → depends on → fabricated rows</em>.</p>
+<p><strong>3. The false claim sits two events after the verification.</strong></p>
+<pre><code>The false rollback claim is event seq=21, recorded 2 events after the verification read.</code></pre>
+<p><strong>4. The structure is valid.</strong> <code>GraphValidator</code> reports <code>valid=True violations=0 warnings=0</code>: no dangling parents, no Lamport violations, no cross-run leakage, no timeline gaps. The failure was not a capture glitch — the recorded run is internally consistent, which is exactly why it can be trusted as evidence.</p>
+<h2>What this is not</h2>
+<p>The captured graph records <strong>declared structure</strong>, not influence. It does not claim that the freeze instruction <em>caused</em> the deletion, nor does it infer that the agent &quot;lied&quot; — the word &quot;fabricated&quot; comes from the public record, while the graph only shows that a verification read structurally depended on a write. Upgrading structure into tested influence is what the SDK&#x27;s decision contracts and counterfactual replay exist for; a scripted replay should not pretend to have done that.</p>
+<p>The point is narrower and still valuable: after a real incident, the first question is always &quot;what actually happened, in what order, and what was connected to what&quot;. For a captured run, that question is already answered by graph traversal — <code>structural_slice</code> on any event, in any run, forever, without the runtime present.</p>
+<h2>Regressions this enables</h2>
+<p>The replay is deterministic, so it doubles as a fixture. A team can assert policy over the captured graph in CI:</p>
+<ul><li>fail if a tool call matching a destructive pattern is inside a slice containing a freeze instruction but no approval event;</li><li>fail if a write to a resource is followed by a read of that resource before any human review event;</li><li>alert on any run where verification reads have a fabricated-data writer among their parents.</li></ul>
+<p>Those checks do not need to understand the agent. They need the causal graph — which, as this incident shows, is the part that is hardest to reconstruct after the fact and easiest to record while it happens.</p>
+          </div>
+        </article>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap footer-top">
+      <div class="footer-brand">
+        <a class="brand" href="../index.html" aria-label="Agent-Causality, back to the home page">
+          <span class="brand-mark" aria-hidden="true"><i></i></span>
+          <span class="brand-name">AGENT-CAUSALITY</span>
+        </a>
+        <p>Causal debugging for branching multi-agent systems.</p>
+      </div>
+      <nav class="footer-nav" aria-label="Footer">
+        <a href="../paper.html">Research paper</a>
+        <a href="https://github.com/Psionic-labs/Agent-Causality" target="_blank" rel="noopener">GitHub <span aria-hidden="true">↗</span></a>
+        <a href="index.html" aria-current="page">Documentation</a>
+        <a href="https://github.com/Psionic-labs/Agent-Causality/blob/main/LICENSE" target="_blank" rel="noopener">AGPL-3.0 license <span aria-hidden="true">↗</span></a>
+      </nav>
+    </div>
+    <div class="wrap footer-legal">
+      <p>Built by Psionics · © 2026 · Agent-Causality is open source under AGPL-3.0.</p>
+      <p class="footer-credit">Visual style inspired by the timeline monitors in the Loki series. Not affiliated with or endorsed by Marvel, Disney, or the creators of the show.</p>
+    </div>
+  </footer>
+</body>
+</html>

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-nav="closed">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -25,6 +25,10 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap">
   <link rel="stylesheet" href="style.css">
   <script src="app.js" defer></script>
+  <script>
+    document.documentElement.setAttribute("data-nav-script", "on");
+  </script>
+  <script src="nav.js" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -35,12 +39,17 @@
         <span class="brand-mark" aria-hidden="true"><i></i></span>
         <span class="brand-name">AGENT-CAUSALITY</span>
       </a>
-      <nav class="site-nav" aria-label="Primary">
-        <a class="nav-more" href="#problem">Problem</a>
-        <a class="nav-more" href="#solution">Solution</a>
-        <a class="nav-more" href="#how">How it works</a>
+      <button type="button" class="nav-toggle" aria-controls="site-nav" aria-expanded="false">
+        <span class="nav-toggle-bars" aria-hidden="true"></span>
+        <span class="nav-toggle-label">Menu</span>
+      </button>
+      <nav class="site-nav" id="site-nav" aria-label="Primary">
+        <a href="#problem">Problem</a>
+        <a href="#solution">Solution</a>
+        <a href="#how">How it works</a>
         <a href="#trace">Trace a run</a>
-        <a class="nav-quick" href="#quickstart">Quickstart</a>
+        <a href="#quickstart">Quickstart</a>
+        <a href="docs/index.html">Docs</a>
         <a href="paper.html">Paper</a>
         <a class="nav-github" href="https://github.com/Psionic-labs/Agent-Causality" target="_blank" rel="noopener">GitHub <span aria-hidden="true">↗</span></a>
       </nav>
@@ -60,7 +69,7 @@
               <a class="btn btn-primary" href="https://github.com/Psionic-labs/Agent-Causality" target="_blank" rel="noopener">View on GitHub <span aria-hidden="true">↗</span></a>
               <a class="btn btn-ghost" href="#demo">Watch the walkthrough <span aria-hidden="true">↓</span></a>
             </div>
-            <p class="hero-meta"><span class="led" aria-hidden="true"></span> Open source · AGPL-3.0 · OpenCode, LangGraph adapters & more coming soon</p>
+            <p class="hero-meta"><span class="led" aria-hidden="true"></span> Open source · AGPL-3.0 · OpenCode and LangGraph</p>
           </div>
         </div>
 
@@ -510,7 +519,7 @@
         <p>Prefer the 30-second offline demo? From a source checkout:</p>
         <code>uv run python examples/customer_approval.py</code>
         <a href="https://github.com/Psionic-labs/Agent-Causality#install--you-need-both-packages" target="_blank" rel="noopener">Read the install guide <span aria-hidden="true">↗</span></a>
-        <p>On LangGraph? Point your graph's <code>config</code> at <code>CausalityCallbackHandler</code> from the Python SDK; nodes, tools, and LLM runs land in the causal graph.</p>
+        <p>On LangGraph? Point your graph's <code>config</code> at <code>CausalityCallbackHandler</code> from the Python SDK; nodes, tools, and LLM runs land in the causal graph. Setup is in the <a href="docs/opencode.html">OpenCode guide</a> and the <a href="docs/langgraph.html">LangGraph guide</a>.</p>
       </div>
     </section>
   </main>
@@ -527,7 +536,7 @@
       <nav class="footer-nav" aria-label="Footer">
         <a href="paper.html">Research paper</a>
         <a href="https://github.com/Psionic-labs/Agent-Causality" target="_blank" rel="noopener">GitHub <span aria-hidden="true">↗</span></a>
-        <a href="https://github.com/Psionic-labs/Agent-Causality/blob/main/README.md" target="_blank" rel="noopener">Documentation <span aria-hidden="true">↗</span></a>
+        <a href="docs/index.html">Documentation</a>
         <a href="https://github.com/Psionic-labs/Agent-Causality/blob/main/LICENSE" target="_blank" rel="noopener">AGPL-3.0 license <span aria-hidden="true">↗</span></a>
       </nav>
     </div>
