@@ -16,7 +16,6 @@ from __future__ import annotations
 import json
 import os
 import time
-from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
@@ -160,26 +159,6 @@ def explanation_matches_format(text: str, evidence_package: dict[str, Any]) -> b
         return False
     ports = (evidence_package.get("decision") or {}).get("ports", {})
     return all(port_id in text for port_id in ports)
-
-
-def load_env_file() -> None:
-    """Load key-value pairs from .env into os.environ if not already set."""
-    env_path = Path(".env")
-    if not env_path.exists():
-        # Try parent directory
-        env_path = Path(__file__).resolve().parent.parent / ".env"
-    if env_path.exists():
-        try:
-            for line in env_path.read_text(encoding="utf-8").splitlines():
-                line = line.strip()
-                if line and not line.startswith("#") and "=" in line:
-                    key, val = line.split("=", 1)
-                    key = key.strip()
-                    val = val.strip().strip("'\"")
-                    if key and key not in os.environ:
-                        os.environ[key] = val
-        except Exception:  # noqa: BLE001
-            pass
 
 
 def _resolve_contract_for_evidence(event_id: str, log: Any) -> DecisionContract | None:
@@ -407,15 +386,12 @@ def explain(
     client: httpx.Client | None = None,
     max_retries: int = 3,
     initial_delay: float = 1.0,
-    load_env: bool = True,
 ) -> str:
     """Generate a causal failure explanation grounded in an evidence package.
 
     Calls OpenRouter chat completions with the grounded explanation prompt.
+    The caller loads environment variables before this function runs.
     """
-    if load_env:
-        load_env_file()
-
     resolved_api_key = api_key or os.environ.get("OPENROUTER_API_KEY")
     if not resolved_api_key:
         raise ValueError(
@@ -455,10 +431,10 @@ def explain(
         "temperature": 0.1,
     }
 
+    import httpx
+
     own_client = False
     if client is None:
-        import httpx
-
         client = httpx.Client(timeout=60.0)
         own_client = True
 
@@ -467,7 +443,10 @@ def explain(
         for attempt in range(max_retries + 1):
             response = client.post(OPENROUTER_API_URL, headers=headers, json=payload)
             if response.status_code == 200:
-                data = response.json()
+                try:
+                    data = response.json()
+                except json.JSONDecodeError as exc:
+                    raise RuntimeError(f"OpenRouter returned non-JSON: {exc}") from exc
                 choices = data.get("choices", [])
                 if not choices:
                     raise RuntimeError(f"OpenRouter returned no completion choices: {data}")
@@ -490,7 +469,7 @@ def explain(
                 try:
                     err_json = response.json()
                     err_msg = err_json.get("error", {}).get("message", err_msg)
-                except Exception:  # noqa: BLE001
+                except json.JSONDecodeError:
                     pass
                 raise RuntimeError(
                     f"OpenRouter model '{resolved_model}' rate-limited (HTTP 429): {err_msg}. "
@@ -502,6 +481,8 @@ def explain(
             raise RuntimeError(
                 f"OpenRouter request failed with status {response.status_code}: {response.text}"
             )
+    except httpx.HTTPError as exc:
+        raise RuntimeError(f"OpenRouter request failed: {exc}") from exc
     finally:
         if own_client:
             client.close()

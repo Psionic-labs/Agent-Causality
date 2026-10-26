@@ -1,14 +1,14 @@
 """Static frontend plus read-only JSON API for the DAG explorer.
 
-Only the standard library is used. ``create_server`` binds a dataset to a
-``ThreadingHTTPServer``; ``main`` wires it to ``--db`` (live SQLite) or the
-bundled demo trace and serves the vendored ``explorer/static/`` bundle at
-``/`` (built from ``frontend/`` via ``scripts/sync-explorer-static.py``).
+``create_server`` binds a dataset to a ``ThreadingHTTPServer``. ``main``
+wires it to ``--db`` (live SQLite) or the bundled demo trace and serves
+the vendored ``explorer/static/`` bundle at ``/``.
 """
 
 from __future__ import annotations
 
 import argparse
+import contextlib
 import json
 import mimetypes
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -25,35 +25,12 @@ from explorer.queries import (
     failure_report,
     graph_overview,
 )
+from sdk.env import load_env_file
 
 
 def get_frontend_dir() -> Path:
-    """Resolve the bundled Visual DAG static assets without relying on CWD.
-
-    Order:
-    1. ``explorer/static/`` next to this file (wheel + source checkout after
-       ``scripts/sync-explorer-static.py``). This is the only path that
-       exists in a PyPI install.
-    2. ``frontend/out/`` in a development checkout (back-compat for a fresh
-       ``npm run build`` before the vendored copy is synced).
-    """
-    packaged = Path(__file__).resolve().parent / "static"
-    if (packaged / "index.html").is_file():
-        return packaged
-    # importlib.resources covers exotic install layouts where __file__ may
-    # not be a plain directory (kept as a best-effort fallback).
-    try:
-        from importlib.resources import files as _files
-
-        candidate = _files("explorer") / "static"
-        # Traversable may not be a Path (e.g. zip); joinpath/as_file only
-        # helps for single files, so only accept a real filesystem dir.
-        if isinstance(candidate, Path) and (candidate / "index.html").is_file():
-            return candidate
-    except Exception:  # noqa: BLE001 - importlib lookup is best-effort; fall back to the source tree
-        pass
-    legacy = Path(__file__).resolve().parent.parent / "frontend" / "out"
-    return legacy
+    """Return the vendored ``explorer/static`` directory."""
+    return Path(__file__).resolve().parent / "static"
 
 
 FRONTEND_DIR = get_frontend_dir()
@@ -146,6 +123,10 @@ def create_server(dataset: Any, host: str = "127.0.0.1", port: int = 0) -> Threa
 
 
 def main(argv: list[str] | None = None) -> int:
+    try:
+        load_env_file()
+    except (OSError, UnicodeError) as exc:
+        raise SystemExit(f"Could not read .env: {exc}") from exc
     parser = argparse.ArgumentParser(description="Visual DAG explorer (read-only)")
     parser.add_argument("--port", type=int, default=8766)
     parser.add_argument("--host", default="127.0.0.1")
@@ -163,10 +144,8 @@ def main(argv: list[str] | None = None) -> int:
     server = create_server(dataset, args.host, args.port)
     host, port = server.server_address[:2]
     print(f"serving {dataset.source} at http://{host}:{port}/")
-    try:  # noqa: SIM105
+    with contextlib.suppress(KeyboardInterrupt):
         server.serve_forever()
-    except KeyboardInterrupt:
-        pass
     return 0
 
 

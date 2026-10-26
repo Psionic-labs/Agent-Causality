@@ -75,7 +75,7 @@ def _failure_slice_ids(dataset: Any) -> set[str]:
         return set()
     try:
         return set(structural_slice(failure_id, dataset.log).event_ids)
-    except Exception:  # noqa: BLE001
+    except ValueError:
         return set()
 
 
@@ -255,10 +255,6 @@ def ai_diagnosis_report(
         }
     except RuntimeError as exc:
         return 502, {"status": "ai_error", "error": str(exc)}
-    except Exception as exc:  # noqa: BLE001
-        # Transport/timeout/unexpected model-layer failures are still model
-        # failures (502), never an unhandled 500 from this endpoint.
-        return 502, {"status": "ai_error", "error": f"{type(exc).__name__}: {exc}"}
     if not explanation_matches_format(text, package):
         return 502, {
             "status": "format_rejected",

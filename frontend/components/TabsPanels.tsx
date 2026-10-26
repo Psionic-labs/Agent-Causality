@@ -148,9 +148,15 @@ function ProvenanceTab({
 
   useEffect(() => {
     let cancelled = false;
+    const dims = diagnosis.status === "ok" ? diagnosis.dimensions : {};
+    const provenance = (dims["provenance"] ?? {}) as DiagnosisDim & {
+      recovered_resources?: string[];
+    };
+    const recovered: string[] = Array.isArray(provenance.recovered_resources)
+      ? provenance.recovered_resources
+      : [];
     (async () => {
       try {
-        const recovered: string[] = Array.isArray(prov.recovered_resources) ? prov.recovered_resources : [];
         const slice = [...overview.nodes]
           .filter((n) => n.in_failure_slice)
           .sort((a, b) => a.logical_seq - b.logical_seq);
@@ -169,8 +175,6 @@ function ProvenanceTab({
               .sort((a, b) => a.logical_seq - b.logical_seq),
           })),
         );
-        // Option B: resources nobody expected — named in recorded capture
-        // metadata but absent from ground truth. Same chain treatment.
         const expected = new Set(recovered.map((r) => String(r)));
         setDiscovered(
           resourcesInDetails(details)
@@ -189,7 +193,6 @@ function ProvenanceTab({
     return () => {
       cancelled = true;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [overview, diagnosis]);
 
   const recovered: string[] = Array.isArray(prov.recovered_resources) ? prov.recovered_resources : [];

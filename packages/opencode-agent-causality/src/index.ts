@@ -4,7 +4,6 @@ declare const process: {
   env: Record<string, string | undefined>
 }
 
-// Telemetry envelope shipped to Agent-Causality ingest endpoint
 type Envelope = {
   kind: string
   timestamp: number
@@ -12,8 +11,6 @@ type Envelope = {
   payload: Record<string, unknown>
 }
 
-// Configurable endpoint (defaults to local receiver on port 8765).
-// Resolved per request so env changes apply without reloading the plugin.
 function ingestUrl(): string {
   return process.env.CAUSALITY_OPENCODE_INGEST_URL ?? "http://127.0.0.1:8765/v1/opencode/events"
 }
@@ -33,12 +30,9 @@ function authHeaders(): Record<string, string> {
   return token ? { authorization: `Bearer ${token}` } : {}
 }
 
-// Bounded in-memory telemetry buffer (max 256 items) to prevent memory growth
 const queue: Envelope[] = []
 let draining = false
 
-// Observable telemetry counters. Losses are counted and warned (fail-open),
-// never thrown, so queue overflows and exhausted retries stay visible.
 export const telemetryStats = {
   enqueued: 0,
   delivered: 0,
@@ -47,15 +41,11 @@ export const telemetryStats = {
   rejectedByReceiver: 0,
 }
 
-// Telemetry is intentionally fail-open and quiet by default: a missing local
-// receiver must not obscure OpenCode's UI. Set this to "1" or "true" when
-// diagnosing capture issues.
 function telemetryWarningsEnabled(): boolean {
   const value = process.env.CAUSALITY_OPENCODE_LOG_TELEMETRY_FAILURES?.toLowerCase()
   return value === "1" || value === "true"
 }
 
-// Warning throttle applies only when diagnostic logging is explicitly enabled.
 let warnedEndpointHint = false
 let lastWarnAt = 0
 let lastWarnedDrops = 0
@@ -65,7 +55,7 @@ function warn(message: string): void {
   try {
     console.warn(`[agent-causality] ${message}`)
   } catch {
-    // Logging must never interrupt OpenCode (fail-open)
+    return
   }
 }
 
@@ -88,9 +78,6 @@ function warnDeliveryExhausted(result: PostResult, batch: Envelope[]): void {
   )
 }
 
-// Helper to extract session ID across OpenCode payload variants
-// Covers top-level fields plus nested info/session (session.created,
-// message.updated) and part (message.part.updated) shapes.
 function sessionID(kind: string, payload: Record<string, unknown>): string | undefined {
   const direct = payload.sessionID ?? payload.session_id
   if (typeof direct === "string") return direct
@@ -116,9 +103,6 @@ function sessionID(kind: string, payload: Record<string, unknown>): string | und
   return undefined
 }
 
-// Push event to queue and trigger asynchronous drain.
-// Drops the oldest envelope if full; the drop is counted in
-// telemetryStats.droppedQueueOverflow and warned (observable, fail-open).
 function enqueue(kind: string, payload: unknown): void {
   if (!payload || typeof payload !== "object") return
   queue.push({
@@ -174,30 +158,16 @@ async function postBatch(batch: Envelope[]): Promise<PostResult> {
   }
 }
 
-// Asynchronously post buffered envelopes to the receiver in batches with up
-// to 3 attempts per batch. Envelopes still undelivered after retries are
-// dropped but counted in telemetryStats.droppedDeliveryFailed (and
-// rejectedByReceiver when the receiver explicitly reported short
-// persistence) and warned (rate-limited).
 async function drain(): Promise<void> {
   if (draining) return
   draining = true
   try {
     while (queue.length > 0) {
-      // Take ownership upfront: overflow shifts during the async post below
-      // then only affect queued (not in-flight) envelopes, keeping the
-      // delivered/dropped accounting exact.
-      const batch: Envelope[] = []
-      const limit = batchMax()
-      while (queue.length > 0 && batch.length < limit) {
-        const item = queue.shift()
-        if (item) batch.push(item)
-      }
+      const batch = takeInFlightBatch()
       if (batch.length === 0) continue
       let result: PostResult = "failed"
       for (let attempt = 0; attempt < 3 && result !== "delivered"; attempt += 1) {
         result = await postBatch(batch)
-        // Backoff between retries (200ms, 400ms) to give a busy receiver room
         if (result !== "delivered" && attempt < 2) {
           await new Promise((resolve) => setTimeout(resolve, 200 * (attempt + 1)))
         }
@@ -211,13 +181,22 @@ async function drain(): Promise<void> {
       }
     }
   } catch {
-    // Fail-open guarantee: telemetry errors must never interrupt OpenCode
+    return
   } finally {
     draining = false
   }
 }
 
-// Introspection hooks for tests and operators (read-only except reset).
+function takeInFlightBatch(): Envelope[] {
+  const batch: Envelope[] = []
+  const limit = batchMax()
+  while (queue.length > 0 && batch.length < limit) {
+    const item = queue.shift()
+    if (item) batch.push(item)
+  }
+  return batch
+}
+
 export function __causalityTestReset(): void {
   queue.length = 0
   telemetryStats.enqueued = 0
@@ -234,13 +213,10 @@ export function __causalityTestQueueLength(): number {
   return queue.length
 }
 
-// OpenCode V1 Plugin implementation registering event and lifecycle hooks
 export const AgentCausalityPlugin: Plugin = async () => ({
-  // Global OpenCode event stream (session lifecycle, file edits, git/file watcher, errors)
   event: async ({ event }) => {
     enqueue(`event:${event.type}`, event.properties)
   },
-  // Tool invocation starts (records tool name, arguments, call ID for causality)
   "tool.execute.before": async (input, output) => {
     enqueue("hook:tool.execute.before", {
       sessionID: input.sessionID,
@@ -249,7 +225,6 @@ export const AgentCausalityPlugin: Plugin = async () => ({
       args: output.args,
     })
   },
-  // Tool invocation completes (records output, metadata, links back to call ID)
   "tool.execute.after": async (input, output) => {
     enqueue("hook:tool.execute.after", {
       sessionID: input.sessionID,
@@ -261,18 +236,15 @@ export const AgentCausalityPlugin: Plugin = async () => ({
       metadata: output.metadata,
     })
   },
-  // User approval / permission dialogs
   "permission.ask": async (input, output) => {
     enqueue("hook:permission.ask", {
       ...input,
       response: output.status,
     })
   },
-  // Shell command execution before running
   "command.execute.before": async (input) => {
     enqueue("hook:command.execute.before", input)
   },
-  // Message activity between agent and model
   "chat.message": async (input, output) => {
     enqueue("hook:chat.message", {
       sessionID: input.sessionID,
@@ -282,7 +254,6 @@ export const AgentCausalityPlugin: Plugin = async () => ({
       parts: output.parts,
     })
   },
-  // Active model, agent, and provider parameters
   "chat.params": async (input) => {
     enqueue("hook:chat.params", {
       sessionID: input.sessionID,

@@ -53,10 +53,8 @@ def load_demo() -> ExplorerDataset:
     envelopes = trace["envelopes"]
     log = InMemoryEventLog()
     mapper = OpenCodeEventMapper(log, run_id="opencode-demo")
-    dropped = 0
     for envelope in envelopes:
-        if mapper.ingest(envelope) is None:
-            dropped += 1
+        mapper.ingest(envelope)
     dataset = ExplorerDataset(
         log=log,
         events=log.events(),
@@ -65,7 +63,7 @@ def load_demo() -> ExplorerDataset:
     )
     _resolve(dataset)
     dataset.failure["envelopes"] = len(envelopes)
-    dataset.failure["dropped_envelopes"] = dropped
+    dataset.failure["dropped_envelopes"] = 0
     return dataset
 
 

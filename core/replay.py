@@ -189,11 +189,6 @@ def counterfactual_replay(
         return evaluator(eval_inputs)
 
     if mode == "downstream_replay":
-        # Downstream replay mode: evaluate decision and validate against recorded downstream events
-        # NOTE: Full downstream validation is not yet implemented (thesis §30.7 future work).
-        # Currently only reconstructs downstream state but does not compare counterfactual
-        # downstream outcome with recorded outcome. Raising NotImplementedError rather than
-        # silently accepting unvalidated results.
         raise NotImplementedError(
             "downstream_replay mode validation is not yet fully implemented. "
             "Comparison between counterfactual and recorded downstream outcomes is deferred. "

@@ -1,6 +1,6 @@
 {
-  "input_sha256": "a2c446bcaa1c55d05fbfbcb5f80d93787cc3489852b9b6569b6f424f09f404fc",
-  "static_sha256": "b25daab10825d454f848ea3154d62b8c904328ff15606ff1acf272a8a4e96faf",
+  "input_sha256": "e82d3b630d31be5632249c6fa9703af67c3ddbe9ba90a9e16e6d490a398c9f55",
+  "static_sha256": "14cfbedcf0e77e5bd0af3f85d834ea4f2176263e950f1e16883715c7ec5ce861",
   "files": [
     "frontend/app/globals.css",
     "frontend/app/layout.tsx",

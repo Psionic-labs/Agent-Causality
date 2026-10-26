@@ -316,7 +316,7 @@ def test_decision_contract_embedded_in_event_payload() -> None:
 
 
 def test_fixture_decision_matches_ground_truth_merge() -> None:
-    contract = create_fixture_decision()
+    contract = create_fixture_decision(_customer_approval_fixture())
     assert contract.decision_event_id == "A3"
     assert len(contract.ports) == 2
 
@@ -336,10 +336,13 @@ def test_fixture_decision_matches_ground_truth_merge() -> None:
 # --- 5. GraphValidator Tests ---
 
 
+def _customer_approval_fixture() -> dict[str, Any]:
+    path = Path(__file__).parent.parent / "fixture" / "fixture.json"
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
 def build_seeded_fixture_log() -> InMemoryEventLog:
-    fixture_path = Path(__file__).parent.parent / "fixture" / "fixture.json"
-    with fixture_path.open("r", encoding="utf-8") as f:
-        data = json.load(f)
+    data = _customer_approval_fixture()
 
     log = InMemoryEventLog()
     for ev_data in data["events"]:
@@ -360,7 +363,7 @@ def build_seeded_fixture_log() -> InMemoryEventLog:
 def test_validator_passes_on_valid_fixture_run() -> None:
     log = build_seeded_fixture_log()
     validator = GraphValidator(log)
-    decision = create_fixture_decision()
+    decision = create_fixture_decision(_customer_approval_fixture())
 
     report = validator.validate_run(run_id="run_7f42", decisions=[decision])
     assert report.is_valid is True
@@ -370,7 +373,7 @@ def test_validator_passes_on_valid_fixture_run() -> None:
 
 def test_validator_does_not_duplicate_contract_supplied_both_ways() -> None:
     log = InMemoryEventLog()
-    decision = create_fixture_decision()
+    decision = create_fixture_decision(_customer_approval_fixture())
     # Embed the same contract into the decision event payload
     log.append(
         Event(
@@ -676,27 +679,42 @@ def test_fail_open_append_status_is_per_call_not_shared() -> None:
     assert results == [i % 2 == 1 for i in range(num_calls)]
 
 
-def test_silent_swallow_log_is_treated_as_not_stored() -> None:
-    """A plain log that returns without an Event must not advance store/registry."""
+def test_plain_append_must_return_an_event() -> None:
+    """A log that returns no Event is not a storage backend."""
 
     class SilentLog:
-        def append(self, event: Event) -> Event | None:
-            return None  # swallows the failure
+        def append(self, event: Event) -> None:
+            return None
 
     clock = AgentClock()
     registry = ResourceRegistry()
     mem = CapturedMemory(agent_id="A", clock=clock, log=SilentLog(), registry=registry)
-
-    event, stored = record_event(
-        agent_id="A", clock=clock, log=SilentLog(), event_type="t", payload={}
-    )
-    assert stored is False
+    raised = False
+    try:
+        record_event(
+            agent_id="A", clock=clock, log=SilentLog(), event_type="t", payload={}
+        )
+    except TypeError:
+        raised = True
+    assert raised
     assert clock.get_last_event_id() is None
 
-    mem.set("k", "v")
+    try:
+        mem.set("k", "v")
+    except TypeError:
+        raised = True
+    else:
+        raised = False
+    assert raised
     assert "k" not in mem.store
     assert registry.get_latest("mem://A/k") is None
-    assert mem.delete("k") is False
+    try:
+        mem.delete("k")
+    except TypeError:
+        raised = True
+    else:
+        raised = False
+    assert raised
 
 
 # --- 8. capture_tool registry wiring ---

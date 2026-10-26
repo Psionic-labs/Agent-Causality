@@ -19,6 +19,7 @@ import argparse
 import importlib
 import json
 import os
+import re
 import sys
 from pathlib import Path
 from typing import Any
@@ -29,7 +30,6 @@ from core.explain import (
     build_evidence_package,
     explain,
     explanation_matches_format,
-    load_env_file,
     render_evidence_summary,
 )
 from core.provenance import provenance
@@ -42,6 +42,7 @@ from core.replay import (
     ddmin,
 )
 from core.slicing import structural_slice, why
+from sdk.env import load_env_file
 from sdk.events import Event, InMemoryEventLog
 from storage._psycopg import load_psycopg
 from storage.sqlite import SQLiteEventStore
@@ -163,7 +164,6 @@ def resolve_decision_contract(decision_or_event_id: str, log: Any) -> DecisionCo
     bundled fixture, which would make misspelled commands appear successful and
     silently use incorrect data for PostgreSQL backends.
     """
-    # Try to resolve from the log backend first (fixture or PostgreSQL)
     getter = getattr(log, "get", None)
     if callable(getter):
         ev = getter(decision_or_event_id)
@@ -172,17 +172,10 @@ def resolve_decision_contract(decision_or_event_id: str, log: Any) -> DecisionCo
             if contract is not None:
                 return contract
 
-    # For fixture-only special IDs, only use bundled fixture if explicitly using
-    # fixture backend
     fixture_data = getattr(log, "data", None)
     fixture_ids = ("dec_customer_approval_A3", "A3", "A4")
     if fixture_data is not None and decision_or_event_id in fixture_ids:
-        # Event was not found in log, but fixture backend is available
-        # For A4 (downstream event), resolve A3 and return it
-        if decision_or_event_id == "A4":
-            return create_fixture_decision(fixture_data)
-        if decision_or_event_id in ("A3", "dec_customer_approval_A3"):
-            return create_fixture_decision(fixture_data)
+        return create_fixture_decision(fixture_data)
 
     raise ValueError(f"Decision contract '{decision_or_event_id}' not found")
 
@@ -218,6 +211,26 @@ def cmd_provenance(log: Any, field_path: str) -> None:
     print(chain.render())
 
 
+_BARE_INTERVENTION = re.compile(r"[A-Za-z_][A-Za-z0-9_]*$")
+
+
+def parse_intervention_value(raw: str) -> Any:
+    """Parse a CLI intervention value.
+
+    JSON literals stay JSON. A bare identifier is a string, which is how
+    ``customer_status=ineligible`` is written. Anything else is a usage error.
+    """
+    try:
+        return json.loads(raw)
+    except json.JSONDecodeError:
+        if _BARE_INTERVENTION.fullmatch(raw):
+            return raw
+        sys.exit(
+            f"Intervention value {raw!r} is not JSON. "
+            "Pass a JSON literal or a bare identifier."
+        )
+
+
 def cmd_replay(log: Any, decision_id: str, intervention_args: list[str]) -> None:
     contract = resolve_decision_contract(decision_id, log)
     interventions: list[PortIntervention] = []
@@ -228,10 +241,7 @@ def cmd_replay(log: Any, decision_id: str, intervention_args: list[str]) -> None
                 "(e.g. customer_status=ineligible)"
             )
         port_id, raw_val = item.split("=", 1)
-        try:
-            val = json.loads(raw_val)
-        except Exception:  # noqa: BLE001
-            val = raw_val
+        val = parse_intervention_value(raw_val)
         interventions.append(PortIntervention(port_id=port_id, substitute_value=val))
 
     cf_outcome = counterfactual_replay(contract, interventions, mode="recorded_output", log=log)
@@ -294,7 +304,10 @@ def cmd_explain(
 
 
 def main(argv: list[str] | None = None) -> None:
-    load_env_file()
+    try:
+        load_env_file()
+    except (OSError, UnicodeError) as exc:
+        sys.exit(f"Could not read .env: {exc}")
     args = build_parser().parse_args(argv)
     for module_name in args.load_module:
         try:

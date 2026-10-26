@@ -179,126 +179,122 @@ class OpenCodeEventMapper:
             state.last_event_id = event.id
         return OpenCodeCapture(event=event, stored=stored)
 
-    def ingest(self, envelope: dict[str, Any]) -> OpenCodeCapture | None:
-        """Map one plugin envelope; telemetry errors are intentionally swallowed."""
-        try:
-            kind = str(envelope.get("kind", "event"))
-            payload = envelope.get("payload")
-            if not isinstance(payload, dict):
-                payload = {"value": payload}
-            session_id = _session_id(envelope | payload, kind)
-            source_id = _source_id(envelope | payload, kind)
-            timestamp = _timestamp(envelope.get("timestamp") or payload.get("timestamp"))
-            state = self._state(session_id)
-            if payload.get("model"):
-                state.model = str(payload["model"])
-            if payload.get("agent"):
-                state.agent = str(payload["agent"])
-            common = {
-                "opencode_kind": kind,
-                "session_id": session_id,
-                # Explicit marker for events with no reliable session evidence
-                # (e.g. file.edited, file.watcher.updated, vcs/tui/server
-                # events). Preserved under "unknown", never invented.
-                "session_unassociated": session_id == "unknown",
-                "event_id": source_id,
-                "timestamp": timestamp.isoformat(),
-                "model": state.model,
-                "agent": state.agent,
-                "payload": payload,
-            }
-            parent = payload.get("parent_event_id")
-            parents = [str(parent)] if parent else None
+    def ingest(self, envelope: dict[str, Any]) -> OpenCodeCapture:
+        """Map one plugin envelope into a capture."""
+        kind = str(envelope.get("kind", "event"))
+        payload = envelope.get("payload")
+        if not isinstance(payload, dict):
+            payload = {"value": payload}
+        session_id = _session_id(envelope | payload, kind)
+        source_id = _source_id(envelope | payload, kind)
+        timestamp = _timestamp(envelope.get("timestamp") or payload.get("timestamp"))
+        state = self._state(session_id)
+        if payload.get("model"):
+            state.model = str(payload["model"])
+        if payload.get("agent"):
+            state.agent = str(payload["agent"])
+        common = {
+            "opencode_kind": kind,
+            "session_id": session_id,
+            # Explicit marker for events with no reliable session evidence
+            # (e.g. file.edited, file.watcher.updated, vcs/tui/server
+            # events). Preserved under "unknown", never invented.
+            "session_unassociated": session_id == "unknown",
+            "event_id": source_id,
+            "timestamp": timestamp.isoformat(),
+            "model": state.model,
+            "agent": state.agent,
+            "payload": payload,
+        }
+        parent = payload.get("parent_event_id")
+        parents = [str(parent)] if parent else None
+        event_type = "context_update"
+        # 1. Session lifecycle mappings
+        if kind in {"event:session.created", "session.created"}:
+            event_type = "run_start"
+        elif kind in {"event:session.deleted", "session.deleted"}:
+            event_type = "run_finish"
+        elif kind in {"event:session.error", "session.error"}:
+            event_type = "agent_error"
+        elif kind in {"event:session.status", "session.status", "event:session.idle"}:
             event_type = "context_update"
-            # 1. Session lifecycle mappings
-            if kind in {"event:session.created", "session.created"}:
-                event_type = "run_start"
-            elif kind in {"event:session.deleted", "session.deleted"}:
-                event_type = "run_finish"
-            elif kind in {"event:session.error", "session.error"}:
-                event_type = "agent_error"
-            elif kind in {"event:session.status", "session.status", "event:session.idle"}:
-                event_type = "context_update"
-            # 2. Model call activity
-            elif kind in {"event:message.updated", "message.updated"}:
-                event_type = "model_call"
-            # 3. File modifications (treated as tool_result writes)
-            elif kind in {"event:file.edited", "file.edited"}:
-                event_type = "tool_result"
-                path = payload.get("file") or payload.get("path")
-                if path:
-                    common["resource_uri"] = f"file://{path}"
-            # 4. Command execution
-            elif kind in {
-                "event:command.executed",
-                "command.executed",
-                "hook:command.execute.before",
-            }:
-                event_type = "tool_call"
-            # 5. Tool invocation before: inspect file path and inject last writer as causal parent
-            elif kind in {"hook:tool.execute.before", "tool.execute.before"}:
-                event_type = "tool_call"
-                args = payload.get("args")
-                if isinstance(args, dict):
-                    path = args.get("filePath") or args.get("path")
-                    if isinstance(path, str):
-                        resource_uri = f"file://{path}"
-                        common["resource_uri"] = resource_uri
-                        latest = self.registry.get_latest(resource_uri, run_id=self.run_id)
-                        if latest is not None:
-                            parents = [latest.last_writer_event_id]
-            # 6. Tool completion after: link back to the preceding tool call as causal parent
-            elif kind in {"hook:tool.execute.after", "tool.execute.after"}:
-                event_type = "tool_result"
-                call_id = payload.get("callID") or payload.get("call_id")
-                if call_id and str(call_id) in state.calls:
-                    parents = [state.calls[str(call_id)]]
-            # 7. User permission interactions
-            elif kind in {
-                "hook:permission.ask",
-                "event:permission.asked",
-                "event:permission.updated",
-                "event:permission.replied",
-                "permission.asked",
-                "permission.updated",
-                "permission.replied",
-            }:
-                event_type = "tool_call"
-            elif kind in {"event:message.part.updated", "message.part.updated"}:  # noqa: SIM114
-                event_type = "context_update"
-            elif kind in {"event:session.updated", "session.updated"}:
-                event_type = "context_update"
+        # 2. Model call activity
+        elif kind in {"event:message.updated", "message.updated"}:
+            event_type = "model_call"
+        # 3. File modifications (treated as tool_result writes)
+        elif kind in {"event:file.edited", "file.edited"}:
+            event_type = "tool_result"
+            path = payload.get("file") or payload.get("path")
+            if path:
+                common["resource_uri"] = f"file://{path}"
+        # 4. Command execution
+        elif kind in {
+            "event:command.executed",
+            "command.executed",
+            "hook:command.execute.before",
+        }:
+            event_type = "tool_call"
+        # 5. Tool invocation before: inspect file path and inject last writer as causal parent
+        elif kind in {"hook:tool.execute.before", "tool.execute.before"}:
+            event_type = "tool_call"
+            args = payload.get("args")
+            if isinstance(args, dict):
+                path = args.get("filePath") or args.get("path")
+                if isinstance(path, str):
+                    resource_uri = f"file://{path}"
+                    common["resource_uri"] = resource_uri
+                    latest = self.registry.get_latest(resource_uri, run_id=self.run_id)
+                    if latest is not None:
+                        parents = [latest.last_writer_event_id]
+        # 6. Tool completion after: link back to the preceding tool call as causal parent
+        elif kind in {"hook:tool.execute.after", "tool.execute.after"}:
+            event_type = "tool_result"
+            call_id = payload.get("callID") or payload.get("call_id")
+            if call_id and str(call_id) in state.calls:
+                parents = [state.calls[str(call_id)]]
+        # 7. User permission interactions
+        elif kind in {
+            "hook:permission.ask",
+            "event:permission.asked",
+            "event:permission.updated",
+            "event:permission.replied",
+            "permission.asked",
+            "permission.updated",
+            "permission.replied",
+        }:
+            event_type = "tool_call"
+        elif kind in {"event:message.part.updated", "message.part.updated"}:  # noqa: SIM114
+            event_type = "context_update"
+        elif kind in {"event:session.updated", "session.updated"}:
+            event_type = "context_update"
 
-            # Persist event into the event store with Lamport clock and causal parents
-            capture = self._record(
-                session_id=session_id,
-                event_type=event_type,
-                payload=common,
-                source_id=source_id,
-                parents=parents,
-                wall_time=timestamp,
+        # Persist event into the event store with Lamport clock and causal parents
+        capture = self._record(
+            session_id=session_id,
+            event_type=event_type,
+            payload=common,
+            source_id=source_id,
+            parents=parents,
+            wall_time=timestamp,
+        )
+        # Remember tool call ID -> event ID to correlate subsequent tool result
+        if kind in {"hook:tool.execute.before", "tool.execute.before"}:
+            call_id = payload.get("callID") or payload.get("call_id")
+            if call_id and capture.stored:
+                state.calls[str(call_id)] = capture.event.id
+        # On file write (file.edited), record write in ResourceRegistry
+        # to enable read-after-write causal linkage
+        resource_uri = common.get("resource_uri")
+        if capture.stored and isinstance(resource_uri, str) and event_type == "tool_result":
+            self.registry.register_write(
+                resource_uri=resource_uri,
+                writer_event_id=capture.event.id,
+                writer_agent_id=capture.event.agent_id,
+                logical_seq=capture.event.logical_seq,
+                wall_time=capture.event.wall_time,
+                run_id=self.run_id,
             )
-            # Remember tool call ID -> event ID to correlate subsequent tool result
-            if kind in {"hook:tool.execute.before", "tool.execute.before"}:
-                call_id = payload.get("callID") or payload.get("call_id")
-                if call_id and capture.stored:
-                    state.calls[str(call_id)] = capture.event.id
-            # On file write (file.edited), record write in ResourceRegistry
-            # to enable read-after-write causal linkage
-            resource_uri = common.get("resource_uri")
-            if capture.stored and isinstance(resource_uri, str) and event_type == "tool_result":
-                self.registry.register_write(
-                    resource_uri=resource_uri,
-                    writer_event_id=capture.event.id,
-                    writer_agent_id=capture.event.agent_id,
-                    logical_seq=capture.event.logical_seq,
-                    wall_time=capture.event.wall_time,
-                    run_id=self.run_id,
-                )
-            return capture
-        except Exception:  # noqa: BLE001
-            # Telemetry error swallowed: fail-open guarantee
-            return None
+        return capture
 
     def resources(self) -> dict[tuple[str | None, str], Any]:
         return self.registry.all_resources()
