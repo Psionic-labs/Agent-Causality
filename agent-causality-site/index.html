@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="en" data-nav="closed">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Agent-Causality — Causal debugging for multi-agent AI systems</title>
   <meta name="description" content="Agent-Causality records multi-agent runs as causal event graphs, traces where values came from, and attributes failures to the agent branches that caused them.">
-  <meta name="theme-color" content="#0e0905">
+  <meta name="theme-color" content="#0E0B07">
 
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Agent-Causality">
@@ -14,41 +14,34 @@
   <meta property="og:image" content="og-image.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="A retro-futurist monitor showing a silver causal trunk, gold branches, an orange threshold, and a red pruned branch.">
+  <meta property="og:image:alt" content="A causal graph on a dark desk. A cream path runs from orch to refund. An orange fault path runs from a risk fallback to an audit failure.">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Agent-Causality — Causal debugging for multi-agent AI">
   <meta name="twitter:description" content="Record branching agent runs as causal graphs, trace value provenance, and attribute failures to the branch or interaction responsible.">
   <meta name="twitter:image" content="og-image.png">
-  <meta name="twitter:image:alt" content="A retro-futurist monitor showing a silver causal trunk, gold branches, an orange threshold, and a red pruned branch.">
+  <meta name="twitter:image:alt" content="A causal graph on a dark desk. A cream path runs from orch to refund. An orange fault path runs from a risk fallback to an audit failure.">
 
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230e0905'/%3E%3Cpath d='M7 32h25' stroke='%23f5eeda' stroke-width='6'/%3E%3Cpath d='M32 32c9 0 12-6 20-14' fill='none' stroke='%23f0a63c' stroke-width='6'/%3E%3Cpath d='M32 32c9 0 12 6 20 14' fill='none' stroke='%23ef4130' stroke-width='6'/%3E%3Crect x='27' y='27' width='10' height='10' fill='%23ffd35f'/%3E%3C/svg%3E">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%230E0B07'/%3E%3Cpath d='M8 40h18' stroke='%23F3E8D4' stroke-width='4'/%3E%3Cpath d='M26 40c8-16 14-20 30-24' fill='none' stroke='%23F3E8D4' stroke-width='4'/%3E%3Cpath d='M26 40c12 10 18 12 30 8' fill='none' stroke='%23FF5C2A' stroke-width='4'/%3E%3Crect x='22' y='36' width='8' height='8' fill='%23FDA63C'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600&family=JetBrains+Mono:wght@400;500&display=swap">
   <link rel="stylesheet" href="style.css">
   <script src="app.js" defer></script>
-  <script src="nav.js" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
 
   <header class="site-header">
     <div class="wrap header-inner">
-      <a class="brand" href="#top" aria-label="Agent-Causality, back to top">
-        <span class="brand-mark" aria-hidden="true"><i></i></span>
-        <span class="brand-name">AGENT-CAUSALITY</span>
-      </a>
-      <button type="button" class="nav-toggle" aria-controls="site-nav" aria-expanded="false">
-        <span class="nav-toggle-bars" aria-hidden="true"></span>
-        <span class="nav-toggle-label">Menu</span>
-      </button>
+      <a class="brand" href="#top" aria-label="Agent-Causality, back to top">Agent-Causality</a>
       <nav class="site-nav" id="site-nav" aria-label="Primary">
-        <a href="#problem">Problem</a>
-        <a href="#solution">Solution</a>
+        <a href="#incidents">Incidents</a>
         <a href="#how">How it works</a>
         <a href="#trace">Trace a run</a>
+        <a href="proof.html">Proof</a>
         <a href="#quickstart">Quickstart</a>
-        <a href="docs/index.html">Docs</a>
-        <a href="paper.html">Paper</a>
-        <a class="nav-github" href="https://github.com/Psionic-labs/Agent-Causality" target="_blank" rel="noopener">GitHub <span aria-hidden="true">↗</span></a>
+        <a href="opencode.html">Docs</a>
+        <a class="nav-github" href="https://github.com/Psionic-labs/Agent-Causality" target="_blank" rel="noopener" aria-label="GitHub"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg></a>
       </nav>
     </div>
   </header>
@@ -59,118 +52,86 @@
     <section class="hero" aria-labelledby="hero-title">
       <div class="wrap hero-grid">
         <div class="hero-copy">
-          <h1 id="hero-title">Trace a failed run back to its cause.</h1>
-          <div class="hero-intro">
-            <p class="hero-sub">Agent-Causality records every run as a causal graph, so you debug the decision that changed the outcome instead of scrolling logs.</p>
-            <div class="hero-actions">
-              <a class="btn btn-primary" href="https://github.com/Psionic-labs/Agent-Causality" target="_blank" rel="noopener">View on GitHub <span aria-hidden="true">↗</span></a>
-              <a class="btn btn-ghost" href="#demo">Watch the walkthrough <span aria-hidden="true">↓</span></a>
-            </div>
-            <p class="hero-meta"><span class="led" aria-hidden="true"></span> Open source · AGPL-3.0 · OpenCode and LangGraph</p>
+          <h1 id="hero-title">Trace a failed<br>run back to its<br>cause.</h1>
+          <p class="hero-sub">Agent-Causality records every run as a causal graph, so you debug the decision that changed the outcome instead of scrolling logs.</p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="https://github.com/Psionic-labs/Agent-Causality" target="_blank" rel="noopener">View on GitHub</a>
           </div>
         </div>
 
-        <div class="hero-visual">
-          <div class="monitor monitor--hero" data-ui role="img" aria-label="Animated causal monitor. On the timeline, a glowing silver trunk traces the intended agent run while thin gold branches split away; one branch crosses an orange decision baseline, turns red, and is pruned. Below the timeline, an event log lists captured events as the run plays.">
-            <div class="bezel">
-              <div class="bezel-bar bezel-bar--top" aria-hidden="true">
-                <span class="chip">CGM-7</span>
-                <span class="bar-label">Causal Desk</span>
-                <span class="bar-rec"><i></i>REC</span>
-              </div>
-              <div class="screen">
-                <div class="screen-viz">
-                  <canvas id="hero-canvas" aria-hidden="true" style="position:absolute;inset:0;width:100%;height:100%"></canvas>
-                  <div class="screen-vignette" aria-hidden="true"></div>
-                  <div class="screen-glare" aria-hidden="true"></div>
-
-                  <div class="hud hud--tl" aria-hidden="true">
-                    <span class="hud-key">Causal Graph Monitor</span>
-                    <span class="hud-sub">CGM-07 / Causal Desk</span>
-                  </div>
-                  <div class="hud hud--tr" aria-hidden="true">
-                    <span class="hud-key">Events captured</span>
-                    <span class="hud-value" id="events-readout">184</span>
-                  </div>
-                  <div class="hud hud--bl" aria-hidden="true">
-                    <span class="hud-key">Trunk A-01 · Intended run</span>
-                    <span class="hud-sub">Branches tracked 07</span>
-                  </div>
-                  <div class="branch-alert" id="branch-alert" aria-hidden="true">
-                  <span class="branch-alert-led"></span>
-                  <span id="branch-alert-text">Branch detected · B-04</span>
-                  </div>
-                </div>
-                <div class="screen-log" aria-hidden="true">
-                  <div class="log-head">
-                    <span>Events</span>
-                    <span>Time</span>
-                    <span>Node</span>
-                    <span>Event</span>
-                  </div>
-                  <div class="log-rows" id="log-rows"></div>
-                </div>
-                <div class="scanlines" aria-hidden="true"></div>
-                <span class="screen-refresh" aria-hidden="true"></span>
-              </div>
-              <div class="bezel-foot">
-                <span class="chip chip--small">CGM</span>
-                <span class="bar-menu">FILE&nbsp;&nbsp;EDIT&nbsp;&nbsp;VIEW&nbsp;&nbsp;MODE&nbsp;&nbsp;HELP</span>
-                <span class="bezel-vents" aria-hidden="true"></span>
-                <span class="bezel-led"><i aria-hidden="true"></i> ONLINE</span>
-              </div>
+        <figure class="causal-graph hero-visual" role="img" aria-label="Causal graph of a refund run on a ruled grid. The intended path runs from orch through intake, policy, and decision to refund. A fallback in risk, score 0.2, reaches decision and ends at audit with check.failed.">
+          <div class="causal-graph-stage">
+            <svg viewBox="0 0 1000 620" preserveAspectRatio="none" aria-hidden="true">
+              <defs>
+                <pattern id="desk-grid" width="40" height="40" patternUnits="userSpaceOnUse">
+                  <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#2F2619" stroke-width="1"/>
+                </pattern>
+              </defs>
+              <rect width="1000" height="620" fill="#0E0B07"/>
+              <rect width="1000" height="620" fill="url(#desk-grid)"/>
+              <path class="graph-path" d="M160 298 C 240 298, 300 124, 400 124"/>
+              <path class="graph-path" d="M400 150 C 430 210, 436 250, 440 298"/>
+              <path class="graph-path" d="M160 298 H 440"/>
+              <path class="graph-path" d="M440 298 H 620"/>
+              <path class="graph-path" d="M620 270 C 690 250, 730 160, 800 112"/>
+              <path class="graph-path graph-path--fault" pathLength="100" stroke-dasharray="100" stroke-dashoffset="100" d="M480 459 C 530 400, 570 345, 640 318 C 700 338, 730 370, 760 397"/>
+            </svg>
+            <div class="graph-nodes">
+              <span class="g-node" style="--x:16%;--y:48%">Orch</span>
+              <span class="g-node" style="--x:40%;--y:20%">Intake</span>
+              <span class="g-node" style="--x:44%;--y:48%">Policy</span>
+              <span class="g-node" style="--x:62%;--y:48%">Decision</span>
+              <span class="g-node" style="--x:80%;--y:18%">Refund</span>
+              <span class="g-node" style="--x:48%;--y:74%">Risk</span>
+              <span class="g-node g-node--fault" style="--x:76%;--y:64%">Audit</span>
+              <span class="g-note" style="--x:48%;--y:84%">Fallback risk=0.2</span>
+              <span class="g-note" style="--x:76%;--y:78%">check.failed</span>
             </div>
           </div>
-          <p class="hero-caption">Live simulation of the bundled refund demo. Every row is an event from the captured run.</p>
-        </div>
+        </figure>
       </div>
     </section>
 
-    <section class="section section--demo" id="demo" aria-labelledby="demo-title">
+    <section class="section section-ledger" id="incidents" aria-labelledby="incidents-title">
       <div class="wrap">
-        <div class="section-head">
-          <h2 id="demo-title">Watch the walkthrough.</h2>
-          <p class="section-lede">One instrumented run, from capture to causal diagnosis. The reel is bundled with this page: no redirect, no player embed, no third-party request.</p>
-        </div>
-
-        <figure class="video-figure">
-          <div class="monitor monitor--video" data-ui>
-            <div class="bezel">
-              <div class="screen screen--video">
-                <div class="video-slot" id="video-slot">
-                  <video class="video-player" id="video-player" playsinline controls preload="none" width="1280" height="720" poster="media/walkthrough-poster.jpg" aria-label="Agent-Causality product walkthrough, 2 minutes 56 seconds">
-                    <source src="media/walkthrough.mp4" type="video/mp4">
-                  </video>
-                  <button class="video-facade" id="video-facade" type="button" aria-label="Play the Agent-Causality product walkthrough, 2 minutes 56 seconds. It plays inside this page.">
-                    <span class="facade-art" aria-hidden="true">
-                      <img class="facade-poster" src="media/explorer-poster.png" alt="" width="1280" height="720" loading="lazy" decoding="async">
-                    </span>
-                    <span class="facade-scanlines" aria-hidden="true"></span>
-                    <span class="facade-duration" aria-hidden="true">02:56</span>
-                    <span class="facade-play" aria-hidden="true">
-                      <svg viewBox="0 0 60 60" focusable="false">
-                        <circle cx="30" cy="30" r="28" fill="rgba(14,9,5,.7)" stroke="currentColor"/>
-                        <path d="M25 19.5 43 30 25 40.5Z" fill="currentColor"/>
-                      </svg>
-                    </span>
-                    <span class="facade-label" aria-hidden="true">Play the walkthrough</span>
-                  </button>
-                </div>
-                <div class="video-vignette" aria-hidden="true"></div>
-              </div>
-              <div class="bezel-foot">
-                <span class="bezel-plate">DEMO REEL / YT-01</span>
-                <span class="bezel-vents" aria-hidden="true"></span>
-                <span class="bezel-led"><i aria-hidden="true"></i> STANDBY</span>
-              </div>
-            </div>
-          </div>
-          <figcaption class="video-caption">
-            <span class="caption-main">Watch the walkthrough <span class="caption-len">2:56</span></span>
-            <span class="caption-sub">A single instrumented OpenCode run: capture, graph, trace, attribution.</span>
-            <span class="video-fallback">Video not playing? <a href="https://www.youtube.com/watch?v=bogmzYe9Hzs" target="_blank" rel="noopener">Watch on YouTube</a>.</span>
-          </figcaption>
-        </figure>
+        <h2 id="incidents-title">Agents already do this.</h2>
+        <table class="ledger">
+          <caption class="visually-hidden">Public incidents where an agent acted and the cause was hard to see in a flat log.</caption>
+          <thead class="visually-hidden">
+            <tr>
+              <th scope="col">When</th>
+              <th scope="col">Agent</th>
+              <th scope="col">What happened</th>
+              <th scope="col">Kind</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="ledger-when">Jul 2025</td>
+              <td class="ledger-who">Replit Agent</td>
+              <td class="ledger-what">Deleted a production database during a code freeze, then said rollback was impossible. Rollback worked.</td>
+              <td><span class="badge">Real-world</span></td>
+            </tr>
+            <tr>
+              <td class="ledger-when">Feb 2025</td>
+              <td class="ledger-who">OpenAI Operator</td>
+              <td class="ledger-what">Bought $3143 of eggs on a journalist's card without asking first.</td>
+              <td><span class="badge">Real-world</span></td>
+            </tr>
+            <tr>
+              <td class="ledger-when">Nov 2025</td>
+              <td class="ledger-who">Claude Code, GTG-1002</td>
+              <td class="ledger-what">Anthropic disclosed an espionage campaign run through its coding agent by human operators.</td>
+              <td><span class="badge">Misuse</span></td>
+            </tr>
+            <tr>
+              <td class="ledger-when">May 2025</td>
+              <td class="ledger-who">OpenAI o3, Palisade</td>
+              <td class="ledger-what">Edited a shutdown script in a controlled test.</td>
+              <td><span class="badge">Lab test</span></td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </section>
 
@@ -192,10 +153,10 @@
             </ul>
           </div>
 
-          <figure class="trace-figure" data-ui role="group" aria-label="Illustrative flat trace of a refund run. A risk checker schema mismatch produces a fallback risk score of 0.2. Three events later, an audit check fails.">
+          <figure class="trace-figure" role="group" aria-label="Illustrative flat trace of a refund run. A risk checker schema mismatch produces a fallback risk score of 0.2. Three events later, an audit check fails.">
             <div class="panel-head">
-              <span class="panel-title">FLAT TRACE / REF-0A7F</span>
-              <span class="panel-badge">ILLUSTRATIVE</span>
+              <span class="panel-title">Flat trace / REF-0A7F</span>
+              <span class="panel-badge">Example</span>
             </div>
             <ol class="trace-rows">
               <li><span class="tr-time">09:41:02</span><span class="tr-agent">orchestrator</span><span class="tr-event">run.start</span></li>
@@ -208,7 +169,7 @@
             </ol>
             <div class="trace-gap">
               <span class="gap-rule" aria-hidden="true"></span>
-              <span>cause → failure · 3 events apart</span>
+              <span>cause to failure, 3 events apart</span>
             </div>
             <figcaption>The list preserves order. It loses the dependency that explains the failure.</figcaption>
           </figure>
@@ -227,7 +188,6 @@
           <article class="instrument">
             <div class="card-figure">
               <svg viewBox="0 0 280 84" aria-hidden="true" focusable="false">
-                <path class="svg-glow" d="M12 44C80 40 150 50 268 42"/>
                 <path class="svg-trunk" d="M12 44C80 40 150 50 268 42"/>
                 <path class="svg-branch" d="M58 43C72 30 86 18 114 18"/>
                 <path class="svg-branch" d="M106 45C122 62 142 70 176 72"/>
@@ -237,8 +197,8 @@
                 <rect class="svg-node svg-node--gold" x="172" y="68" width="7" height="7"/>
                 <rect class="svg-node svg-node--gold" x="212" y="22" width="7" height="7"/>
                 <rect class="svg-node" x="214" y="39" width="7" height="7"/>
-                <text class="svg-label" x="14" y="70">A-01</text>
-                <text class="svg-label" x="222" y="17">B-03</text>
+                <text class="svg-label" x="14" y="74">A-01</text>
+                <text class="svg-label" x="222" y="18">B-03</text>
               </svg>
             </div>
             <h3>Event graph recording</h3>
@@ -249,15 +209,15 @@
             <div class="card-figure card-figure--center">
               <div class="mini-prov" aria-hidden="true">
                 <span class="prov-chip">tool read</span>
-                <span class="prov-arrow">→</span>
+                <span class="prov-arrow"></span>
                 <span class="prov-chip prov-chip--coarse">LLM call · coarse</span>
-                <span class="prov-arrow">→</span>
+                <span class="prov-arrow"></span>
                 <span class="prov-chip prov-chip--target">merge</span>
               </div>
-              <span class="mini-prov-note" aria-hidden="true">field-level provenance / exact where possible</span>
+              <span class="mini-prov-note" aria-hidden="true">field-level provenance, exact where possible</span>
             </div>
             <h3>Value provenance tracing</h3>
-            <p>Trace a value back through tools, memory, and handoffs; LLM-mediated links are clearly marked coarse.</p>
+            <p>Trace a value back through tools, memory, and handoffs. LLM-mediated links are marked coarse.</p>
           </article>
 
           <article class="instrument">
@@ -271,8 +231,8 @@
                 <rect class="svg-node" x="113" y="38" width="8" height="8"/>
                 <rect class="svg-node svg-node--red" x="218" y="37" width="10" height="10"/>
                 <path class="svg-bracket" d="M124 26V58"/>
-                <text class="svg-label svg-label--amber" x="132" y="28">INTERACTION 1.0</text>
-                <text class="svg-label svg-label--red" x="212" y="66">FAULT</text>
+                <text class="svg-label svg-label--amber" x="132" y="24">Interaction</text>
+                <text class="svg-label svg-label--red" x="212" y="68">Fault</text>
               </svg>
             </div>
             <h3>Failure attribution</h3>
@@ -283,15 +243,13 @@
             <div class="card-figure">
               <svg viewBox="0 0 280 84" aria-hidden="true" focusable="false">
                 <line class="svg-threshold" x1="12" y1="22" x2="268" y2="22"/>
-                <line class="svg-threshold svg-threshold--soft" x1="12" y1="74" x2="268" y2="74"/>
                 <path class="svg-trunk svg-trunk--dim" d="M12 58C92 58 180 56 268 54"/>
                 <path class="svg-branch" d="M58 58C82 58 98 40 142 28"/>
                 <path class="svg-pruned" d="M142 28C168 19 188 13 214 10"/>
-                <path class="svg-fray" d="M214 10l12-6M214 10l13 3M214 10l5 11"/>
                 <rect class="svg-node" x="54" y="54" width="8" height="8"/>
                 <rect class="svg-node svg-node--red" x="142" y="24" width="8" height="8"/>
-                <text class="svg-label svg-label--amber" x="14" y="16">BASELINE 0.8</text>
-                <text class="svg-label svg-label--red" x="214" y="34">PRUNED</text>
+                <text class="svg-label svg-label--amber" x="14" y="16">Baseline 0.8</text>
+                <text class="svg-label svg-label--red" x="158" y="46">Pruned</text>
               </svg>
             </div>
             <h3>Divergence detection</h3>
@@ -316,10 +274,10 @@
           </div>
         </div>
 
-        <div class="timeline-scroller" id="timeline-scroller" tabindex="0" aria-label="How Agent-Causality works: four steps in a horizontal timeline. Scroll or use the previous and next buttons.">
+        <div class="timeline-scroller" id="timeline-scroller" tabindex="0" aria-label="How Agent-Causality works. Four steps. Scroll or use the previous and next buttons.">
           <div class="timeline-track">
             <article class="time-step">
-              <div class="step-rail"><span class="step-tick"></span>              <span class="step-time">T+0</span></div>
+              <div class="step-rail"><span class="step-tick"></span><span class="step-time">T+0</span></div>
               <h3>Record</h3>
               <p>Capture every event and its causal parent as the run happens.</p>
               <div class="step-visual">
@@ -333,12 +291,11 @@
             </article>
 
             <article class="time-step">
-              <div class="step-rail"><span class="step-tick"></span>              <span class="step-time">T+1</span></div>
+              <div class="step-rail"><span class="step-tick"></span><span class="step-time">T+1</span></div>
               <h3>Graph</h3>
               <p>Turn the capture into a directed graph across agents, tools, and handoffs.</p>
               <div class="step-visual">
                 <svg viewBox="0 0 280 100" aria-hidden="true" focusable="false">
-                  <path class="svg-glow" d="M18 52C80 44 140 58 262 50"/>
                   <path class="svg-trunk svg-trunk--thin" d="M18 52C80 44 140 58 262 50"/>
                   <path class="svg-branch" d="M62 51C84 34 104 24 140 22"/>
                   <path class="svg-branch" d="M118 55C142 74 164 82 206 84"/>
@@ -353,7 +310,7 @@
             </article>
 
             <article class="time-step">
-              <div class="step-rail"><span class="step-tick"></span>              <span class="step-time">T+2</span></div>
+              <div class="step-rail"><span class="step-tick"></span><span class="step-time">T+2</span></div>
               <h3>Trace</h3>
               <p>Walk backward from a failed outcome through the values that fed it.</p>
               <div class="step-visual">
@@ -365,15 +322,14 @@
                   <path class="svg-trace" d="M118 55C142 74 164 82 206 84"/>
                   <rect class="svg-node" x="58" y="47" width="7" height="7"/>
                   <rect class="svg-node svg-node--red" x="202" y="80" width="9" height="9"/>
-                  <circle class="svg-pulse" cx="206" cy="84" r="13"/>
-                  <text class="svg-label svg-label--amber" x="16" y="28">CAUSAL SLICE</text>
-                  <text class="svg-label svg-label--red" x="214" y="76">FAILURE</text>
+                  <text class="svg-label svg-label--amber" x="16" y="28">Causal slice</text>
+                  <text class="svg-label svg-label--red" x="214" y="76">Failure</text>
                 </svg>
               </div>
             </article>
 
             <article class="time-step">
-              <div class="step-rail"><span class="step-tick"></span>              <span class="step-time">T+3</span></div>
+              <div class="step-rail"><span class="step-tick"></span><span class="step-time">T+3</span></div>
               <h3>Attribute</h3>
               <p>Name the branch or interaction responsible, with the evidence attached.</p>
               <div class="step-visual">
@@ -386,7 +342,7 @@
                   <span class="attr-link"></span>
                   <div class="attribute-result">
                     <span class="attr-target">decision</span>
-                    <span class="attr-verdict">ATTRIBUTED → risk_checker</span>
+                    <span class="attr-verdict">Attributed to risk_checker</span>
                   </div>
                 </div>
               </div>
@@ -396,7 +352,7 @@
 
         <div class="timeline-foot">
           <div class="timeline-progress" aria-hidden="true"><span id="timeline-progress-fill"></span></div>
-          <span class="timeline-hint">Scroll for the next step →</span>
+          <span class="timeline-hint">Scroll for the next step</span>
         </div>
       </div>
     </section>
@@ -406,16 +362,16 @@
         <div class="section-head">
           <h2 id="trace-title">Follow a failure to its source.</h2>
           <p class="section-lede">This refund run ended in an audit failure. The chain shows how a fallback in one branch reached the final alert.</p>
-          <p class="instruction"><span class="instruction-mark" aria-hidden="true"></span> Click any node to trace its cause.</p>
+          <p class="instruction">Click any node to trace its cause.</p>
         </div>
 
-        <div class="explorer" data-ui>
+        <div class="explorer">
           <div class="explorer-bar">
-            <div class="explorer-title"><span class="led" aria-hidden="true"></span> CAUSAL EXPLORER <span class="explorer-slash">/</span> RUN REF-0A7F</div>
+            <div class="explorer-title">Causal explorer <span class="explorer-slash">/</span> Run REF-0A7F</div>
             <div class="explorer-stats">
-              <span>8 EVENTS</span>
-              <span>10 EDGES</span>
-              <span class="stat-fault">1 FAULT</span>
+              <span>8 events</span>
+              <span>10 edges</span>
+              <span class="stat-fault">1 fault</span>
             </div>
           </div>
 
@@ -432,13 +388,13 @@
 
             <aside class="inspector" aria-labelledby="inspector-title">
               <div class="inspector-head">
-                <span class="inspector-title" id="inspector-title">EVENT INSPECTOR</span>
-                <button class="inspector-clear" id="inspector-clear" type="button" aria-label="Clear node selection" hidden>Clear ×</button>
+                <span class="inspector-title" id="inspector-title">Event inspector</span>
+                <button class="inspector-clear" id="inspector-clear" type="button" aria-label="Clear node selection" hidden>Clear</button>
               </div>
               <div class="inspector-body" id="inspector-body" aria-live="polite">
-                <p class="inspector-kicker">NO NODE SELECTED</p>
+                <p class="inspector-kicker">No node selected</p>
                 <p class="inspector-empty">Click a node to trace its causal chain back to the root decision.</p>
-                <p class="inspector-tip"><span>TRY</span> risk_checker · tool_error → fallback</p>
+                <p class="inspector-tip"><span>Try</span> risk_checker · tool_error, then fallback</p>
                 <p class="inspector-key">Keyboard: Tab to a node, then Enter or Space.</p>
               </div>
             </aside>
@@ -447,12 +403,48 @@
           <div class="explorer-foot">
             <div class="legend" aria-hidden="true">
               <span><i class="legend-swatch legend-swatch--node"></i> event</span>
-              <span><i class="legend-swatch legend-swatch--fault"></i> fault / failure</span>
+              <span><i class="legend-swatch legend-swatch--fault"></i> fault</span>
               <span><i class="legend-line"></i> selected causal chain</span>
             </div>
-            <span class="map-hint">Small screens: scroll the graph sideways →</span>
+            <span class="map-hint">Scroll the graph sideways</span>
           </div>
         </div>
+      </div>
+    </section>
+
+    <section class="section section--demo" id="demo" aria-labelledby="demo-title">
+      <div class="wrap">
+        <div class="section-head">
+          <h2 id="demo-title">Watch the walkthrough.</h2>
+          <p class="section-lede">One instrumented run, from capture to causal diagnosis. The reel plays on this page.</p>
+        </div>
+
+        <figure class="video-figure">
+          <div class="video-frame">
+            <div class="video-slot" id="video-slot">
+              <video class="video-player" id="video-player" playsinline controls preload="none" width="1280" height="720" poster="media/walkthrough-poster.jpg" aria-label="Agent-Causality product walkthrough, 2 minutes 56 seconds">
+                <source src="media/walkthrough.mp4" type="video/mp4">
+              </video>
+              <button class="video-facade" id="video-facade" type="button" aria-label="Play the Agent-Causality product walkthrough, 2 minutes 56 seconds. It plays inside this page.">
+                <span class="facade-art" aria-hidden="true">
+                  <img class="facade-poster" src="media/explorer-poster.png" alt="" width="1280" height="720" loading="lazy" decoding="async">
+                </span>
+                <span class="facade-duration" aria-hidden="true">02:56</span>
+                <span class="facade-play" aria-hidden="true">
+                  <svg viewBox="0 0 60 60" focusable="false">
+                    <circle cx="30" cy="30" r="28" fill="#0E0B07" stroke="currentColor"/>
+                    <path d="M25 19.5 43 30 25 40.5Z" fill="currentColor"/>
+                  </svg>
+                </span>
+              </button>
+            </div>
+          </div>
+          <figcaption class="video-caption">
+            <span class="caption-main">A single instrumented OpenCode run <span class="caption-len">2:56</span></span>
+            <span class="caption-sub">Capture, graph, trace, attribution.</span>
+            <span class="video-fallback">Video not playing? <a href="https://www.youtube.com/watch?v=bogmzYe9Hzs" target="_blank" rel="noopener">Watch on YouTube</a>.</span>
+          </figcaption>
+        </figure>
       </div>
     </section>
 
@@ -495,10 +487,9 @@
           <p class="quick-note">The Python package ships the SDK, CLI, ingest receiver, and explorer. The npm package is the OpenCode capture plugin. Live capture needs both.</p>
         </div>
 
-        <div class="terminal" data-ui>
+        <div class="terminal">
           <div class="terminal-bar">
-            <span class="terminal-lights" aria-hidden="true"><i></i><i></i><i></i></span>
-            <span class="terminal-title">SHELL / AGENT-CAUSALITY</span>
+            <span class="terminal-title">shell</span>
             <button class="copy-btn" id="copy-btn" type="button" aria-label="Copy quickstart commands">Copy</button>
           </div>
           <pre class="terminal-code" id="quickstart-code"><code><span class="term-prompt">$</span> <span class="cmd">pip install agent-causality</span>
@@ -516,7 +507,7 @@
         <p>Prefer the 30-second offline demo? From a source checkout:</p>
         <code>uv run python examples/customer_approval.py</code>
         <a href="https://github.com/Psionic-labs/Agent-Causality#install--you-need-both-packages" target="_blank" rel="noopener">Read the install guide <span aria-hidden="true">↗</span></a>
-        <p>On LangGraph? Point your graph's <code>config</code> at <code>CausalityCallbackHandler</code> from the Python SDK; nodes, tools, and LLM runs land in the causal graph. Setup is in the <a href="docs/opencode.html">OpenCode guide</a> and the <a href="docs/langgraph.html">LangGraph guide</a>.</p>
+        <p>On LangGraph? Point your graph's <code>config</code> at <code>CausalityCallbackHandler</code> from the Python SDK. Nodes, tools, and LLM runs land in the causal graph.</p>
       </div>
     </section>
   </main>
@@ -524,22 +515,17 @@
   <footer class="site-footer">
     <div class="wrap footer-top">
       <div class="footer-brand">
-        <a class="brand" href="#top" aria-label="Agent-Causality, back to top">
-          <span class="brand-mark" aria-hidden="true"><i></i></span>
-          <span class="brand-name">AGENT-CAUSALITY</span>
-        </a>
+        <a class="brand" href="#top">Agent-Causality</a>
         <p>Causal debugging for branching multi-agent systems.</p>
       </div>
       <nav class="footer-nav" aria-label="Footer">
         <a href="paper.html">Research paper</a>
-        <a href="https://github.com/Psionic-labs/Agent-Causality" target="_blank" rel="noopener">GitHub <span aria-hidden="true">↗</span></a>
-        <a href="docs/index.html">Documentation</a>
-        <a href="https://github.com/Psionic-labs/Agent-Causality/blob/main/LICENSE" target="_blank" rel="noopener">AGPL-3.0 license <span aria-hidden="true">↗</span></a>
+        <a href="https://github.com/Psionic-labs/Agent-Causality" target="_blank" rel="noopener">GitHub</a>
+        <a href="opencode.html">Docs</a>
       </nav>
     </div>
     <div class="wrap footer-legal">
-      <p>Built by Psionics · © 2026 · Agent-Causality is open source under AGPL-3.0.</p>
-      <p class="footer-credit">Visual style inspired by the timeline monitors in the Loki series. Not affiliated with or endorsed by Marvel, Disney, or the creators of the show.</p>
+      <p>Built by Psionics · © 2026</p>
     </div>
   </footer>
 </body>
