@@ -22,6 +22,7 @@ def test_home_chrome_is_idempotent_and_keeps_the_page_body() -> None:
     assert 'href="#incidents"' in once
     assert 'href="proof.html"' in once
     assert 'href="opencode.html"' in once
+    assert 'href="paper.html"' in once
     assert 'class="nav-github"' in once
     assert 'aria-label="GitHub"' in once
     assert "nav-toggle" not in once
@@ -39,6 +40,25 @@ def test_paper_section_links_return_to_the_home_page() -> None:
     assert 'href="opencode.html"' in updated
     assert updated.count("app.js") == source.count("app.js")
     assert 'aria-current="page"' in updated
+
+
+def test_paper_page_exposes_scholar_citation() -> None:
+    catalog = load()
+    paper = page_by_id(catalog, "paper")
+    source = (SITE / "paper.html").read_text(encoding="utf-8")
+    updated = apply_chrome(source, catalog, paper)
+    title = (
+        "Agent-Causality: Declared Dependency Tracing and "
+        "Counterfactual Sensitivity Analysis for Multi-Agent Systems"
+    )
+    pdf = "https://psionic-labs.github.io/Agent-Causality/agentic_causality_paper.pdf"
+    for page in (source, updated):
+        assert f'name="citation_title" content="{title}"' in page
+        assert 'name="citation_author" content="Vasant Kumar Mogia"' in page
+        assert 'name="citation_publication_date" content="2026/10/28"' in page
+        assert f'name="citation_pdf_url" content="{pdf}"' in page
+        assert "AI systems built from several cooperating agents are easy to record" in page
+        assert 'href="agentic_causality_paper.pdf"' in page
 
 
 def test_guides_stay_short() -> None:

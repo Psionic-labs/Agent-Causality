@@ -3,21 +3,29 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Research paper, Agent-Causality</title>
-  <meta name="description" content="Read the Agent-Causality research paper. Declared dependency tracing and counterfactual sensitivity analysis for multi-agent systems, by Vasant.">
+  <title>Agent-Causality: Declared Dependency Tracing and Counterfactual Sensitivity Analysis for Multi-Agent Systems</title>
+  <meta name="description" content="AI systems built from several cooperating agents are easy to record but hard to debug. Agent-Causality records a dependency graph with explicit parent links, structural slices, provenance grades, and decision contracts with deterministic counterfactual replay.">
+  <link rel="canonical" href="https://psionic-labs.github.io/Agent-Causality/paper.html">
+  <meta name="citation_title" content="Agent-Causality: Declared Dependency Tracing and Counterfactual Sensitivity Analysis for Multi-Agent Systems">
+  <meta name="citation_author" content="Vasant Kumar Mogia">
+  <meta name="citation_publication_date" content="2026/10/28">
+  <meta name="citation_pdf_url" content="https://psionic-labs.github.io/Agent-Causality/agentic_causality_paper.pdf">
+  <meta name="citation_abstract_html_url" content="https://psionic-labs.github.io/Agent-Causality/paper.html">
+  <meta name="citation_language" content="en">
+  <meta name="citation_keywords" content="multi-agent systems; LLM agents; dependency tracing; failure attribution; observability; counterfactual sensitivity analysis; AI agent debugging; AI safety; trustworthy AI; AI agent reliability">
   <meta name="theme-color" content="#0E0B07">
 
   <meta property="og:type" content="article">
   <meta property="og:site_name" content="Agent-Causality">
-  <meta property="og:title" content="Research paper, Agent-Causality">
-  <meta property="og:description" content="Declared dependency tracing and counterfactual sensitivity analysis for multi-agent systems.">
+  <meta property="og:title" content="Agent-Causality: Declared Dependency Tracing and Counterfactual Sensitivity Analysis for Multi-Agent Systems">
+  <meta property="og:description" content="Declared dependency tracing and counterfactual sensitivity analysis for multi-agent systems, by Vasant Kumar Mogia.">
   <meta property="og:image" content="og-image.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta property="og:image:alt" content="A causal graph on a dark desk. A cream path runs from orch to refund. An orange fault path runs from a risk fallback to an audit failure.">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Research paper, Agent-Causality">
-  <meta name="twitter:description" content="Declared dependency tracing and counterfactual sensitivity analysis for multi-agent systems.">
+  <meta name="twitter:title" content="Agent-Causality: Declared Dependency Tracing and Counterfactual Sensitivity Analysis for Multi-Agent Systems">
+  <meta name="twitter:description" content="Declared dependency tracing and counterfactual sensitivity analysis for multi-agent systems, by Vasant Kumar Mogia.">
   <meta name="twitter:image" content="og-image.png">
 
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%230E0B07'/%3E%3Cpath d='M8 40h18' stroke='%23F3E8D4' stroke-width='4'/%3E%3Cpath d='M26 40c8-16 14-20 30-24' fill='none' stroke='%23F3E8D4' stroke-width='4'/%3E%3Cpath d='M26 40c12 10 18 12 30 8' fill='none' stroke='%23FF5C2A' stroke-width='4'/%3E%3Crect x='22' y='36' width='8' height='8' fill='%23FDA63C'/%3E%3C/svg%3E">
@@ -47,10 +55,14 @@
   <main id="main" class="paper-page">
     <div class="wrap">
       <div class="section-head">
-        <h1 class="paper-title" id="paper-title">Research paper.</h1>
-        <p class="section-lede">Vasant (Psionics) describes declared parent links, structural slices, provenance grades, decision contracts, and counterfactual replay of registered merge decisions.</p>
+        <h1 class="paper-title citation_title" id="paper-title">Agent-Causality: Declared Dependency Tracing and Counterfactual Sensitivity Analysis for Multi-Agent Systems</h1>
+        <p class="paper-author citation_author">Vasant Kumar Mogia</p>
+        <p class="paper-date">October 28, 2026</p>
+        <h2 class="paper-abstract-heading">Abstract</h2>
+        <p class="paper-abstract">AI systems built from several cooperating agents are easy to record but hard to debug. A conventional log shows what happened in order, but not which earlier events a failure structurally depends on. The problem is harder when agents run in parallel and their outputs merge into one decision, because a failure may depend on one branch, on several, or on their joint ancestry. We present Agent-Causality, an open-source tool that records a dependency graph with explicit parent links, computes structural slices and provenance grades, and supports decision contracts with deterministic counterfactual replay. From the graph, the tool trims a run to structural ancestors, traces values to their sources with exact or coarse labels, and tests whether recorded inputs, alone or jointly, change a registered merge decision in replay. It also produces a structured summary and keeps optional model-written text in a separate block. We describe the design, assumptions, and limits; the evidence is five deterministic fixtures, a synthetic shared-state test, an offline single-port replacement test, and a five-task live pilot that did not exercise the injected failures. We do not claim actual causation. We outline proposed combinations with agent frameworks, test runners, approval systems, and security gateways.</p>
+        <p class="paper-keywords">Keywords: multi-agent systems, LLM agents, dependency tracing, failure attribution, observability, counterfactual sensitivity analysis, AI agent debugging, AI safety, trustworthy AI, AI agent reliability</p>
         <p class="paper-actions">
-          <a class="btn btn-primary" href="agentic_causality_paper.pdf" target="_blank" rel="noopener">Open the PDF <span aria-hidden="true">↗</span></a>
+          <a class="btn btn-primary" href="agentic_causality_paper.pdf">PDF <span aria-hidden="true">↗</span></a>
         </p>
       </div>
 

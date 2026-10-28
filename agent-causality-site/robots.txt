@@ -1,0 +1,7 @@
+User-agent: Googlebot
+Allow: /
+
+User-agent: *
+Allow: /
+
+Sitemap: https://psionic-labs.github.io/Agent-Causality/sitemap.xml
