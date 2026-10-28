@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Proof, Agent-Causality</title>
+  <meta name="description" content="The OpenCode benchmark record for Agent-Causality. Five live runs, what the scores show, and what they do not.">
+  <meta name="theme-color" content="#0E0B07">
+
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Agent-Causality">
+  <meta property="og:title" content="Proof, Agent-Causality">
+  <meta property="og:description" content="Five live OpenCode runs. Capture coverage was complete. Naming the cause was not.">
+  <meta property="og:image" content="og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="A causal graph on a dark desk. A cream path runs from orch to refund. An orange fault path runs from a risk fallback to an audit failure.">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Proof, Agent-Causality">
+  <meta name="twitter:description" content="Five live OpenCode runs. Capture coverage was complete. Naming the cause was not.">
+  <meta name="twitter:image" content="og-image.png">
+
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%230E0B07'/%3E%3Cpath d='M8 40h18' stroke='%23F3E8D4' stroke-width='4'/%3E%3Cpath d='M26 40c8-16 14-20 30-24' fill='none' stroke='%23F3E8D4' stroke-width='4'/%3E%3Cpath d='M26 40c12 10 18 12 30 8' fill='none' stroke='%23FF5C2A' stroke-width='4'/%3E%3Crect x='22' y='36' width='8' height='8' fill='%23FDA63C'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600&family=JetBrains+Mono:wght@400;500&display=swap">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <div class="wrap header-inner">
+      <a class="brand" href="index.html">Agent-Causality</a>
+      <nav class="site-nav" id="site-nav" aria-label="Primary">
+        <a href="index.html#incidents">Incidents</a>
+        <a href="index.html#how">How it works</a>
+        <a href="index.html#trace">Trace a run</a>
+        <a href="proof.html" aria-current="page">Proof</a>
+        <a href="index.html#quickstart">Quickstart</a>
+        <a href="opencode.html">Docs</a>
+        <a class="nav-github" href="https://github.com/Psionic-labs/Agent-Causality" target="_blank" rel="noopener" aria-label="GitHub"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg></a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main" class="paper-page">
+    <div class="wrap">
+      <div class="section-head">
+        <h1 class="paper-title">Proof.</h1>
+        <p class="section-lede">The incident list is what agents have already done in public. This page is the measured record of Agent-Causality on live OpenCode runs.</p>
+      </div>
+
+      <div class="docs-stack">
+        <section class="docs-block" id="record" aria-labelledby="record-title">
+          <h2 id="record-title">The runs</h2>
+          <div class="docs-copy">
+            <p>On 11 Oct 2026, five tasks ran once each on OpenCode 1.19.0. Every run completed. Capture coverage was 1.0, both as a micro-average and as a macro-average.</p>
+          </div>
+        </section>
+
+        <section class="docs-block" id="scores" aria-labelledby="scores-title">
+          <h2 id="scores-title">The scores</h2>
+          <div class="docs-copy">
+            <p>Cause identification averaged 0.3 across the five runs. Provenance resource recall was 1.0. Joint-branch ancestry was 0.0 on the two tasks that check it.</p>
+          </div>
+        </section>
+
+        <section class="docs-block" id="limits" aria-labelledby="limits-title">
+          <h2 id="limits-title">The limit</h2>
+          <div class="docs-copy">
+            <p>A capture score of 1.0 means the expected event classes were present. It does not mean every cause was named. Several runs skipped the injected actions, so the scorer had no ground-truth events to find.</p>
+            <p>Live traces also cannot show causal minimality or a counterfactual interaction. The writeup marks those as not measurable and unsupported.</p>
+          </div>
+        </section>
+
+        <section class="docs-block" id="sources" aria-labelledby="sources-title">
+          <h2 id="sources-title">The writeup</h2>
+          <div class="docs-copy">
+            <ul class="docs-links">
+              <li>
+                <a href="https://github.com/Psionic-labs/Agent-Causality/blob/main/benchmark/results/opencode/opencode.md" target="_blank" rel="noopener">OpenCode results <span aria-hidden="true">↗</span></a>
+                <span>The five runs, the scores, and the limits above.</span>
+              </li>
+              <li>
+                <a href="https://github.com/Psionic-labs/Agent-Causality/blob/main/docs/benchmarks.md" target="_blank" rel="noopener">Benchmarks <span aria-hidden="true">↗</span></a>
+                <span>How the offline suite and the OpenCode runs are scored.</span>
+              </li>
+              <li>
+                <a href="https://github.com/Psionic-labs/Agent-Causality/blob/main/docs/PROOF.md" target="_blank" rel="noopener">Earlier snapshot <span aria-hidden="true">↗</span></a>
+                <span>A historical note. The numbers on this page are the current record.</span>
+              </li>
+            </ul>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap footer-top">
+      <div class="footer-brand">
+        <a class="brand" href="index.html">Agent-Causality</a>
+        <p>Causal debugging for branching multi-agent systems.</p>
+      </div>
+      <nav class="footer-nav" aria-label="Footer">
+        <a href="paper.html">Research paper</a>
+        <a href="https://github.com/Psionic-labs/Agent-Causality" target="_blank" rel="noopener">GitHub</a>
+        <a href="opencode.html">Docs</a>
+      </nav>
+    </div>
+    <div class="wrap footer-legal">
+      <p>Built by Psionics · © 2026</p>
+    </div>
+  </footer>
+</body>
+</html>

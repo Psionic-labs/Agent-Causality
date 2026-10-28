@@ -29,7 +29,18 @@ from tools.site.catalog import (
 )
 
 FONT = "https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap"
-HAND_KINDS = frozenset({"home", "paper"})
+HAND_KINDS = frozenset({"home", "paper", "proof", "guide"})
+GITHUB_MARK = (
+    '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .297c-6.63 0-12 5.373-12 12 '
+    "0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724"
+    "-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 "
+    "1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76"
+    "-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105"
+    "-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 "
+    "3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 "
+    "5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57"
+    'C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>'
+)
 NAV_RE = re.compile(r'<nav class="site-nav"[^>]*>.*?</nav>', re.DOTALL)
 INLINE_NAV_RE = re.compile(
     r"  <script>\n    document\.documentElement\.setAttribute\(\"data-nav-script\", \"on\"\);\n"
@@ -82,23 +93,22 @@ def is_current(catalog: Catalog, current: Page, item: NavItem) -> bool:
     target = page_by_id(catalog, item.target.page_id)
     if target.id == current.id:
         return True
-    return target.kind == "hub" and current.kind in {"hub", "doc"}
+    return item.id in {"docs", "footer-docs"} and current.id == "langgraph"
 
 
 def render_anchor(catalog: Catalog, current: Page, item: NavItem) -> str:
     href = html.escape(href_from(catalog, current, item), quote=True)
-    attrs = ""
     if item.mark == "github":
-        attrs += ' class="nav-github"'
-    attrs += f' href="{href}"'
+        return (
+            f'<a class="nav-github" href="{href}" target="_blank" rel="noopener" '
+            f'aria-label="GitHub">{GITHUB_MARK}</a>'
+        )
+    attrs = f' href="{href}"'
     if is_current(catalog, current, item):
         attrs += ' aria-current="page"'
     if isinstance(item, ExternalNav) and item.new_tab:
         attrs += ' target="_blank" rel="noopener"'
-    label = html.escape(item.label)
-    if isinstance(item, ExternalNav) and item.new_tab:
-        label += ' <span aria-hidden="true">↗</span>'
-    return f"<a{attrs}>{label}</a>"
+    return f"<a{attrs}>{html.escape(item.label)}</a>"
 
 
 def render_primary(catalog: Catalog, current: Page) -> str:
@@ -142,28 +152,10 @@ def apply_chrome(source: str, catalog: Catalog, page: Page) -> str:
     if page.kind not in HAND_KINDS:
         raise ValueError(page.id)
     updated = INLINE_NAV_RE.sub("", source, count=1)
-    updated = updated.replace(
-        '<html lang="en">',
-        '<html lang="en" data-nav="closed">',
-        1,
-    )
-    if "nav.js" not in updated:
-        boot = _boot(page.path)
-        app_tag = '<script src="app.js"'
-        if app_tag in updated:
-            updated = updated.replace(app_tag, boot + app_tag, 1)
-        else:
-            updated = updated.replace("</head>", boot + "</head>", 1)
     nav = render_primary(catalog, page)
     updated, count = NAV_RE.subn(nav, updated, count=1)
     if count != 1:
         raise RuntimeError(f"{page.path} is missing the primary nav")
-    if 'class="nav-toggle"' not in updated:
-        updated = updated.replace(
-            '<nav class="site-nav" id="site-nav" aria-label="Primary">',
-            _button() + '<nav class="site-nav" id="site-nav" aria-label="Primary">',
-            1,
-        )
     footer = render_footer_nav(catalog, page)
     updated, count = FOOTER_NAV_RE.subn(footer, updated, count=1)
     if count != 1:

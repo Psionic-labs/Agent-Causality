@@ -8,11 +8,9 @@ from typing import Literal
 
 REPO = Path(__file__).resolve().parents[2]
 SITE = REPO / "agent-causality-site"
-BLOB_BASE = "https://github.com/Psionic-labs/Agent-Causality/blob/main/"
 GITHUB_REPO = "https://github.com/Psionic-labs/Agent-Causality"
-LICENSE_BLOB = BLOB_BASE + "LICENSE"
 
-Kind = Literal["home", "paper", "doc", "hub"]
+Kind = Literal["home", "paper", "proof", "guide", "doc", "hub"]
 
 
 @dataclass(frozen=True)
@@ -72,7 +70,6 @@ class Catalog:
 
 
 def _pages() -> tuple[Page, ...]:
-    docs = REPO / "docs"
     return (
         Page(
             "home",
@@ -89,47 +86,27 @@ def _pages() -> tuple[Page, ...]:
             "paper",
         ),
         Page(
-            "docs",
-            "Documentation",
-            "Setup guides for OpenCode and LangGraph, plus the Replit case study.",
-            "docs/index.html",
-            "hub",
+            "proof",
+            "Proof",
+            "Five live OpenCode runs. Capture coverage was complete. Naming the cause was not.",
+            "proof.html",
+            "proof",
         ),
         Page(
             "opencode",
             "OpenCode integration",
-            "Capture a live OpenCode session with the PyPI receiver and the npm plugin.",
-            "docs/opencode.html",
-            "doc",
+            "Live OpenCode capture needs agent-causality and the OpenCode plugin.",
+            "opencode.html",
+            "guide",
             nav_label="OpenCode",
-            markdown=docs / "opencode.md",
-            in_doc_nav=True,
         ),
         Page(
             "langgraph",
             "LangGraph integration",
-            "Record a LangGraph run with CausalityCallbackHandler and trace the causal edges.",
-            "docs/langgraph.html",
-            "doc",
+            "Point a LangGraph run at CausalityCallbackHandler and read the causal graph.",
+            "langgraph.html",
+            "guide",
             nav_label="LangGraph",
-            markdown=docs / "langgraph.md",
-            in_doc_nav=True,
-        ),
-        Page(
-            "case-study-replit",
-            "Case study: the Replit agent incident as a causal graph",
-            "A documented agent failure replayed as a 22-event causal graph.",
-            "docs/case-study-replit.html",
-            "doc",
-            nav_label="Replit case study",
-            markdown=docs / "case-study-replit.md",
-            assets=(
-                Asset(
-                    docs / "screenshots" / "replit_example.png",
-                    "docs/screenshots/replit_example.png",
-                ),
-            ),
-            in_doc_nav=True,
         ),
     )
 
@@ -137,20 +114,18 @@ def _pages() -> tuple[Page, ...]:
 def load() -> Catalog:
     pages = _pages()
     primary: tuple[NavItem, ...] = (
-        InternalNav("problem", "Problem", Target("home", "problem")),
-        InternalNav("solution", "Solution", Target("home", "solution")),
+        InternalNav("incidents", "Incidents", Target("home", "incidents")),
         InternalNav("how", "How it works", Target("home", "how")),
         InternalNav("trace", "Trace a run", Target("home", "trace")),
+        InternalNav("proof", "Proof", Target("proof")),
         InternalNav("quickstart", "Quickstart", Target("home", "quickstart")),
-        InternalNav("docs", "Docs", Target("docs")),
-        InternalNav("paper", "Paper", Target("paper")),
+        InternalNav("docs", "Docs", Target("opencode")),
         ExternalNav("github", "GitHub", GITHUB_REPO, mark="github"),
     )
     footer: tuple[NavItem, ...] = (
         InternalNav("footer-paper", "Research paper", Target("paper")),
         ExternalNav("footer-github", "GitHub", GITHUB_REPO),
-        InternalNav("footer-docs", "Documentation", Target("docs")),
-        ExternalNav("footer-license", "AGPL-3.0 license", LICENSE_BLOB),
+        InternalNav("footer-docs", "Docs", Target("opencode")),
     )
     return Catalog(pages, primary, footer)
 
