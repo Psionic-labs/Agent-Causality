@@ -1,46 +1,49 @@
 "use client";
 
-/* Zoomable / pannable causal DAG (SVG). Edges are the declared
- * causal_parent_ids only; layout and highlight reuse the pure helpers in
- * lib/viewport.ts and lib/render.ts. */
+/* Failure-story DAG. Positions come from the story. Highlight walks causal
+ * links only, so a filter gap does not light ancestors across it. */
 
-import { useEffect, useMemo, useRef } from "react";
-import {
-  clickSuppressed,
-  fitZoomMax,
-  layoutPositions,
-  panBy,
-  resetView,
-  zoomAt,
-  type View,
-} from "../lib/viewport.ts";
+import { useEffect, useRef } from "react";
+import { clickSuppressed, fitZoomMax, panBy, resetView, zoomAt, type View } from "../lib/viewport.ts";
 import { nodeClassNames } from "../lib/render.ts";
 import { selectEvent } from "../lib/use-selection.ts";
+import { causalAsEdge, storyHighlight, type FailureStory } from "../lib/failureColumn.ts";
 import { Legend } from "./Legend.tsx";
-import type { GraphOverview } from "../lib/types.ts";
 
 export interface ViewApi {
   reset: () => void;
 }
 
 interface Props {
-  overview: GraphOverview;
+  story: FailureStory;
   selectedId: string | null;
-  lit: Set<string> | null;
   apiRef: React.MutableRefObject<ViewApi | null>;
 }
 
-export function DagView({ overview, selectedId, lit, apiRef }: Props) {
+interface Mark {
+  x: number;
+  y: number;
+}
+
+function edgeCurve(a: Mark, b: Mark): string {
+  const mx = (a.x + b.x) / 2;
+  return `M ${a.x} ${a.y} C ${mx} ${a.y}, ${mx} ${b.y}, ${b.x} ${b.y}`;
+}
+
+function causalCurve(a: Mark, b: Mark): string {
+  // The 18px marker square covers a tip that lands on the node center.
+  const endX = b.x + (a.x <= b.x ? -12 : 12);
+  const mx = (a.x + endX) / 2;
+  return `M ${a.x} ${a.y} C ${mx} ${a.y}, ${mx} ${b.y}, ${endX} ${b.y}`;
+}
+
+export function DagView({ story, selectedId, apiRef }: Props) {
   const svgRef = useRef<SVGSVGElement | null>(null);
   const gRef = useRef<SVGGElement | null>(null);
   const viewRef = useRef<View>({ k: 1, tx: 0, ty: 0 });
   const suppressRef = useRef(false);
-  const boxRef = useRef({ w: 600, h: 300 });
-
-  const layout = useMemo(
-    () => layoutPositions(overview.nodes, overview.edges),
-    [overview],
-  );
+  const boxRef = useRef({ w: story.bounds.w, h: story.bounds.h });
+  const layoutKey = `${story.bounds.w}x${story.bounds.h}:${story.nodes.map((placed) => placed.node.id).join("\0")}`;
 
   const applyView = () => {
     const g = gRef.current;
@@ -62,11 +65,12 @@ export function DagView({ overview, selectedId, lit, apiRef }: Props) {
   }, [apiRef]);
 
   useEffect(() => {
-    boxRef.current = { w: layout.bounds.w, h: layout.bounds.h };
+    boxRef.current = { w: story.bounds.w, h: story.bounds.h };
     viewRef.current = resetView();
     applyView();
-  }, [layout]);
+  }, [layoutKey]);
 
+  const showEmpty = story.nodes.length === 0;
   useEffect(() => {
     const svg = svgRef.current;
     if (!svg) return;
@@ -120,11 +124,11 @@ export function DagView({ overview, selectedId, lit, apiRef }: Props) {
       window.removeEventListener("pointerup", onPointerUp);
       window.removeEventListener("pointercancel", onPointerUp);
     };
-  }, []);
+  }, [showEmpty]);
 
-  if (overview.nodes.length === 0) {
+  if (story.nodes.length === 0) {
     return (
-      <svg id="dag" role="img" aria-label="causal DAG" ref={svgRef}>
+      <svg id="dag" role="img" aria-label="causal DAG" preserveAspectRatio="xMidYMid meet" ref={svgRef}>
         <g ref={gRef}>
           <text x={20} y={30}>
             no events
@@ -134,7 +138,9 @@ export function DagView({ overview, selectedId, lit, apiRef }: Props) {
     );
   }
 
-  const { ordered, pos, bounds } = layout;
+  const highlight = storyHighlight(story, selectedId);
+  const byId = new Map(story.nodes.map((placed) => [placed.node.id, placed]));
+  const { bounds } = story;
   return (
     <div className="dag-wrap">
       <div className="dag-stage">
@@ -143,57 +149,111 @@ export function DagView({ overview, selectedId, lit, apiRef }: Props) {
           role="img"
           aria-label="causal DAG"
           ref={svgRef}
+          preserveAspectRatio="xMidYMid meet"
           viewBox={`0 0 ${bounds.w} ${bounds.h}`}
         >
-        <g id="viewport" ref={gRef}>
-          {overview.edges.map((e, i) => {
-            const a = pos[e.parent];
-            const b = pos[e.child];
-            if (!a || !b) return null;
-            const mx = (a.x + b.x) / 2;
-            const on = !!lit && lit.has(e.parent) && lit.has(e.child);
-            return (
-              <path
-                key={`${e.parent}→${e.child}#${i}`}
-                d={`M ${a.x} ${a.y} C ${mx} ${a.y}, ${mx} ${b.y}, ${b.x} ${b.y}`}
-                className={`edge${on ? " lit" : ""}${lit && !on ? " dim" : ""}`}
-              />
-            );
-          })}
-          {ordered.map((n) => {
-            const p = pos[n.id];
-            const onClick = () => {
-              if (suppressRef.current) {
-                suppressRef.current = false;
-                return;
+          <defs>
+            <marker
+              id="causal-arrow"
+              viewBox="0 0 8 8"
+              refX="8"
+              refY="4"
+              markerWidth="6"
+              markerHeight="6"
+              orient="auto"
+            >
+              <path d="M0 0 L8 4 L0 8 Z" fill="context-stroke" />
+            </marker>
+          </defs>
+          <g id="viewport" ref={gRef}>
+            {story.links.map((link) => {
+              switch (link.kind) {
+                case "causal": {
+                  const edge = causalAsEdge(link);
+                  const a = byId.get(edge.parent);
+                  const b = byId.get(edge.child);
+                  if (!a || !b) return null;
+                  const on =
+                    !!highlight.lit && highlight.lit.has(link.parent) && highlight.lit.has(link.child);
+                  return (
+                    <path
+                      key={`${edge.parent}->${edge.child}`}
+                      d={causalCurve(a, b)}
+                      className={on ? "edge lit" : "edge"}
+                      markerEnd="url(#causal-arrow)"
+                    />
+                  );
+                }
+                case "filter-gap": {
+                  const a = byId.get(link.upstream);
+                  const b = byId.get(link.downstream);
+                  if (!a || !b) return null;
+                  return (
+                    <path
+                      key={`gap:${link.upstream}->${link.downstream}`}
+                      className="gap"
+                      d={edgeCurve(a, b)}
+                    >
+                      <title>{`${link.omitted.length} hidden by filter`}</title>
+                    </path>
+                  );
+                }
+                case "filter-stub": {
+                  const node = byId.get(link.downstream);
+                  if (!node) return null;
+                  return (
+                    <path
+                      key={`stub:${link.downstream}`}
+                      className="gap"
+                      d={`M ${node.x} ${node.y - 28} L ${node.x} ${node.y - 10}`}
+                    >
+                      <title>{`${link.omitted.length} hidden by filter`}</title>
+                    </path>
+                  );
+                }
               }
-              selectEvent(n.id);
-            };
-            return (
-              <g
-                key={n.id}
-                className={nodeClassNames(n, {
-                  selectedId,
-                  failureId: overview.failure_event_id,
-                  litSet: lit,
-                })}
-                transform={`translate(${p.x} ${p.y})`}
-                onClick={onClick}
-              >
-                <rect x={-9} y={-9} width={18} height={18} rx={1} />
-                <text x={16} y={4}>
-                  {n.logical_seq}: {n.event_type}
-                </text>
-                <title>{n.label + (n.role ? ` [role: ${n.role}]` : "")}</title>
-              </g>
-            );
-          })}
-        </g>
+              const unreachable: never = link;
+              return unreachable;
+            })}
+            {story.nodes.map((placed) => {
+              const n = placed.node;
+              const onClick = () => {
+                if (suppressRef.current) {
+                  suppressRef.current = false;
+                  return;
+                }
+                selectEvent(n.id);
+              };
+              return (
+                <g
+                  key={n.id}
+                  className={nodeClassNames(n, {
+                    selectedId: highlight.selectedId,
+                    failureId: story.failureId,
+                    litSet: highlight.lit,
+                  })}
+                  transform={`translate(${placed.x} ${placed.y})`}
+                  onClick={onClick}
+                >
+                  <rect x={-9} y={-9} width={18} height={18} rx={1} />
+                  <text x={16} y={4}>
+                    {placed.labelText}
+                  </text>
+                  {placed.roleText ? (
+                    <text x={16} y={18}>
+                      {placed.roleText}
+                    </text>
+                  ) : null}
+                  <title>{placed.roleText ? `${n.label} ${placed.roleText}` : n.label}</title>
+                </g>
+              );
+            })}
+          </g>
         </svg>
         <div className="viz-scanlines" aria-hidden="true" />
       </div>
       <div className="dag-foot">
-        <Legend />
+        <Legend filterGap />
       </div>
     </div>
   );
