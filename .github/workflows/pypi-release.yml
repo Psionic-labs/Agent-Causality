@@ -26,6 +26,8 @@ permissions:
 jobs:
   verify-and-build:
     name: Verify, test, and build distributions
+    # Plugin releases use plugin-v* tags and publish to npm, not PyPI.
+    if: github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
