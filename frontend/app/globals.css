@@ -928,7 +928,7 @@ h2 {
     rgba(0, 0, 0, 0.22) 2px,
     rgba(0, 0, 0, 0.22) 3px
   );
-  opacity: 0.5;
+  opacity: 0.22;
 }
 
 #dag .node {
@@ -983,12 +983,23 @@ h2 {
 
 #dag .edge {
   fill: none;
-  stroke: rgba(245, 238, 218, 0.28);
+  stroke: rgba(245, 238, 218, 0.55);
   stroke-width: 1.25;
 }
 
 #dag .edge.dim {
-  opacity: 0.18;
+  opacity: 0.55;
+}
+
+#dag .gap {
+  fill: none;
+  stroke: rgb(245, 238, 218);
+  stroke-width: 1.25;
+  stroke-dasharray: 4 3;
+  opacity: 0.55;
+  /* Stroke-only hits keep drags/panning on the svg while letting the
+   * nested <title> count tooltip show on hover. */
+  pointer-events: stroke;
 }
 
 #dag .edge.lit {
@@ -1343,6 +1354,11 @@ h2 {
 
 .sw.selected {
   border: 2px solid var(--amber-bright);
+  background: transparent;
+}
+
+.sw.gap {
+  border: 1px dashed rgba(245, 238, 218, 0.55);
   background: transparent;
 }
 

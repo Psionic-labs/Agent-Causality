@@ -7,7 +7,7 @@ import type { EventDetail, EventRecord, GraphOverview } from "./types.ts";
 export interface ClassCtx {
   selectedId: string | null;
   failureId: string | null;
-  litSet?: Set<string> | null;
+  litSet?: ReadonlySet<string> | null;
 }
 
 /** Class string for a DAG node. litSet is the selected node's ancestor set

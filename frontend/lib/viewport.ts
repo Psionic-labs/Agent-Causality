@@ -35,6 +35,25 @@ export function panBy(view: View, dx: number, dy: number): View {
   return { k: view.k, tx: view.tx + dx, ty: view.ty + dy };
 }
 
+/**
+ * Uniform user-unit scale and centered inset for an SVG with
+ * `preserveAspectRatio="xMidYMid meet"`. A mismatched element/viewBox
+ * aspect letterboxes the drawing, so pointer deltas divide by `scale`
+ * and client points subtract the inset before scaling.
+ */
+export function letterboxFit(
+  rectW: number,
+  rectH: number,
+  viewW: number,
+  viewH: number,
+): { scale: number; offsetX: number; offsetY: number } {
+  const w = Math.max(1, viewW);
+  const h = Math.max(1, viewH);
+  const scale = Math.min(rectW / w, rectH / h);
+  if (!(scale > 0)) return { scale: 1, offsetX: 0, offsetY: 0 };
+  return { scale, offsetX: (rectW - w * scale) / 2, offsetY: (rectH - h * scale) / 2 };
+}
+
 /** Zoom around a cursor point given in content units. */
 export function zoomAt(
   view: View,

@@ -102,6 +102,8 @@ evidence's authority.
 
 ## 5. Causal DAG
 
+The graph draws the failure's visible declared ancestors. Filter gaps are not edges. x is sequence at fixed pitch. y is depth on declared edges only.
+
 - Nodes = events, edges = declared `causal_parent_ids` only. The frontend
   performs **no causal inference**; layout uses depth (longest ancestor
   chain) for vertical lanes and logical sequence for horizontal order.

@@ -2,7 +2,7 @@
  * views. Swatch colors (.sw.*) are defined once in globals.css next to the
  * node/clip rules, so the two views can never drift apart. */
 
-export function Legend() {
+export function Legend({ filterGap = false }: { filterGap?: boolean }) {
   return (
     <span className="legend">
       <span>
@@ -25,6 +25,12 @@ export function Legend() {
         <span className="sw selected" />
         selected
       </span>
+      {filterGap ? (
+        <span>
+          <span className="sw gap" />
+          hidden by filter
+        </span>
+      ) : null}
     </span>
   );
 }

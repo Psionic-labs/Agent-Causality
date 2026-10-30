@@ -7,6 +7,7 @@ import {
   fitZoomMax,
   layoutBounds,
   layoutPositions,
+  letterboxFit,
   resetView,
   panBy,
   zoomAt,
@@ -114,6 +115,23 @@ describe("layoutPositions", () => {
   });
 });
 
+
+describe("letterbox fit (preserveAspectRatio meet)", () => {
+  it("centers and scales uniformly when the element and viewBox aspects differ", () => {
+    const fit = letterboxFit(1000, 300, 600, 240);
+    assert.equal(fit.scale, 1.25);
+    assert.equal(fit.offsetX, 125, "horizontal inset matches the letterbox band");
+    assert.equal(fit.offsetY, 0);
+    assert.equal((125 - fit.offsetX) / fit.scale, 0, "left content edge lands at x=0");
+    assert.equal((125 + 750 - fit.offsetX) / fit.scale, 600, "right content edge lands at x=600");
+    assert.equal(125 / fit.scale, 100, "a 125px drag is 100 content units, not 75");
+  });
+
+  it("has no inset when the aspects match, and survives a collapsed rect", () => {
+    assert.deepEqual(letterboxFit(600, 300, 600, 300), { scale: 1, offsetX: 0, offsetY: 0 });
+    assert.deepEqual(letterboxFit(0, 0, 600, 300), { scale: 1, offsetX: 0, offsetY: 0 });
+  });
+});
 
 describe("content-aware max zoom", () => {
   it("keeps the historic 10x floor for small graphs", () => {

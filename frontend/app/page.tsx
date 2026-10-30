@@ -16,11 +16,13 @@ import { ancestorsOf, parentMap } from "../lib/timeline.ts";
 import {
   DEFAULT_HIDDEN_TYPES,
   countByType,
+  defaultSession,
   filterOverview,
   filterSession,
   listSessions,
   shortSessionId,
 } from "../lib/filter.ts";
+import { failureColumn } from "../lib/failureColumn.ts";
 import {
   fetchDiagnosis,
   fetchEvidence,
@@ -88,16 +90,22 @@ export default function Page() {
     [overview],
   );
 
-  // Views render the session- and type-filtered overview; highlight,
-  // inspector, and tabs keep the full dataset so chains and details stay
-  // truthful. The session defaults to the latest activity ("All sessions"
-  // is opt-in: 1625 events at once is not navigable).
+  // The timeline renders the session- and type-filtered overview. The graph
+  // takes the failure story, which still needs hidden nodes so a gap can
+  // count them. Inspector and tabs keep the full dataset. The default
+  // session is the failure's own session, so the graph never opens empty
+  // when the failure is older than the latest ("All sessions" is opt-in:
+  // 1625 events at once is not navigable).
   const sessions = useMemo(
     () => (overview ? listSessions(overview.nodes) : []),
     [overview],
   );
   const [session, setSession] = useState<string | null>(null);
-  const activeSession = session ?? sessions[0]?.agent ?? "";
+  const failureSession = useMemo(
+    () => (overview ? defaultSession(overview.nodes, overview.failure_event_id) : ""),
+    [overview],
+  );
+  const activeSession = session ?? failureSession;
   const scoped = useMemo(
     () => (overview ? filterSession(overview, activeSession) : null),
     [overview, activeSession],
@@ -121,13 +129,21 @@ export default function Page() {
     });
   };
 
-  /** Ancestor set of the selection (selection included), or null. */
+  /** Ancestor set of the selection (selection included), or null. Timeline only. */
   const lit = useMemo(() => {
     if (!selectedId) return null;
     const s = ancestorsOf(selectedId, parentOf);
     s.add(selectedId);
     return s;
   }, [selectedId, parentOf]);
+
+  const story = useMemo(
+    () =>
+      overview
+        ? failureColumn(overview, activeSession, hiddenTypes, overview.failure_event_id)
+        : null,
+    [overview, activeSession, hiddenTypes],
+  );
 
   // Default selection: the resolved failure target when there is one, else
   // the last event by causal order. Never overrides an existing selection.
@@ -155,7 +171,7 @@ export default function Page() {
       </header>
     );
   }
-  if (!overview || !failure || !diagnosis || !evidence) {
+  if (!overview || !story || !failure || !diagnosis || !evidence) {
     return (
       <header className="topbar">
         <div className="brand">
@@ -272,12 +288,7 @@ export default function Page() {
             </span>
           </div>
           {view === "graph" ? (
-            <DagView
-              overview={shown}
-              selectedId={selectedId}
-              lit={lit}
-              apiRef={viewApiRef}
-            />
+            <DagView story={story} selectedId={selectedId} apiRef={viewApiRef} />
           ) : (
             <TimelineView
               overview={shown}

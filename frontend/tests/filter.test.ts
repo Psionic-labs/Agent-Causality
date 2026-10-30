@@ -7,6 +7,7 @@ import {
   DEFAULT_HIDDEN_TYPES,
   KEY_EVENT_TYPES,
   countByType,
+  defaultSession,
   filterOverview,
   filterSession,
   listSessions,
@@ -217,6 +218,15 @@ describe("session scope", () => {
     const scoped = filterSession(MIXED, "opencode:ses_missing");
     assert.deepEqual(scoped.nodes, []);
     assert.deepEqual(scoped.edges, []);
+  });
+
+  it("defaults to the session that owns the failure, not just the newest", () => {
+    // ses_new is newer; the failure lives in the older session.
+    assert.equal(defaultSession(MIXED.nodes, "a2"), "opencode:ses_old");
+    assert.equal(defaultSession(MIXED.nodes, "b2"), "opencode:ses_new");
+    assert.equal(defaultSession(MIXED.nodes, null), "opencode:ses_new");
+    assert.equal(defaultSession(MIXED.nodes, "missing"), "opencode:ses_new");
+    assert.equal(defaultSession([], null), "");
   });
 
   it("shortSessionId strips the capture prefix and truncates", () => {

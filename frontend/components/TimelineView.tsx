@@ -168,18 +168,23 @@ export function TimelineView({ overview, selectedId, lit, parentOf, apiRef }: Pr
   const readScroll = () => {
     const scroller = scrollRef.current;
     if (!scroller) return;
-    setScroll({
+    const next = {
       left: scroller.scrollLeft,
       client: scroller.clientWidth,
       total: Math.max(1, scroller.scrollWidth),
-    });
+    };
+    setScroll((prev) =>
+      prev.left === next.left && prev.client === next.client && prev.total === next.total
+        ? prev
+        : next,
+    );
   };
 
   useEffect(() => {
     readScroll();
     window.addEventListener("resize", readScroll);
     return () => window.removeEventListener("resize", readScroll);
-  });
+  }, [ordered.length, k]);
 
   // Cursor-anchored scroll zoom. The floor is the fit-all scale (zooming
   // out stops at fit, so the trace can never be lost); the ceiling is 10x

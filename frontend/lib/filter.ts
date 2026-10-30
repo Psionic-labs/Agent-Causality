@@ -96,6 +96,17 @@ export function listSessions(nodes: OverviewNode[]): SessionInfo[] {
     );
 }
 
+/** Session that owns the failure target, else the session with the latest
+ * activity. The failure story is scoped to one session, so defaulting to the
+ * newest session alone can show an empty graph when the failure is older. */
+export function defaultSession(nodes: OverviewNode[], failureId: string | null): string {
+  if (failureId) {
+    const failure = nodes.find((n) => n.id === failureId);
+    if (failure) return failure.agent_id;
+  }
+  return listSessions(nodes)[0]?.agent ?? "";
+}
+
 /** Overview restricted to one session (null/"" keeps all sessions). Edges
  * keep only pairs inside the session; dataset counts and the failure
  * target are preserved untouched. */
