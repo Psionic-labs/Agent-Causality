@@ -150,6 +150,36 @@ describe("failure story", () => {
     takesEdge(sample);
   });
 
+  it("keeps the hidden count when a direct causal edge shares the gap endpoints", () => {
+    const source: GraphOverview = {
+      source: "test",
+      event_count: 3,
+      edge_count: 3,
+      failure_event_id: "c",
+      failure_status: null,
+      failure_method: null,
+      nodes: [
+        node("a", "tool_call", 1, "visible parent"),
+        node("h", "context_update", 2, "hidden detour"),
+        node("c", "tool_result", 3, "failure"),
+      ],
+      edges: [
+        { parent: "a", child: "h" },
+        { parent: "h", child: "c" },
+        { parent: "a", child: "c" },
+      ],
+    };
+    const story = failureColumn(source, "opencode:ses_demo", DEFAULT_HIDDEN_TYPES, "c");
+    assert.deepEqual(
+      story.nodes.map((placed) => placed.node.id),
+      ["a", "c"],
+    );
+    const causal = story.links.filter(isCausalLink);
+    assert.deepEqual(causal.map(causalAsEdge), [{ parent: "a", child: "c" }]);
+    assert.deepEqual(causal[0]?.omitted, ["h"], "hidden detour count is kept on the direct edge");
+    assert.equal(story.links.some(isFilterGap), false, "no overlapping duplicate gap");
+  });
+
   it("keeps a pinned context update and the visible ancestors above it", () => {
     const story = failureColumn(overview(), "opencode:ses_demo", DEFAULT_HIDDEN_TYPES, "part2");
     assert.deepEqual(

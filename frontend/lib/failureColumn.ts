@@ -9,6 +9,8 @@ export interface CausalLink {
   readonly kind: "causal";
   readonly parent: string;
   readonly child: string;
+  /** Hidden nodes on a parallel path whose endpoints this same edge draws. */
+  readonly omitted?: readonly [string, ...string[]];
 }
 
 export interface FilterGap {
@@ -223,11 +225,18 @@ export function failureColumn(
     const found = hiddenUpstream(hiddenParents, parents, keep, scopedIds);
     const upstreamIds = [...found.upstreams.keys()].sort((a, b) => compareIds(seq, a, b));
     for (const upstream of upstreamIds) {
-      if (links.some((link) => link.kind === "causal" && link.parent === upstream && link.child === child.id)) {
-        continue;
-      }
       const omitted = nonEmptySorted(found.upstreams.get(upstream) ?? new Set(), seq);
       if (!omitted) continue;
+      const index = links.findIndex(
+        (link) => link.kind === "causal" && link.parent === upstream && link.child === child.id,
+      );
+      const direct = links[index];
+      if (direct?.kind === "causal") {
+        // The direct edge already draws this pair. Keep the hidden count on
+        // it instead of dropping it with a redundant overlapping gap.
+        if (!direct.omitted) links[index] = { ...direct, omitted };
+        continue;
+      }
       links.push({
         kind: "filter-gap",
         upstream,

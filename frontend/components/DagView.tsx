@@ -4,7 +4,15 @@
  * links only, so a filter gap does not light ancestors across it. */
 
 import { useEffect, useRef } from "react";
-import { clickSuppressed, fitZoomMax, panBy, resetView, zoomAt, type View } from "../lib/viewport.ts";
+import {
+  clickSuppressed,
+  fitZoomMax,
+  letterboxFit,
+  panBy,
+  resetView,
+  zoomAt,
+  type View,
+} from "../lib/viewport.ts";
 import { nodeClassNames } from "../lib/render.ts";
 import { selectEvent } from "../lib/use-selection.ts";
 import { causalAsEdge, storyHighlight, type FailureStory } from "../lib/failureColumn.ts";
@@ -76,9 +84,11 @@ export function DagView({ story, selectedId, apiRef }: Props) {
     if (!svg) return;
     const toContent = (clientX: number, clientY: number): [number, number] => {
       const rect = svg.getBoundingClientRect();
-      const ux = boxRef.current.w / Math.max(1, rect.width);
-      const uy = boxRef.current.h / Math.max(1, rect.height);
-      return [(clientX - rect.left) * ux, (clientY - rect.top) * uy];
+      const fit = letterboxFit(rect.width, rect.height, boxRef.current.w, boxRef.current.h);
+      return [
+        (clientX - rect.left - fit.offsetX) / fit.scale,
+        (clientY - rect.top - fit.offsetY) / fit.scale,
+      ];
     };
     const onWheel = (e: WheelEvent) => {
       e.preventDefault();
@@ -103,9 +113,8 @@ export function DagView({ story, selectedId, apiRef }: Props) {
       const dy = e.clientY - drag.y;
       if (clickSuppressed(dx, dy)) suppressRef.current = true;
       const rect = svg.getBoundingClientRect();
-      const ux = boxRef.current.w / Math.max(1, rect.width);
-      const uy = boxRef.current.h / Math.max(1, rect.height);
-      viewRef.current = panBy(viewRef.current, dx * ux, dy * uy);
+      const fit = letterboxFit(rect.width, rect.height, boxRef.current.w, boxRef.current.h);
+      viewRef.current = panBy(viewRef.current, dx / fit.scale, dy / fit.scale);
       drag = { x: e.clientX, y: e.clientY };
       applyView();
     };
@@ -181,7 +190,11 @@ export function DagView({ story, selectedId, apiRef }: Props) {
                       d={causalCurve(a, b)}
                       className={on ? "edge lit" : "edge"}
                       markerEnd="url(#causal-arrow)"
-                    />
+                    >
+                      {link.omitted ? (
+                        <title>{`${link.omitted.length} hidden by filter`}</title>
+                      ) : null}
+                    </path>
                   );
                 }
                 case "filter-gap": {

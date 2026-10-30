@@ -16,6 +16,7 @@ import { ancestorsOf, parentMap } from "../lib/timeline.ts";
 import {
   DEFAULT_HIDDEN_TYPES,
   countByType,
+  defaultSession,
   filterOverview,
   filterSession,
   listSessions,
@@ -91,15 +92,20 @@ export default function Page() {
 
   // The timeline renders the session- and type-filtered overview. The graph
   // takes the failure story, which still needs hidden nodes so a gap can
-  // count them. Inspector and tabs keep the full dataset. The session
-  // defaults to the latest activity ("All sessions" is opt-in: 1625 events
-  // at once is not navigable).
+  // count them. Inspector and tabs keep the full dataset. The default
+  // session is the failure's own session, so the graph never opens empty
+  // when the failure is older than the latest ("All sessions" is opt-in:
+  // 1625 events at once is not navigable).
   const sessions = useMemo(
     () => (overview ? listSessions(overview.nodes) : []),
     [overview],
   );
   const [session, setSession] = useState<string | null>(null);
-  const activeSession = session ?? sessions[0]?.agent ?? "";
+  const failureSession = useMemo(
+    () => (overview ? defaultSession(overview.nodes, overview.failure_event_id) : ""),
+    [overview],
+  );
+  const activeSession = session ?? failureSession;
   const scoped = useMemo(
     () => (overview ? filterSession(overview, activeSession) : null),
     [overview, activeSession],
