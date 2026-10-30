@@ -6,6 +6,7 @@
 [![npm downloads](https://img.shields.io/npm/d18m/@psionic-labs/opencode-agent-causality?label=npm%20downloads&labelColor=black&color=green)](https://www.npmjs.com/package/@psionic-labs/opencode-agent-causality)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue)](https://www.python.org/)
 [![License: AGPL-3.0](https://img.shields.io/badge/license-AGPL--3.0-green)](https://github.com/Psionic-labs/Agent-Causality/blob/main/LICENSE)
+[![Website](https://img.shields.io/badge/website-live-orange)](https://psionic-labs.github.io/Agent-Causality/)
 [![OpenCode 1.19+](https://img.shields.io/badge/opencode-1.19%2B-purple)](https://opencode.ai)
 
 *Causal debugging for branching multi-agent systems — plus capture adapters for OpenCode and LangGraph.*
@@ -26,6 +27,7 @@ explains failures with grounded evidence instead of guesses.
 >
 > Source: <https://github.com/Psionic-labs/Agent-Causality>
 
+[Website](https://psionic-labs.github.io/Agent-Causality/) ·
 [Demo video](#demo-video) ·
 [Install](#install--you-need-both-packages) ·
 [30-second demo](#try-it-in-30-seconds-no-server-key-or-network) ·
@@ -33,6 +35,7 @@ explains failures with grounded evidence instead of guesses.
 [Explorer](#see-it-visual-dag-explorer) ·
 [OpenCode](#works-with-opencode) ·
 [LangGraph](#works-with-langgraph) ·
+[Research paper](#research-paper) ·
 [Docs](#documentation)
 
 ---
@@ -42,6 +45,8 @@ explains failures with grounded evidence instead of guesses.
 [![Agent-Causality demo — watch on YouTube](https://img.youtube.com/vi/bogmzYe9Hzs/maxresdefault.jpg)](https://www.youtube.com/watch?v=bogmzYe9Hzs)
 
 *Full walkthrough, click the thumbnail to watch on YouTube.*
+
+*The reel also plays in-page on the [website](https://psionic-labs.github.io/Agent-Causality/#demo), alongside the interactive walkthrough.*
 
 *The Video follows the Single-run capture given below*
 
@@ -70,7 +75,7 @@ Agent execution → event capture → causal graph → slice / provenance / inte
 
 Published as `agent-causality==0.3.0`
 ([PyPI](https://pypi.org/project/agent-causality/)) and
-`@psionic-labs/opencode-agent-causality==0.1.6`
+`@psionic-labs/opencode-agent-causality==0.1.7`
 ([npm](https://www.npmjs.com/package/@psionic-labs/opencode-agent-causality)).
 Requires Python 3.11+ and [`uv`](https://docs.astral.sh/uv/)
 for source checkouts; PyPI/npm consumers only need `pip`/`opencode`.
@@ -283,7 +288,7 @@ recorded trace. No repository clone is needed.
 > `completed (exit 0), 331 events, capture coverage 1.0, diagnosis scored`
 > (see `benchmark/results/opencode/opencode.md`). No video artifact ships
 > with this release.
-> [Setup guide →](https://github.com/Psionic-labs/Agent-Causality/blob/main/docs/opencode.md)
+> [Setup guide →](https://psionic-labs.github.io/Agent-Causality/opencode.html)
 
 ### What the plugin captures
 
@@ -319,8 +324,8 @@ written, false rollback claim — captured as 22 causally-validated events
 in
 [`examples/replit_incident.py`](https://github.com/Psionic-labs/Agent-Causality/blob/main/examples/replit_incident.py)
 (write-up:
-[docs/case-study-replit.md](https://github.com/Psionic-labs/Agent-Causality/blob/main/docs/case-study-replit.md)).
-[Adapter guide →](https://github.com/Psionic-labs/Agent-Causality/blob/main/docs/langgraph.md)
+[the Replit case study](https://github.com/Psionic-labs/Agent-Causality/blob/main/docs/case-study-replit.md)).
+[Adapter guide →](https://psionic-labs.github.io/Agent-Causality/langgraph.html)
 
 ---
 
@@ -348,17 +353,41 @@ and `benchmark/results/`.
 
 ---
 
+## Research paper
+
+[Agent-Causality: Declared Dependency Tracing and Counterfactual Sensitivity Analysis for Multi-Agent Systems](https://github.com/Psionic-labs/Agent-Causality/blob/main/research_paper/agentic_causality_paper.pdf), by Vasant Kumar Mogia, Psionics. The file is [`research_paper/agentic_causality_paper.pdf`](https://github.com/Psionic-labs/Agent-Causality/blob/main/research_paper/agentic_causality_paper.pdf). Source is [`research_paper/main.tex`](https://github.com/Psionic-labs/Agent-Causality/blob/main/research_paper/main.tex).
+
+The paper describes declared parent links, structural slices, provenance grades, decision contracts, and counterfactual replay of registered merge decisions.
+
+Each name links to the PDF page where that section starts.
+
+1. [Introduction](https://github.com/Psionic-labs/Agent-Causality/blob/main/research_paper/agentic_causality_paper.pdf#page=1)
+2. [The problem](https://github.com/Psionic-labs/Agent-Causality/blob/main/research_paper/agentic_causality_paper.pdf#page=2)
+3. [The core idea](https://github.com/Psionic-labs/Agent-Causality/blob/main/research_paper/agentic_causality_paper.pdf#page=2)
+4. [How the system works](https://github.com/Psionic-labs/Agent-Causality/blob/main/research_paper/agentic_causality_paper.pdf#page=3)
+5. [Fixture walkthrough: customer approval](https://github.com/Psionic-labs/Agent-Causality/blob/main/research_paper/agentic_causality_paper.pdf#page=5)
+6. [What the tool supports on its own](https://github.com/Psionic-labs/Agent-Causality/blob/main/research_paper/agentic_causality_paper.pdf#page=6)
+7. [Combinations with other tools](https://github.com/Psionic-labs/Agent-Causality/blob/main/research_paper/agentic_causality_paper.pdf#page=6)
+8. [Case study: a documented agent incident](https://github.com/Psionic-labs/Agent-Causality/blob/main/research_paper/agentic_causality_paper.pdf#page=8)
+9. [Evaluation](https://github.com/Psionic-labs/Agent-Causality/blob/main/research_paper/agentic_causality_paper.pdf#page=8)
+10. [Limitations and future work](https://github.com/Psionic-labs/Agent-Causality/blob/main/research_paper/agentic_causality_paper.pdf#page=10)
+11. [Related work](https://github.com/Psionic-labs/Agent-Causality/blob/main/research_paper/agentic_causality_paper.pdf#page=11)
+12. [Conclusion](https://github.com/Psionic-labs/Agent-Causality/blob/main/research_paper/agentic_causality_paper.pdf#page=11)
+
+---
+
 ## Documentation
 
 | Topic | Link |
 | --- | --- |
 | Getting started | [GETTING_STARTED.md](https://github.com/Psionic-labs/Agent-Causality/blob/main/GETTING_STARTED.md) |
-| OpenCode integration | [docs/opencode.md](https://github.com/Psionic-labs/Agent-Causality/blob/main/docs/opencode.md) |
-| LangGraph integration | [docs/langgraph.md](https://github.com/Psionic-labs/Agent-Causality/blob/main/docs/langgraph.md) |
+| OpenCode integration | [OpenCode guide](https://psionic-labs.github.io/Agent-Causality/opencode.html) |
+| LangGraph integration | [LangGraph guide](https://psionic-labs.github.io/Agent-Causality/langgraph.html) |
 | Replit incident case study | [docs/case-study-replit.md](https://github.com/Psionic-labs/Agent-Causality/blob/main/docs/case-study-replit.md) |
 | CLI and Python reference | [docs/reference.md](https://github.com/Psionic-labs/Agent-Causality/blob/main/docs/reference.md) |
 | Benchmarks and results | [docs/benchmarks.md](https://github.com/Psionic-labs/Agent-Causality/blob/main/docs/benchmarks.md) |
 | Scope and limits | [docs/reference.md](https://github.com/Psionic-labs/Agent-Causality/blob/main/docs/reference.md) |
+| Research paper | [`research_paper/agentic_causality_paper.pdf`](https://github.com/Psionic-labs/Agent-Causality/blob/main/research_paper/agentic_causality_paper.pdf) |
 | Research background | [docs/thesis.md](https://github.com/Psionic-labs/Agent-Causality/blob/main/docs/thesis.md), [docs/research-memo.md](https://github.com/Psionic-labs/Agent-Causality/blob/main/docs/research-memo.md) |
 | Contributing and tests | [TEST.md](https://github.com/Psionic-labs/Agent-Causality/blob/main/TEST.md), [CONTRIBUTING.md](https://github.com/Psionic-labs/Agent-Causality/blob/main/CONTRIBUTING.md) |
 | Release notes | [CHANGELOG.md](https://github.com/Psionic-labs/Agent-Causality/blob/main/CHANGELOG.md) |

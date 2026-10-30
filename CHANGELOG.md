@@ -2,12 +2,69 @@
 
 All notable changes to this project will be documented in this file.
 
-## [0.3.0] - 2026-10-25
+## [0.3.0] - 2026-10-30
 
 ### Breaking changes
 
 - `capture_tool` now requires `provenance_recorder` when `field_sources`
-  produces a non-empty mapping.
+  produces a non-empty mapping. Callable recorders must return an `EventLog`,
+  and captured tool retries without provenance are rejected.
+
+### Failure story on the causal DAG
+
+- The failure column now shows the failure's visible declared ancestors, not
+  only the immediate slice. Hidden stretches become dashed filter gaps or
+  stubs with the omitted event count, and selecting a node lights only its
+  causal ancestors, stopping at a gap.
+- Gap tooltips report their hidden count, and the count survives when the same
+  visible pair also has a direct causal edge.
+- Zoom and pan map pointer movement through the SVG letterbox, so anchors stay
+  under the cursor at every viewport aspect ratio.
+- The explorer opens the session that owns the failure event by default; an
+  explicit session choice still wins.
+
+### Capture, CLI, and explorer boundaries
+
+- Replay intervention values that are neither JSON nor a bare identifier now
+  fail with usage guidance instead of silently becoming a string.
+- `EventLog.append` must return the stored `Event` or raise. Fail-open logs
+  implement `append_with_status` through the new `AppendWithStatus` protocol,
+  and malformed append returns raise `TypeError`.
+- The explorer serves only the vendored `explorer/static` bundle; the
+  `frontend/out` fallback is gone.
+- `.env` loading moved to `sdk/env.py`. Inline comments are stripped from
+  unquoted values, and unreadable files fail at startup.
+- Diagnosis scoring moved from the OpenCode benchmark into `core/diagnosis.py`
+  and `core/metrics.py`, ready for non-benchmark callers.
+
+### Examples, site, and docs
+
+- New payment approval failure example (`examples/payment_approval.py`) with
+  CLI coverage.
+- The site was redesigned as a causal-graph landing page, with OpenCode and
+  LangGraph guides and a mobile menu.
+- The research paper is published with Google Scholar metadata, and the README
+  shows live PyPI and npm download badges.
+
+### Verification and agent tooling
+
+- `tools/verify/verify.py` now provides deterministic quick and full modes,
+  ephemeral ports, PASS/FAIL timings, and per-run artifact logs; pre-commit,
+  CI, and the agent workflow run it.
+- New checks enforce import boundaries, suppression budgets from `CLEANUP.md`,
+  static-bundle freshness, the installed plugin copy, and linked-worktree
+  hygiene.
+- Added the parallel worktree spawner (capped at three agents), the worktree
+  cleanup command, task-scope enforcement for spawned branches, and an advisory
+  pull request review job.
+- The failure-story, viewport, and default-session regressions are covered by
+  node tests, and the explorer Playwright smoke test remains the browser gate.
+
+### npm plugin 0.1.7
+
+- `@psionic-labs/opencode-agent-causality` 0.1.7 republishes the README with
+  the synced website, paper, guide, and download-badge links. Plugin runtime
+  behavior is unchanged from 0.1.6.
 
 ## [0.2.1] - 2026-10-22
 

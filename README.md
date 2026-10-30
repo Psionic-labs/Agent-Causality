@@ -75,7 +75,7 @@ Agent execution → event capture → causal graph → slice / provenance / inte
 
 Published as `agent-causality==0.3.0`
 ([PyPI](https://pypi.org/project/agent-causality/)) and
-`@psionic-labs/opencode-agent-causality==0.1.6`
+`@psionic-labs/opencode-agent-causality==0.1.7`
 ([npm](https://www.npmjs.com/package/@psionic-labs/opencode-agent-causality)).
 Requires Python 3.11+ and [`uv`](https://docs.astral.sh/uv/)
 for source checkouts; PyPI/npm consumers only need `pip`/`opencode`.
