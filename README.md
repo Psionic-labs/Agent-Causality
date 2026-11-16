@@ -190,13 +190,18 @@ causality-explorer --db .causality/opencode.db --port 8766
 From a source checkout, use `uv run python -m explorer.server` with the same `--db` and `--port`.
 Open <http://127.0.0.1:8766>. With no `--db`, you get the bundled demo: a failing test, the edit, and the passing retry.
 
-The close-ups below are a different run,
+The screen below is a different run,
 [`examples/replit_incident.py`](https://github.com/Psionic-labs/Agent-Causality/blob/main/examples/replit_incident.py):
 a freeze notice, a production delete, made-up rows, and a false claim that rollback was impossible.
 The longer write-up is [the Replit case study](https://github.com/Psionic-labs/Agent-Causality/blob/main/docs/case-study-replit.md).
-A 10-second pass over the whole screen is in the [gif](https://github.com/Psionic-labs/Agent-Causality/raw/main/docs/media/explorer-night-desk.gif) and the [WebM](https://github.com/Psionic-labs/Agent-Causality/raw/main/docs/media/explorer-night-desk.webm).
+
+![The whole explorer: night desk, the causal graph, the event inspector, and the tabs](https://github.com/Psionic-labs/Agent-Causality/raw/main/docs/screenshots/explorer-night-graph.png)
+
+This is the debugger. The sentence at the top says why the run failed. The graph is the events and the arrows between them. The panel on the right is the event you have open. The tabs along the bottom are the lists and the counts. A short recording of the same screen is in the [gif](https://github.com/Psionic-labs/Agent-Causality/raw/main/docs/media/explorer-night-desk.gif) and the [WebM](https://github.com/Psionic-labs/Agent-Causality/raw/main/docs/media/explorer-night-desk.webm).
 
 The words on the screen that have a special meaning are collected in [Explorer terms](https://github.com/Psionic-labs/Agent-Causality/blob/main/docs/explorer.md). That page also lists what this screen does not claim, and what is not built yet.
+
+The rest of this section is one piece of that screen at a time.
 
 ### Choose night or day
 
@@ -224,9 +229,9 @@ Each button is a filter. The session button limits the screen to one run. **Key 
 
 ### Follow the arrows
 
-![A close view of solid and dashed arrows between events](https://github.com/Psionic-labs/Agent-Causality/raw/main/docs/screenshots/features/gaps.png)
+![The graph chain: solid arrows between recorded steps, dashed arrows where events are hidden](https://github.com/Psionic-labs/Agent-Causality/raw/main/docs/screenshots/features/arrows.png)
 
-A square is one event. A solid arrow means the capture recorded that this event led to the next one. A dashed arrow means you hid the events in between. The dash is a gap in the picture, not a new cause. Hover the dash to see how many events are hidden.
+A square is one event. A solid arrow means the capture recorded that this event led to the next one. A dashed arrow means you hid the events in between. On this run, **Key events** hid 12 status updates, so those stretches are dashed. The dash is a gap in the picture, not a new cause. Hover a dash to see how many events it stands for. The key under the graph names each mark.
 
 ### Open one event
 
