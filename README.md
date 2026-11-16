@@ -178,104 +178,79 @@ Then open <http://127.0.0.1:8797>. Each `opencode run` appends to the same
 
 ## See it: Visual DAG Explorer
 
-Open a capture as a causal graph. No API key is required.
+Open a recorded run and click through it. No API key is required.
 The explorer ships inside the `agent-causality` wheel.
 
 ```bash
-# PyPI install
 pip install agent-causality
 causality-explorer
 causality-explorer --db .causality/opencode.db --port 8766
 ```
 
-```bash
-# Source checkout
-uv run python -m explorer.server
-uv run python -m explorer.server --db .causality/opencode.db --port 8766
-uv run python -m explorer.server --db .causality/single-run.db --port 8797
-```
+From a source checkout, use `uv run python -m explorer.server` with the same `--db` and `--port`.
+Open <http://127.0.0.1:8766>. With no `--db`, you get the bundled demo: a failing test, the edit, and the passing retry.
 
-Open <http://127.0.0.1:8766> (or `:8797` for the single-run file).
-With no `--db`, the bundled demo loads: a failing test, the edit, and the passing retry.
+The close-ups below are a different run,
+[`examples/replit_incident.py`](https://github.com/Psionic-labs/Agent-Causality/blob/main/examples/replit_incident.py):
+a freeze notice, a production delete, made-up rows, and a false claim that rollback was impossible.
+The longer write-up is [the Replit case study](https://github.com/Psionic-labs/Agent-Causality/blob/main/docs/case-study-replit.md).
+A 10-second pass over the whole screen is in the [gif](https://github.com/Psionic-labs/Agent-Causality/raw/main/docs/media/explorer-night-desk.gif) and the [WebM](https://github.com/Psionic-labs/Agent-Causality/raw/main/docs/media/explorer-night-desk.webm).
 
-The pictures below are a different run,
-[`examples/replit_incident.py`](https://github.com/Psionic-labs/Agent-Causality/blob/main/examples/replit_incident.py).
-It replays the documented July 2025 Replit incident as 22 events:
-a freeze notice, a production `DELETE`, fabricated rows, and a false rollback claim.
-The write-up is
-[the Replit case study](https://github.com/Psionic-labs/Agent-Causality/blob/main/docs/case-study-replit.md).
+The words on the screen that have a special meaning are collected in [Explorer terms](https://github.com/Psionic-labs/Agent-Causality/blob/main/docs/explorer.md). That page also lists what this screen does not claim, and what is not built yet.
 
-![Walkthrough of the explorer on the Replit incident: night graph, timeline, daylight, and the metrics tab](https://github.com/Psionic-labs/Agent-Causality/raw/main/docs/media/explorer-night-desk.gif)
+### Choose night or day
 
-*Select the `write_sql` result, open **Timeline**, switch to **Daylight**, return to **Graph**, then open **Metrics**. The same take is a [WebM](https://github.com/Psionic-labs/Agent-Causality/raw/main/docs/media/explorer-night-desk.webm).*
+![Night desk and Daylight switch](https://github.com/Psionic-labs/Agent-Causality/raw/main/docs/screenshots/features/theme.png)
 
-![Night desk graph of the Replit incident with Key events on and the event inspector open](https://github.com/Psionic-labs/Agent-Causality/raw/main/docs/screenshots/explorer-night-graph.png)
+**Night desk** is the dark screen you get first. **Daylight** is the light screen. The browser keeps the one you picked.
 
-*Night desk is the default. **Key events** hides `context_update`, so this view shows 10 of 22 events. Dashed arrows mark the hidden stretches. Solid arrows are declared causal parents.*
+### Read the failure in one sentence
 
-![The write_sql tool result selected on the graph, with the same event in the inspector](https://github.com/Psionic-labs/Agent-Causality/raw/main/docs/screenshots/explorer-night-selected.png)
+![The why sentence and the line that says no answer key was found](https://github.com/Psionic-labs/Agent-Causality/raw/main/docs/screenshots/features/why.png)
 
-*Click a node. The inspector shows its type, sequence, parents, and recorded payload. This capture has no failure selector, so the why line says the last event is positional, not a cause.*
+The first line answers "why did it fail?" in ordinary language. The smaller line on the right tells you when the file has no answer key, so the last event is only a position, not a proven cause. **Full technical explanation** opens the stored write-up. **Generate AI analysis** asks a model for a reading, and that reading is labeled as not evidence. It needs the `explain` extra and `OPENROUTER_API_KEY`.
 
-![Night desk timeline with run and tool lanes, the selected event marked on the ruler](https://github.com/Psionic-labs/Agent-Causality/raw/main/docs/screenshots/explorer-night-timeline.png)
+### Switch between the graph and the timeline
 
-*Timeline uses the same selection. Lanes follow the recorded tool name. Position is sequence order, not wall-clock time. Drag the ruler, or use the arrow keys, to step.*
+![Graph and Timeline buttons, with Reset view](https://github.com/Psionic-labs/Agent-Causality/raw/main/docs/screenshots/features/views.png)
 
-![Daylight timeline with black clips and white text](https://github.com/Psionic-labs/Agent-Causality/raw/main/docs/screenshots/explorer-daylight-timeline.png)
+**Graph** and **Timeline** show the same events. Clicking one event selects it in both. Scroll to zoom, drag to pan, and the arrow keys step along the timeline. **Reset view** fits the drawing on the screen again.
 
-***Daylight** keeps the same layout. Timeline clips are black with white text. `run_finish` stays a dashed outline. The choice is remembered in this browser.*
+### Hide the noise
 
-![Daylight graph with dashed filter gaps between the visible tool events](https://github.com/Psionic-labs/Agent-Causality/raw/main/docs/screenshots/explorer-daylight-graph.png)
+![Session, Key events, and event-type filter buttons](https://github.com/Psionic-labs/Agent-Causality/raw/main/docs/screenshots/features/filters.png)
 
-*The same gaps stay visible in Daylight. **All events** puts the hidden `context_update` nodes back on the graph.*
+Each button is a filter. The session button limits the screen to one run. **Key events** hides the noisy status updates, here 12 of them. **All events** brings those updates back. Click a type such as `tool_call` to hide just that type. The count on the right says how many are still showing.
 
-![Metrics tab with the capture census for the 22-event Replit replay](https://github.com/Psionic-labs/Agent-Causality/raw/main/docs/screenshots/explorer-metrics.png)
+### Follow the arrows
 
-***Causal chain**, **Provenance**, **Interaction**, **Evidence**, and **Metrics** read the capture. Benchmark scores stay collapsed, because a live trace often has no ground truth to score against.*
+![A close view of solid and dashed arrows between events](https://github.com/Psionic-labs/Agent-Causality/raw/main/docs/screenshots/features/gaps.png)
 
-![Evidence tab listing the tool story for the Replit replay](https://github.com/Psionic-labs/Agent-Causality/raw/main/docs/screenshots/explorer-evidence.png)
+A square is one event. A solid arrow means the capture recorded that this event led to the next one. A dashed arrow means you hid the events in between. The dash is a gap in the picture, not a new cause. Hover the dash to see how many events are hidden.
 
-***Evidence** lists the tool calls and results in order. **Provenance** lists files named in the capture. **Interaction** lists recorded branch and merge points, and says when the trace is a straight line.*
+### Open one event
 
-### What you can do
+![The event inspector for the write_sql result](https://github.com/Psionic-labs/Agent-Causality/raw/main/docs/screenshots/features/inspector.png)
 
-- Read the graph or the timeline. One selection drives both views and the inspector.
-- Switch **Night desk** and **Daylight**.
-- Limit the view with a session button, **Key events**, **All events**, or one event-type button. A filled type is showing. Click it to hide that type.
-- Pan and zoom the graph. **Reset view** fits the drawing again.
-- Read the why sentence, and the causal path when the capture has ground-truth roles.
-- Click **Generate AI analysis** after you install the `explain` extra and set `OPENROUTER_API_KEY`. The reply sits in a block labeled as not evidence.
+The panel on the right is the event you clicked. It names the type, the sequence number, the time, and the command or result when one was recorded. Copy the id if you need it in the CLI. The explorer never writes back to the file.
 
-Point the explorer at your own file with `causality-explorer --db .causality/opencode.db`.
-From a source checkout, use `uv run python -m explorer.server --db .causality/opencode.db`.
+### Lay the run out in order
 
-### What it does not do
+![Daylight timeline with black event boxes](https://github.com/Psionic-labs/Agent-Causality/raw/main/docs/screenshots/features/timeline.png)
 
-- It does not invent an edge. A solid arrow is a causal parent recorded at capture time.
-- A dashed arrow is a filter gap, not a new cause. It counts events you hid.
-- A structural slice is declared-dependency evidence. It does not prove influence.
-- Joint ancestry is not causal interaction. The required-cause proxy is not causal minimality.
-- `unsupported` and `not measurable` are capability limits, not failed runs.
-- It does not write to the database.
-- It does not choose a cause when no selector matched. The why line says the last event is only a position.
-- It is a desktop screen. At phone width the graph collapses to a strip.
+The timeline is the same run, left to right, in the order things happened. In Daylight the boxes are black and the words are white. The marker shows the selected event. `run_finish` stays an outline, so the end of the run is easy to spot. Drag the number line, or press the arrow keys, to move the selection.
 
-### What is not built yet
+### Count the capture, then read the tools
 
-These are recorded as later work, not as current behavior.
+![The Metrics tab with the event counts](https://github.com/Psionic-labs/Agent-Causality/raw/main/docs/screenshots/features/metrics.png)
 
-- A graph that mounts only the nodes on screen, for traces of several thousand events.
-- Search by tool, role, resource, or text. Type and session filters exist today.
-- A side-by-side diff of a file edit.
-- A download of the evidence package from the page.
-- A manual failure-target picker, labeled as manual rather than ground truth.
-- More than one failure target in a single run.
-- A live tail of events while the agent is still running.
-- Paging the causal chain past its 80-row cap.
-- A bundled trace that actually branches and merges, instead of a line.
+**Metrics** counts what was recorded. It is not a score of who was at fault. Scoring against an answer key stays folded away, because many live runs have no answer key.
 
-Full acceptance procedure:
-[TEST.md §29](https://github.com/Psionic-labs/Agent-Causality/blob/main/TEST.md).
+![The Evidence tab listing tool calls in order](https://github.com/Psionic-labs/Agent-Causality/raw/main/docs/screenshots/features/evidence.png)
+
+**Evidence** lists each tool call and its result, in order. Click a row and that event opens in the inspector. **Provenance** lists files named in the capture. **Interaction** lists places where the run split or joined, and says so when the run is a straight line. **Causal chain** lists the events the failure depends on, up to 80 rows.
+
+The acceptance steps are in [TEST.md §29](https://github.com/Psionic-labs/Agent-Causality/blob/main/TEST.md).
 
 ---
 
@@ -419,6 +394,7 @@ Each name links to the PDF page where that section starts.
 | OpenCode integration | [OpenCode guide](https://psionic-labs.github.io/Agent-Causality/opencode.html) |
 | LangGraph integration | [LangGraph guide](https://psionic-labs.github.io/Agent-Causality/langgraph.html) |
 | Replit incident case study | [docs/case-study-replit.md](https://github.com/Psionic-labs/Agent-Causality/blob/main/docs/case-study-replit.md) |
+| Explorer terms, limits, and later work | [docs/explorer.md](https://github.com/Psionic-labs/Agent-Causality/blob/main/docs/explorer.md) |
 | CLI and Python reference | [docs/reference.md](https://github.com/Psionic-labs/Agent-Causality/blob/main/docs/reference.md) |
 | Benchmarks and results | [docs/benchmarks.md](https://github.com/Psionic-labs/Agent-Causality/blob/main/docs/benchmarks.md) |
 | Scope and limits | [docs/reference.md](https://github.com/Psionic-labs/Agent-Causality/blob/main/docs/reference.md) |
