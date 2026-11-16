@@ -1,6 +1,6 @@
 {
-  "input_sha256": "d19a88aba7c866ec67d6aa85c713988caf5d05d3434d0ca0461d90b0c2bd45f2",
-  "static_sha256": "665f87327d5843689960cdaf34b2e46d5e3cae9c1e07a91b9c601379880a4801",
+  "input_sha256": "078504ffe7dc27e2c3e24a1cc5d1e4f5c20f22fb674674f28b78ade06c9ad1ea",
+  "static_sha256": "8b658fc886b46565a2f35b287303b4d0539a4d8d06f702b811714195930e3c18",
   "files": [
     "frontend/app/globals.css",
     "frontend/app/layout.tsx",
@@ -11,6 +11,7 @@
     "frontend/components/Inspector.tsx",
     "frontend/components/Legend.tsx",
     "frontend/components/TabsPanels.tsx",
+    "frontend/components/ThemeToggle.tsx",
     "frontend/components/TimelineView.tsx",
     "frontend/components/WhyStrip.tsx",
     "frontend/lib/api.ts",

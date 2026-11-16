@@ -25,7 +25,29 @@ test("explorer loads the demo and supports graph, timeline, and tabs", async ({
   await expect(page.getByRole("heading", { name: "DAG Explorer" })).toBeVisible();
   await expect(page.locator("#dataset-line")).toContainText("demo:failed_test_retry");
   await expect(page.locator("#dataset-line")).toContainText("10 events");
-  await expect(page.locator("#failure-banner")).toHaveText("Resolved");
+  await expect(page.locator("#failure-banner")).toHaveCount(0);
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "night");
+
+  await page.getByRole("button", { name: "Daylight" }).click();
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "daylight");
+  await page.getByRole("button", { name: "Night desk" }).click();
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "night");
+
+  const allSessions = page.getByRole("button", { name: /All sessions/ });
+  await allSessions.click();
+  await expect(allSessions).toHaveAttribute("aria-pressed", "true");
+  const sessionButton = page.getByRole("group", { name: "Session filter" }).getByRole("button").first();
+  await sessionButton.click();
+  await expect(sessionButton).toHaveAttribute("aria-pressed", "true");
+  await expect(allSessions).toHaveAttribute("aria-pressed", "false");
+
+  const toolCall = page.locator(".filter-chips").getByRole("button", { name: /^tool_call \(\d+\)$/ });
+  await expect(toolCall).toHaveAttribute("aria-pressed", "true");
+  await toolCall.click();
+  await expect(toolCall).toHaveAttribute("aria-pressed", "false");
+  await expect(page.locator(".filter-bar .hint")).toContainText("hidden by filter");
+  await toolCall.click();
+  await expect(toolCall).toHaveAttribute("aria-pressed", "true");
 
   const nodes = page.locator("#viewport > g");
   expect(await nodes.count()).toBeGreaterThan(0);

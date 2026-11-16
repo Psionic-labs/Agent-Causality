@@ -231,22 +231,29 @@ export default function Page() {
               </button>
             </div>
           </div>
-          <div className="filter-bar" role="group" aria-label="Event type filter">
-            <label className="session-pick">
-              Session{" "}
-              <select
-                value={activeSession}
-                onChange={(e) => setSession(e.target.value)}
-                title={activeSession || "all sessions"}
+          <div className="filter-bar" role="group" aria-label="Session and event filters">
+            <div className="view-toggle" role="group" aria-label="Session filter">
+              {sessions.map((s) => (
+                <button
+                  key={s.agent}
+                  type="button"
+                  className={activeSession === s.agent ? "active" : ""}
+                  aria-pressed={activeSession === s.agent}
+                  title={s.agent}
+                  onClick={() => setSession(s.agent)}
+                >
+                  {shortSessionId(s.agent)} ({s.count})
+                </button>
+              ))}
+              <button
+                type="button"
+                className={activeSession === "" ? "active" : ""}
+                aria-pressed={activeSession === ""}
+                onClick={() => setSession("")}
               >
-                {sessions.map((s) => (
-                  <option key={s.agent} value={s.agent} title={s.agent}>
-                    {shortSessionId(s.agent)} ({s.count})
-                  </option>
-                ))}
-                <option value="">All sessions ({overview.nodes.length})</option>
-              </select>
-            </label>
+                All sessions ({overview.nodes.length})
+              </button>
+            </div>
             <div className="view-toggle">
               <button
                 type="button"

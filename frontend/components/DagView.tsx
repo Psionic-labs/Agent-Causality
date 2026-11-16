@@ -206,6 +206,7 @@ export function DagView({ story, selectedId, apiRef }: Props) {
                       key={`gap:${link.upstream}->${link.downstream}`}
                       className="gap"
                       d={edgeCurve(a, b)}
+                      markerEnd="url(#causal-arrow)"
                     >
                       <title>{`${link.omitted.length} hidden by filter`}</title>
                     </path>
@@ -263,7 +264,6 @@ export function DagView({ story, selectedId, apiRef }: Props) {
             })}
           </g>
         </svg>
-        <div className="viz-scanlines" aria-hidden="true" />
       </div>
       <div className="dag-foot">
         <Legend filterGap />

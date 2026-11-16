@@ -15,7 +15,6 @@ const page = readFileSync(join(frontendDir, "app", "page.tsx"), "utf-8");
 const dag = readFileSync(join(frontendDir, "components", "DagView.tsx"), "utf-8");
 const timeline = readFileSync(join(frontendDir, "components", "TimelineView.tsx"), "utf-8");
 const inspector = readFileSync(join(frontendDir, "components", "Inspector.tsx"), "utf-8");
-const header = readFileSync(join(frontendDir, "components", "Header.tsx"), "utf-8");
 const whystrip = readFileSync(join(frontendDir, "components", "WhyStrip.tsx"), "utf-8");
 const tabs = readFileSync(join(frontendDir, "components", "TabsPanels.tsx"), "utf-8");
 const legend = readFileSync(join(frontendDir, "components", "Legend.tsx"), "utf-8");
@@ -66,7 +65,6 @@ describe("shared element ids across views", () => {
     ["dag", [dag]],
     ["timeline", [timeline]],
     ["event-detail", [inspector]],
-    ["failure-banner", [page, header]],
     ["failure-info", [page, whystrip]],
     ["diagnosis", [tabs]],
     ["evidence", [tabs]],
