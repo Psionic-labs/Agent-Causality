@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.3.1] - 2026-11-16
+
+### Visual DAG Explorer
+
+- Night desk is the default theme. **Daylight** is a header switch, and the browser remembers the choice.
+- The monitor bezel, scanlines, glare, and the **Resolved** / **Fallback target** chips are gone. The graph, the timeline, and the event inspector stay.
+- Sessions and event types are filter buttons. **Key events** still hides `context_update` and `model_call`. A hidden stretch draws as a dashed arrow in both themes.
+- Daylight timeline clips are black with white text.
+- The README product tour uses the Replit incident replay (`examples/replit_incident.py`): graph, timeline, daylight, filters, and the metrics census.
+
+### npm plugin 0.1.8
+
+- `@psionic-labs/opencode-agent-causality` 0.1.8 republishes that README. Plugin runtime behavior is unchanged from 0.1.7.
+
 ## [0.3.0] - 2026-10-30
 
 ### Breaking changes
