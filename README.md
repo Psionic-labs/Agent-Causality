@@ -1,5 +1,6 @@
 # Agent-Causality
 
+[![Listed in awesome-agent-observability](https://img.shields.io/badge/listed%20in-awesome--agent--observability-blue)](https://github.com/anhermon/awesome-agent-observability#evaluation-and-testing)
 [![PyPI version](https://img.shields.io/pypi/v/agent-causality?label=PyPI)](https://pypi.org/project/agent-causality/)
 [![PyPI Downloads](https://static.pepy.tech/personalized-badge/agent-causality?period=total&units=INTERNATIONAL_SYSTEM&left_color=BLACK&right_color=GREEN&left_text=pypi%20downloads)](https://pepy.tech/projects/agent-causality)
 [![npm version](https://img.shields.io/npm/v/@psionic-labs/opencode-agent-causality)](https://www.npmjs.com/package/@psionic-labs/opencode-agent-causality)
