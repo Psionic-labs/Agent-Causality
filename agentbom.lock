@@ -1,0 +1,17 @@
+{
+  "artifacts": {
+    "rules:AGENTS.md:AGENTS.md": {
+      "definition": {
+        "body": "sha256:be92e3a7915d29e4a704790f6a0fdaf70c558cf72f68ee7f2bb8aa0137bd3335",
+        "frontmatter": {}
+      },
+      "kind": "rules",
+      "name": "AGENTS.md",
+      "path": "AGENTS.md"
+    }
+  },
+  "files": {
+    "AGENTS.md": "sha256:be92e3a7915d29e4a704790f6a0fdaf70c558cf72f68ee7f2bb8aa0137bd3335"
+  },
+  "version": 1
+}
