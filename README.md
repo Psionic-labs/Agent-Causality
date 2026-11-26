@@ -201,7 +201,7 @@ It contains a freeze notice, a production delete, made-up rows, and a false
 claim that rollback was impossible.
 The longer write-up is [the Replit case study](https://github.com/Psionic-labs/Agent-Causality/blob/main/docs/case-study-replit.md).
 
-![The whole explorer: night desk, the causal graph, the event inspector, and the tabs](https://github.com/Psionic-labs/Agent-Causality/raw/main/docs/screenshots/explorer-night-graph.png)
+![The whole explorer: night desk, the causal graph, the event inspector, and the tabs](https://github.com/Psionic-labs/Agent-Causality/raw/main/docs/media/explorer-night-desk.gif)
 
 This is the debugger. The sentence at the top says why the run failed. The graph is the events and the arrows between them. The panel on the right is the event you have open. The tabs along the bottom are the lists and the counts. A short recording of the same screen is in the [gif](https://github.com/Psionic-labs/Agent-Causality/raw/main/docs/media/explorer-night-desk.gif) and the [WebM](https://github.com/Psionic-labs/Agent-Causality/raw/main/docs/media/explorer-night-desk.webm).
 
