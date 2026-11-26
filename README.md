@@ -10,7 +10,7 @@
 [![Website](https://img.shields.io/badge/website-live-orange)](https://psionic-labs.github.io/Agent-Causality/)
 [![OpenCode 1.19+](https://img.shields.io/badge/opencode-1.19%2B-purple)](https://opencode.ai)
 
-![Agent-Causality mascot, a small detective robot examining a causal graph through a magnifying glass](https://github.com/Psionic-labs/Agent-Causality/raw/main/mascot.png)
+<img src="https://github.com/Psionic-labs/Agent-Causality/raw/main/mascot.png" alt="Agent-Causality mascot, a small detective robot examining a causal graph through a magnifying glass" width="200" />
 
 *Causal debugging for branching multi-agent systems, with capture adapters for OpenCode and LangGraph.*
 
