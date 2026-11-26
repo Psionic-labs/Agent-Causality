@@ -29,6 +29,11 @@ paper/
 # Local design-review artifacts (design-taste-frontend skill)
 .taste-skill/
 
+#stuff
+.scratch/
+contact/
+test-results/
+
 # Distribution / packaging
 .Python
 build/
