@@ -10,7 +10,9 @@
 [![Website](https://img.shields.io/badge/website-live-orange)](https://psionic-labs.github.io/Agent-Causality/)
 [![OpenCode 1.19+](https://img.shields.io/badge/opencode-1.19%2B-purple)](https://opencode.ai)
 
-*Causal debugging for branching multi-agent systems — plus capture adapters for OpenCode and LangGraph.*
+![Agent-Causality mascot, a small detective robot examining a causal graph through a magnifying glass](https://github.com/Psionic-labs/Agent-Causality/raw/main/mascot.png)
+
+*Causal debugging for branching multi-agent systems, with capture adapters for OpenCode and LangGraph.*
 
 Agent-Causality records what your agents did as a causal event graph, then
 explains failures with grounded evidence instead of guesses.
@@ -18,13 +20,13 @@ explains failures with grounded evidence instead of guesses.
 > **This README is identical on both registries.** The full system needs
 > **both** packages:
 >
-> - **Python (`agent-causality` on PyPI)** — SDK, CLI, ingest receiver
->   (`causality-opencode-ingest`), and Visual DAG Explorer
+> - **Python (`agent-causality` on PyPI)** provides the SDK, CLI, ingest
+>   receiver (`causality-opencode-ingest`), and Visual DAG Explorer
 >   (`causality-explorer`). Installing only this gives you the offline demo
 >   but no live OpenCode capture.
-> - **JavaScript (`@psionic-labs/opencode-agent-causality` on npm)** —
->   OpenCode plugin (telemetry capture only). Installing only this gives you
->   events with nowhere to persist or view them.
+> - **JavaScript (`@psionic-labs/opencode-agent-causality` on npm)** is the
+>   OpenCode plugin. It captures telemetry only. Installing only this gives
+>   you events with nowhere to persist or view them.
 >
 > Source: <https://github.com/Psionic-labs/Agent-Causality>
 
@@ -43,7 +45,7 @@ explains failures with grounded evidence instead of guesses.
 
 ## Demo video
 
-[![Agent-Causality demo — watch on YouTube](https://img.youtube.com/vi/bogmzYe9Hzs/maxresdefault.jpg)](https://www.youtube.com/watch?v=bogmzYe9Hzs)
+[![Agent-Causality demo, watch on YouTube](https://img.youtube.com/vi/bogmzYe9Hzs/maxresdefault.jpg)](https://www.youtube.com/watch?v=bogmzYe9Hzs)
 
 *Full walkthrough, click the thumbnail to watch on YouTube.*
 
@@ -87,20 +89,20 @@ pip install agent-causality
 # or, inside a uv project:
 uv add agent-causality
 
-# 2. JavaScript side (OpenCode capture plugin — telemetry only)
+# 2. JavaScript side (OpenCode capture plugin, telemetry only)
 opencode plugin add @psionic-labs/opencode-agent-causality
 ```
 
-> **npm-only installers:** you still need the PyPI package — the Visual DAG
+> **npm-only installers:** you still need the PyPI package. The Visual DAG
 > Explorer and the `causality-opencode-ingest` receiver ship **only** in
 > `agent-causality`, not in this npm package.
 >
 > **PyPI-only installers:** you still need the npm package for live OpenCode
-> capture — `pip install agent-causality` alone cannot observe an OpenCode
+> capture. `pip install agent-causality` alone cannot observe an OpenCode
 > session without the plugin.
 
-*Optional — AI explanation extra.* Only needed for LLM-grounded `explain` /
-*Generate AI analysis* (needs `httpx` + `OPENROUTER_API_KEY`):
+*Optional AI explanation extra.* Needed for LLM-grounded `explain` and
+*Generate AI analysis*. Requires `httpx` and `OPENROUTER_API_KEY`.
 
 ```bash
 # pip consumer
@@ -137,10 +139,10 @@ Limitations: the evidence does not establish why the upstream tools produced the
 ## Single-run capture: ingest → opencode → explorer
 
 The minimal end-to-end loop. One isolated SQLite file per run keeps traces
-separate (`.causality/single-run.db` below is just an example — any path
-works) and port `8797` avoids clashing with the default `8766` explorer.
+separate. The `.causality/single-run.db` path below is just an example. Any
+path works. Port `8797` avoids clashing with the default `8766` explorer.
 
-**Terminal 1 — start the receiver:**
+**Terminal 1. Start the receiver.**
 
 ```bash
 # PyPI install
@@ -149,20 +151,20 @@ causality-opencode-ingest --db .causality/single-run.db
 uv run causality-opencode-ingest --db .causality/single-run.db
 ```
 
-**Terminal 2 — run one instrumented agent task** (plugin posts automatically):
+**Terminal 2. Run one instrumented agent task** (the plugin posts automatically).
 
 ```bash
 opencode run "Run the existing tests before editing. Diagnose and fix the bug in discount.py so both tests pass. Do not modify the tests. Rerun the tests and summarize the change."
 ```
 
-*Optional — enable AI explanations for this project:*
+*Optional: enable AI explanations for this project.*
 
 ```bash
 uv add "agent-causality[explain]"
 # pip equivalent: pip install "agent-causality[explain]"
 ```
 
-**Terminal 3 — inspect the trace in the Visual DAG Explorer:**
+**Terminal 3. Inspect the trace in the Visual DAG Explorer.**
 
 ```bash
 # PyPI install
@@ -172,8 +174,8 @@ uv run python -m explorer.server --db .causality/single-run.db --port 8797
 ```
 
 Then open <http://127.0.0.1:8797>. Each `opencode run` appends to the same
-`--db` file; use a fresh `--db` path per task for one-trace-per-file
-(any filename works).
+`--db` file. Use a fresh `--db` path per task to keep one trace per file.
+Any filename works.
 
 ---
 
@@ -191,9 +193,10 @@ causality-explorer --db .causality/opencode.db --port 8766
 From a source checkout, use `uv run python -m explorer.server` with the same `--db` and `--port`.
 Open <http://127.0.0.1:8766>. With no `--db`, you get the bundled demo: a failing test, the edit, and the passing retry.
 
-The screen below is a different run,
-[`examples/replit_incident.py`](https://github.com/Psionic-labs/Agent-Causality/blob/main/examples/replit_incident.py):
-a freeze notice, a production delete, made-up rows, and a false claim that rollback was impossible.
+The screen below shows a different run,
+[`examples/replit_incident.py`](https://github.com/Psionic-labs/Agent-Causality/blob/main/examples/replit_incident.py).
+It contains a freeze notice, a production delete, made-up rows, and a false
+claim that rollback was impossible.
 The longer write-up is [the Replit case study](https://github.com/Psionic-labs/Agent-Causality/blob/main/docs/case-study-replit.md).
 
 ![The whole explorer: night desk, the causal graph, the event inspector, and the tabs](https://github.com/Psionic-labs/Agent-Causality/raw/main/docs/screenshots/explorer-night-graph.png)
@@ -214,7 +217,7 @@ The rest of this section is one piece of that screen at a time.
 
 ![The why sentence and the line that says no answer key was found](https://github.com/Psionic-labs/Agent-Causality/raw/main/docs/screenshots/features/why.png)
 
-The first line answers "why did it fail?" in ordinary language. The smaller line on the right tells you when the file has no answer key, so the last event is only a position, not a proven cause. **Full technical explanation** opens the stored write-up. **Generate AI analysis** asks a model for a reading, and that reading is labeled as not evidence. It needs the `explain` extra and `OPENROUTER_API_KEY`.
+The first line answers "why did it fail?" in ordinary language. The smaller line on the right says when the file has no answer key. In that case the last event is a position, not a proven cause. **Full technical explanation** opens the stored write-up. **Generate AI analysis** asks a model for a reading and labels that reading as not evidence. It needs the `explain` extra and `OPENROUTER_API_KEY`.
 
 ### Switch between the graph and the timeline
 
@@ -282,7 +285,7 @@ for a complete runnable example.
 
 ## Works with OpenCode
 
-Capture live coding-agent sessions. Telemetry is fail-open: it never
+Capture live coding-agent sessions. Telemetry is fail-open, so it never
 interrupts your agent. **Requires both packages** (receiver from PyPI,
 plugin from npm).
 
@@ -295,13 +298,13 @@ opencode run "Read RESEARCH.md, implement sort_items in task.py as recommended, 
 causality-explorer --db .causality/opencode.db
 ```
 
-Full consumer flow: install `agent-causality` (PyPI) → install the OpenCode
-plugin (`opencode plugin add @psionic-labs/opencode-agent-causality`, npm) →
-start the receiver → run OpenCode → launch `causality-explorer` → inspect the
+Install `agent-causality` from PyPI. Add the OpenCode plugin from npm with
+`opencode plugin add @psionic-labs/opencode-agent-causality`. Start the
+receiver, run OpenCode, then launch `causality-explorer` and inspect the
 recorded trace. No repository clone is needed.
 
-> Representative committed result (`stale_research`, OpenCode `1.19.0`):
-> `completed (exit 0), 331 events, capture coverage 1.0, diagnosis scored`
+> A representative committed result (`stale_research`, OpenCode `1.19.0`)
+> reads `completed (exit 0), 331 events, capture coverage 1.0, diagnosis scored`
 > (see `benchmark/results/opencode/opencode.md`). No video artifact ships
 > with this release.
 > [Setup guide →](https://psionic-labs.github.io/Agent-Causality/opencode.html)
@@ -312,17 +315,17 @@ The npm plugin forwards OpenCode's global event stream plus explicit hooks
 (`tool.execute.before/after`, `permission.ask`, `command.execute.before`,
 `chat.message`, `chat.params`). The Python receiver maps these onto canonical
 events, registers file writes with Resource-Version machinery, and redacts
-secrets before SQLite persistence. It is telemetry capture only — the
+secrets before SQLite persistence. It is telemetry capture only. The
 Explorer and CLI live in the PyPI distribution.
 
 ---
 
 ## Works with LangGraph
 
-`CausalityCallbackHandler` is a LangChain callback handler: point your
+`CausalityCallbackHandler` is a LangChain callback handler. Point your
 graph's `config` at it and every node, tool, and LLM run lands in the
-causal graph — fail-open, with `parent_run_id` containment converted into
-explicit causal edges (unknown parents are dropped, never invented).
+causal graph. Capture is fail-open. `parent_run_id` containment becomes
+explicit causal edges, and unknown parents are dropped rather than invented.
 
 ```python
 from adapters.langgraph import CausalityCallbackHandler
@@ -334,13 +337,12 @@ handler = CausalityCallbackHandler(store)
 app.invoke(inputs, config=handler.config())
 ```
 
-Worked example: a deterministic replay of the documented July 2025 Replit
-incident — freeze violated, production rows deleted, fabricated data
-written, false rollback claim — captured as 22 causally-validated events
-in
-[`examples/replit_incident.py`](https://github.com/Psionic-labs/Agent-Causality/blob/main/examples/replit_incident.py)
-(write-up:
-[the Replit case study](https://github.com/Psionic-labs/Agent-Causality/blob/main/docs/case-study-replit.md)).
+For a worked example, [`examples/replit_incident.py`](https://github.com/Psionic-labs/Agent-Causality/blob/main/examples/replit_incident.py)
+replays the documented July 2025 Replit incident as 22 causally-validated
+events. The incident includes a violated freeze, deleted production rows,
+fabricated data, and a false rollback claim. See
+[the Replit case study](https://github.com/Psionic-labs/Agent-Causality/blob/main/docs/case-study-replit.md)
+for the longer write-up.
 [Adapter guide →](https://psionic-labs.github.io/Agent-Causality/langgraph.html)
 
 ---
@@ -357,15 +359,15 @@ and `benchmark/results/`.
 - Experiment 3 (semantic-port vs raw deletion): **20/20** semantic-port
   successes; raw-deletion failure rate met target.
 - Experiment 1 (offline): passes; external Fastino run is
-  provider-blocked/deferred (no structured-output capability).
-- Real OpenCode benchmark (5 runs / 5 tasks, OpenCode `1.19.0`): capture
+  provider-blocked and deferred (no structured-output capability).
+- Real OpenCode benchmark (5 runs across 5 tasks, OpenCode `1.19.0`): capture
   micro/macro-average `1.0`; cause recall mean `0.3` (structural-slice
-  ancestry under explicit-evidence edges only); joint ancestry `0.0` —
-  genuine causal interaction is unsupported from live traces.
+  ancestry under explicit-evidence edges only); joint ancestry `0.0`.
+  Genuine causal interaction is unsupported from live traces.
 
-*Terminology is precise: live-trace branch results are reported as
-`joint ancestry` (not causal interaction), and minimal slices as a
-`required-cause preservation proxy` (not causal minimality).*
+*Terminology matters here. Live-trace branch results are reported as
+`joint ancestry`, not causal interaction. Minimal slices are a
+`required-cause preservation proxy`, not causal minimality.*
 
 ---
 
