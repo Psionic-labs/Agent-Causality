@@ -128,3 +128,15 @@ Every pull request runs the checks in `.github/workflows/ci.yml`, including
 the applicable test suite, Ruff, `ty`, and PostgreSQL integration where
 configured. A pull request should merge only after all required checks pass and
 review feedback is resolved.
+
+## License of contributions
+
+By opening a pull request, you certify that you have the right to submit the
+contribution and that it may be licensed under AGPL-3.0-only and under any
+commercial license offered for the whole work. Put this line in the pull request
+description:
+
+> I certify that I have the right to submit this contribution under the terms in CONTRIBUTING.md.
+
+This section does not cover contributions made before it was added. If you made
+one of those contributions and agree to the same terms, open an issue and say so.

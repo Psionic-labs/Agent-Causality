@@ -518,7 +518,8 @@ def render_footer(catalog: Catalog, current: Page) -> str:
         f"      {render_footer_nav(catalog, current)}\n"
         "    </div>\n"
         '    <div class="wrap footer-legal">\n'
-        "      <p>Built by Psionics · © 2026 · Agent-Causality is open source under AGPL-3.0.</p>\n"
+        "      <p>Built by Psionics · © 2026 · Agent-Causality is open source "
+        "under AGPL-3.0-only.</p>\n"
         '      <p class="footer-credit">Visual style inspired by the timeline monitors '
         "in the Loki series. Not affiliated with or endorsed by Marvel, Disney, "
         "or the creators of the show.</p>\n"

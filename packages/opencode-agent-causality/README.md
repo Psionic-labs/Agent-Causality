@@ -5,7 +5,7 @@
 [![npm version](https://img.shields.io/npm/v/@psionic-labs/opencode-agent-causality)](https://www.npmjs.com/package/@psionic-labs/opencode-agent-causality)
 [![npm downloads](https://img.shields.io/npm/d18m/@psionic-labs/opencode-agent-causality?label=npm%20downloads&labelColor=black&color=green)](https://www.npmjs.com/package/@psionic-labs/opencode-agent-causality)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue)](https://www.python.org/)
-[![License: AGPL-3.0](https://img.shields.io/badge/license-AGPL--3.0-green)](https://github.com/Psionic-labs/Agent-Causality/blob/main/LICENSE)
+[![License: AGPL-3.0-only](https://img.shields.io/badge/license-AGPL--3.0--only-green)](https://github.com/Psionic-labs/Agent-Causality/blob/main/LICENSE)
 [![Website](https://img.shields.io/badge/website-live-orange)](https://psionic-labs.github.io/Agent-Causality/)
 [![OpenCode 1.19+](https://img.shields.io/badge/opencode-1.19%2B-purple)](https://opencode.ai)
 
